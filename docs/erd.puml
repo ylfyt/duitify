@@ -1,0 +1,87 @@
+@startuml erd
+
+entity account {
+    * id : INT
+    --
+    * name : VARCHAR
+    * initial_balance : FLOAT
+    * balance : FLOAT
+    * logo : VARCHAR
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity expense_category {
+    * id : INT
+    --
+    * name : VARCHAR
+    * logo : VARCHAR
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity transfer_category {
+    * id : INT
+    --
+    * name : VARCHAR
+    * logo : VARCHAR
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity income_category {
+    * id : INT
+    --
+    * name : VARCHAR
+    * logo : VARCHAR
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity expense {
+    * id : INT
+    --
+    * amount : FLOAT
+    * category_id : INT
+    * account_id : INT
+    * description : VARCHAR
+    * occurred_at : DATETIME
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity income {
+    * id : INT
+    --
+    * amount : FLOAT
+    * account_id : INT
+    * category_id : INT
+    * description : VARCHAR
+    * occurred_at : DATETIME
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+entity transfer {
+    * id : INT
+    --
+    * amount : FLOAT
+    * from_account_id : INT
+    * to_account_id : INT
+    * category_id : INT
+    * description : VARCHAR
+    * occurred_at : DATETIME
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
+expense "n" -- "1" account
+expense "n" -- "1" expense_category
+
+income "n" -- "1" account
+income "n" -- "1" income_category
+
+transfer "n" -- "1" account
+transfer "n" -- "1" transfer_category
+
+@enduml
