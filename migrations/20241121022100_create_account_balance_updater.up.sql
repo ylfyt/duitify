@@ -30,12 +30,12 @@ $$ LANGUAGE plpgsql;
 
 -- postgres trigger to upadate balance = initial_balance when account is created
 CREATE TRIGGER update_account_created_trigger
-AFTER INSERT ON "user_yudi.alfayet99@gmail.com".account
+AFTER INSERT ON "user_admin@gmail.com".account
 FOR EACH ROW EXECUTE PROCEDURE update_account_created();
 
 -- TRIGGER TO update balance when initial_balance is updated
 CREATE TRIGGER update_account_initial_balance_trigger
-AFTER UPDATE ON "user_yudi.alfayet99@gmail.com".account
+AFTER UPDATE ON "user_admin@gmail.com".account
 FOR EACH ROW WHEN (NEW.initial_balance != OLD.initial_balance)
 EXECUTE PROCEDURE public.update_account_initial_balance();
 
