@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;1,100;1,200;1,300;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    font-family: 'Open Sans', sans-serif;
+}
+
+@layer base {
+    * {
+        scrollbar-width: thin;
+    }
+
+    body {
+        @apply min-h-dvh w-full overscroll-contain;
+    }
+}
+
+@layer components {
+    .resp-dbg {
+        @apply bg-red-500 sm:bg-green-500 md:bg-orange-500 lg:bg-yellow-500 xl:bg-blue-500 2xl:bg-purple-600;
+    }
+
+    .req {
+        @apply after:text-red-500 after:content-['_*'];
+    }
+}

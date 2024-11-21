@@ -1,0 +1,61 @@
+import { appBarCtxAtom } from '@/stores/common';
+import { useAtom } from 'jotai';
+import { FC, Fragment, useEffect, useState } from 'react';
+import { Icon } from '@/components/icon';
+
+const SCROLL_THRESHOLD = 8;
+
+interface AppBarProps {}
+
+export const AppBar: FC<AppBarProps> = () => {
+    const [appBarCtx] = useAtom(appBarCtxAtom);
+    const [scrolled, setScrolled] = useState(false);
+    const [scrollY, setScrollY] = useState(0);
+
+    useEffect(() => {
+        const onScroll = () => setScrollY(window.scrollY);
+        window.addEventListener('scroll', onScroll);
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    useEffect(() => {
+        if (scrollY <= SCROLL_THRESHOLD && scrolled) return setScrolled(false);
+        if (scrollY > SCROLL_THRESHOLD && !scrolled) return setScrolled(true);
+    }, [scrollY]);
+
+    return (
+        <div>
+            <div
+                className={
+                    'fixed left-0 top-0 z-20 grid h-16 w-full place-items-center bg-secondary text-secondary-content shadow-md ' +
+                    (scrolled ? 'opacity-90' : '')
+                }
+            >
+                <div className="flex w-full items-center justify-between px-6 lg:w-[50rem]">
+                    <div className="flex items-center gap-4 text-3xl">
+                        {!appBarCtx.hideDefaultAction && (
+                            <button
+                                onClick={() => history.back()}
+                                disabled={!appBarCtx.back}
+                                className="flex items-center gap-4"
+                            >
+                                {appBarCtx.back ? (
+                                    <Icon icon="mdi:arrow-left" />
+                                ) : (
+                                    <Icon icon={appBarCtx.icon ?? 'lucide:house'} />
+                                )}
+                            </button>
+                        )}
+                        {appBarCtx.actions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
+                    </div>
+                    {typeof appBarCtx.title !== 'string' ? (
+                        appBarCtx.title
+                    ) : (
+                        <span className="text-2xl font-semibold">{appBarCtx.title}</span>
+                    )}
+                </div>
+            </div>
+            <div className="h-16"></div>
+        </div>
+    );
+};
