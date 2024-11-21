@@ -13,7 +13,6 @@ export const NotFound: FC<NotFoundProps> = ({ home }) => {
     useEffect(() => {
         setAppBarCtx({
             title: 'Not found',
-            icon: 'lucide:circle-alert',
         });
     }, []);
 

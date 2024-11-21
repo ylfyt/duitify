@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 
 export const handleLogout = async () => {
     const confirmed = await showConfirm({
-        body: 'Apakah anda yakin ingin keluar?',
+        body: 'Are you sure want to logout?',
         title: 'Logout',
         okText: 'Logout',
     });

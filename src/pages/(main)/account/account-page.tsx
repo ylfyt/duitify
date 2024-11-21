@@ -1,11 +1,10 @@
-import { DropdownMenu } from '@/components/dropdown-menu';
-import { Icon } from '@/components/icon';
 import { AccountRepo } from '@/repo/account-repo';
 import { appBarCtxAtom } from '@/stores/common';
 import { Account } from '@/types/account.type';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { AccountCard, AccountCardSkeleton } from './components/account-card';
 
 interface AccountPageProps {}
 
@@ -18,7 +17,7 @@ const AccountPage: FC<AccountPageProps> = () => {
     useEffect(() => {
         setAppBarCtx({
             title: 'Accounts',
-            icon: 'lucide:wallet',
+            actions: [<button className="dai-btn dai-btn-success dai-btn-sm">Create</button>],
         });
     }, []);
 
@@ -27,9 +26,6 @@ const AccountPage: FC<AccountPageProps> = () => {
             setLoading(true);
             const { data, error } = await AccountRepo.getAccounts();
             setLoading(false);
-
-            console.log(data, error);
-
             if (error) {
                 toast.error(error.message);
                 return;
@@ -41,25 +37,13 @@ const AccountPage: FC<AccountPageProps> = () => {
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
             <div className="grid grid-cols-1 gap-4">
-                <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-                    <Icon icon="lucide:wallet" className="text-3xl" />
-                    <div className="flex flex-1 flex-col gap-0.5">
-                        <p className="text-lg">Gopay</p>
-                        <div className="flex items-center gap-2">
-                            <p>Balance: </p>
-                            <p className="font-bold text-success">Rp 10.000</p>
-                        </div>
-                    </div>
-                    <DropdownMenu
-                        options={[
-                            {
-                                icon: 'lucide:pencil',
-                                label: 'Edit',
-                                onClick: () => {},
-                            },
-                        ]}
-                    />
-                </div>
+                {loading ? (
+                    Array.from({ length: 2 }).map((_, idx) => <AccountCardSkeleton key={idx} />)
+                ) : accounts.length === 0 ? (
+                    <p className="text-center">No accounts found</p>
+                ) : (
+                    accounts.map((account) => <AccountCard key={account.id} account={account} />)
+                )}
             </div>
         </div>
     );

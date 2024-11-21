@@ -26,6 +26,9 @@ import IconLucideInfo from '~icons/lucide/info';
 import IconLucideWallet from '~icons/lucide/wallet';
 import IconLucideMoreVertical from '~icons/lucide/more-vertical';
 import IconLucidePencil from '~icons/lucide/pencil';
+import IconLucidePlus from '~icons/lucide/plus';
+import IconLucideSun from '~icons/lucide/sun';
+import IconLucideMoon from '~icons/lucide/moon';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -55,6 +58,9 @@ const Icons = {
     'lucide:wallet': IconLucideWallet,
     'lucide:more-vertical': IconLucideMoreVertical,
     'lucide:pencil': IconLucidePencil,
+    'lucide:plus': IconLucidePlus,
+    'lucide:sun': IconLucideSun,
+    'lucide:moon': IconLucideMoon,
 };
 
 export type IconName = keyof typeof Icons;

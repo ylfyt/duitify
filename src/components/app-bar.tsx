@@ -33,26 +33,20 @@ export const AppBar: FC<AppBarProps> = () => {
             >
                 <div className="flex w-full items-center justify-between px-6 lg:w-[50rem]">
                     <div className="flex items-center gap-4 text-3xl">
-                        {!appBarCtx.hideDefaultAction && (
-                            <button
-                                onClick={() => history.back()}
-                                disabled={!appBarCtx.back}
-                                className="flex items-center gap-4"
-                            >
-                                {appBarCtx.back ? (
-                                    <Icon icon="mdi:arrow-left" />
-                                ) : (
-                                    <Icon icon={appBarCtx.icon ?? 'lucide:house'} />
-                                )}
+                        {appBarCtx.back && (
+                            <button onClick={() => history.back()} className="flex items-center gap-4">
+                                <Icon icon="mdi:arrow-left" />
                             </button>
                         )}
+                        {typeof appBarCtx.title !== 'string' ? (
+                            appBarCtx.title
+                        ) : (
+                            <span className="text-2xl font-semibold">{appBarCtx.title}</span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-4 text-3xl">
                         {appBarCtx.actions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
                     </div>
-                    {typeof appBarCtx.title !== 'string' ? (
-                        appBarCtx.title
-                    ) : (
-                        <span className="text-2xl font-semibold">{appBarCtx.title}</span>
-                    )}
                 </div>
             </div>
             <div className="h-16"></div>

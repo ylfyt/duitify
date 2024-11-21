@@ -1,4 +1,3 @@
-import { IconName } from '@/components/icon';
 import { atom, getDefaultStore } from 'jotai';
 
 const store = getDefaultStore();
@@ -17,8 +16,6 @@ type AppBarCtx = {
     title: string | JSX.Element;
     actions?: JSX.Element[];
     back?: boolean;
-    hideDefaultAction?: boolean;
-    icon?: IconName;
 };
 export const appBarCtxAtom = atom<AppBarCtx>({
     title: 'Duitify',
