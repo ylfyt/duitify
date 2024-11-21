@@ -23,7 +23,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER income_updated_trigger
 BEFORE UPDATE ON "user_admin@gmail.com".income
-FOR EACH ROW
+FOR EACH ROW WHEN (NEW.amount != OLD.amount)
 EXECUTE PROCEDURE public.income_updated();
 
 -- income deleted
