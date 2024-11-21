@@ -3,9 +3,9 @@ import { atom } from 'jotai';
 
 export const userAtom = atom<Session | null>(null);
 
-export const schemaAtom = atom<'public'>((get) => {
+export const schemaAtom = atom<string>((get) => {
     const email = get(userAtom)?.user.email;
     if (!email) return 'public';
-    return 'public';
-    // return `user_${email}`;
+    // return 'public';
+    return `user_${email}`;
 });

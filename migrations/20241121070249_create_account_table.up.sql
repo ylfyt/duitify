@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS "user_admin@gmail.com".account (
+CREATE TABLE IF NOT EXISTS "user_schema".account (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     name VARCHAR(255) NOT NULL,
     initial_balance NUMERIC(17, 2) NOT NULL,
@@ -10,11 +10,11 @@ CREATE TABLE IF NOT EXISTS "user_admin@gmail.com".account (
 
 -- account created
 CREATE TRIGGER account_created_trigger
-AFTER INSERT ON "user_admin@gmail.com".account
+AFTER INSERT ON "user_schema".account
 FOR EACH ROW EXECUTE PROCEDURE public.account_created();
 
 -- account updated
 CREATE TRIGGER account_updated_trigger
-AFTER UPDATE ON "user_admin@gmail.com".account
+AFTER UPDATE ON "user_schema".account
 FOR EACH ROW WHEN (NEW.initial_balance != OLD.initial_balance)
 EXECUTE PROCEDURE public.account_updated();

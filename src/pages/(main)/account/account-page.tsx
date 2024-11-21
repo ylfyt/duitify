@@ -24,14 +24,17 @@ const AccountPage: FC<AccountPageProps> = () => {
 
     useEffect(() => {
         (async () => {
-            // setLoading(true);
-            // const { data, error } = await AccountRepo.getAccounts();
-            // setLoading(false);
-            // if (error) {
-            //     toast.error(error.message);
-            //     return;
-            // }
-            // setAccounts(data);
+            setLoading(true);
+            const { data, error } = await AccountRepo.getAccounts();
+            setLoading(false);
+
+            console.log(data, error);
+
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            setAccounts(data ?? []);
         })();
     }, []);
 
