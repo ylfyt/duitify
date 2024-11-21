@@ -1,6 +1,7 @@
 import { showLoading } from '@/stores/common';
 import { showConfirm } from '@/stores/confirm';
-import { delay } from './delay';
+import { supabase } from '@/supabase';
+import { toast } from 'react-toastify';
 
 export const handleLogout = async () => {
     const confirmed = await showConfirm({
@@ -11,6 +12,14 @@ export const handleLogout = async () => {
     if (!confirmed) return;
 
     showLoading(true);
-    await delay(3000);
+    const { error } = await supabase.auth.signOut();
     showLoading(false);
+    if (error) {
+        toast.error(error.message);
+        return;
+    }
+
+    let newLoc = '/login';
+    if (import.meta.env.BASE_URL !== '/') newLoc = import.meta.env.BASE_URL + newLoc;
+    window.location.href = newLoc;
 };

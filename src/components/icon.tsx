@@ -23,6 +23,9 @@ import IconLucideCircleCheck from '~icons/lucide/circle-check';
 import IconLucideOctagonAlert from '~icons/lucide/octagon-alert';
 import IconLucideTriangleAlert from '~icons/lucide/triangle-alert';
 import IconLucideInfo from '~icons/lucide/info';
+import IconLucideWallet from '~icons/lucide/wallet';
+import IconLucideMoreVertical from '~icons/lucide/more-vertical';
+import IconLucidePencil from '~icons/lucide/pencil';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -49,6 +52,9 @@ const Icons = {
     'lucide:octagon-alert': IconLucideOctagonAlert,
     'lucide:triangle-alert': IconLucideTriangleAlert,
     'lucide:info': IconLucideInfo,
+    'lucide:wallet': IconLucideWallet,
+    'lucide:more-vertical': IconLucideMoreVertical,
+    'lucide:pencil': IconLucidePencil,
 };
 
 export type IconName = keyof typeof Icons;
