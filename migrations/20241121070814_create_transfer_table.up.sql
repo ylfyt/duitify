@@ -27,6 +27,6 @@ EXECUTE PROCEDURE public.transfer_updated();
 
 -- transfer deleted
 CREATE TRIGGER transfer_deleted_trigger
-BEFORE DELETE ON "user_admin@gmail.com".transfer
+AFTER DELETE ON "user_admin@gmail.com".transfer
 FOR EACH ROW
 EXECUTE PROCEDURE public.transfer_deleted();
