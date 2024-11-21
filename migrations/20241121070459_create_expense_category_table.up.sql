@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS "user_admin@gmail.com".expense_category (
     logo VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NULL
-)
+);

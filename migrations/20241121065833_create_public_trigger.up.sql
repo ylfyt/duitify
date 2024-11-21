@@ -10,7 +10,8 @@ BEGIN
     USING delta, account_id;
 END; $$;
 
-CREATE OR REPLACE FUNCTION public.update_account_initial_balance()
+-- account updated
+CREATE OR REPLACE FUNCTION public.account_updated()
 RETURNS TRIGGER AS $$
 BEGIN
     CALL update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.id, NEW.initial_balance - OLD.initial_balance);
@@ -38,7 +39,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- expense amount updated
-CREATE OR REPLACE FUNCTION public.expense_amount_updated()
+CREATE OR REPLACE FUNCTION public.expense_updated()
 RETURNS TRIGGER AS $$
 BEGIN
     CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));

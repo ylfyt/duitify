@@ -11,4 +11,22 @@ CREATE TABLE IF NOT EXISTS "user_admin@gmail.com".transfer (
     FOREIGN KEY (from_account_id) REFERENCES "user_admin@gmail.com".account (id),
     FOREIGN KEY (to_account_id) REFERENCES "user_admin@gmail.com".account (id),
     FOREIGN KEY (category_id) REFERENCES "user_admin@gmail.com".transfer_category (id)
-)
+);
+
+-- transfer created
+CREATE TRIGGER transfer_created_trigger
+BEFORE INSERT ON "user_admin@gmail.com".transfer
+FOR EACH ROW
+EXECUTE PROCEDURE public.transfer_created();
+
+-- transfer updated
+CREATE TRIGGER transfer_updated_trigger
+BEFORE UPDATE ON "user_admin@gmail.com".transfer
+FOR EACH ROW WHEN (NEW.amount != OLD.amount)
+EXECUTE PROCEDURE public.transfer_updated();
+
+-- transfer deleted
+CREATE TRIGGER transfer_deleted_trigger
+BEFORE DELETE ON "user_admin@gmail.com".transfer
+FOR EACH ROW
+EXECUTE PROCEDURE public.transfer_deleted();

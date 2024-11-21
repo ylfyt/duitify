@@ -9,4 +9,22 @@ CREATE TABLE IF NOT EXISTS "user_admin@gmail.com".expense (
     updated_at TIMESTAMPTZ NULL,
     FOREIGN KEY (category_id) REFERENCES "user_admin@gmail.com".expense_category (id),
     FOREIGN KEY (account_id) REFERENCES "user_admin@gmail.com".account (id)
-)
+);
+
+-- expense created
+CREATE TRIGGER expense_created_trigger
+BEFORE INSERT ON "user_admin@gmail.com".expense
+FOR EACH ROW
+EXECUTE PROCEDURE public.expense_created();
+
+-- expense amount updated
+CREATE TRIGGER expense_updated_trigger
+BEFORE UPDATE ON "user_admin@gmail.com".expense
+FOR EACH ROW WHEN (NEW.amount != OLD.amount)
+EXECUTE PROCEDURE public.expense_updated();
+
+-- expense deleted
+CREATE TRIGGER expense_deleted_trigger
+BEFORE DELETE ON "user_admin@gmail.com".expense
+FOR EACH ROW
+EXECUTE PROCEDURE public.expense_deleted();
