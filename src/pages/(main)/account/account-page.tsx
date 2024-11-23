@@ -5,6 +5,8 @@ import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { AccountCard, AccountCardSkeleton } from './components/account-card';
+import { openModal } from '@/stores/modal';
+import { ModalAccountCreate } from './components/modal-account-create';
 
 interface AccountPageProps {}
 
@@ -17,7 +19,18 @@ const AccountPage: FC<AccountPageProps> = () => {
     useEffect(() => {
         setAppBarCtx({
             title: 'Accounts',
-            actions: [<button className="dai-btn dai-btn-success dai-btn-sm">Create</button>],
+            actions: [
+                <button
+                    onClick={() =>
+                        openModal(ModalAccountCreate, {
+                            onSuccess: (account) => setAccounts((prev) => [account, ...prev]),
+                        })
+                    }
+                    className="dai-btn dai-btn-success dai-btn-sm"
+                >
+                    Create
+                </button>,
+            ],
         });
     }, []);
 
