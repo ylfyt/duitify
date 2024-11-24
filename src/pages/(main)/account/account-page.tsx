@@ -55,7 +55,18 @@ const AccountPage: FC<AccountPageProps> = () => {
                 ) : accounts.length === 0 ? (
                     <p className="text-center">No accounts found</p>
                 ) : (
-                    accounts.map((account) => <AccountCard key={account.id} account={account} />)
+                    accounts.map((account) => (
+                        <AccountCard
+                            key={account.id}
+                            account={account}
+                            onDeleted={(id) => {
+                                setAccounts((prev) => prev.filter((acc) => acc.id !== id));
+                            }}
+                            onUpdated={(account) => {
+                                setAccounts((prev) => prev.map((acc) => (acc.id === account.id ? account : acc)));
+                            }}
+                        />
+                    ))
                 )}
             </div>
         </div>

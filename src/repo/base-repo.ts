@@ -13,6 +13,11 @@ export type QueryResultOne<T> = {
     error: PostgrestError | null;
 };
 
+export type QueryResultEmpty = {
+    data: null;
+    error: PostgrestError | null;
+};
+
 const store = getDefaultStore();
 
 export class BaseRepo {

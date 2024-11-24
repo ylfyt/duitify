@@ -1,17 +1,42 @@
 import { DropdownMenu } from '@/components/dropdown-menu';
 import Skeleton from '@/components/skeleton';
 import { formatCurrency } from '@/helper/format-currency';
+import { AccountRepo } from '@/repo/account-repo';
+import { showLoading } from '@/stores/common';
+import { showConfirm } from '@/stores/confirm';
+import { openModal } from '@/stores/modal';
 import { Account } from '@/types/account.type';
 import { FC } from 'react';
+import { toast } from 'react-toastify';
+import { ModalAccountCreate } from './modal-account-create';
 
 interface AccountCardProps {
     account: Account;
+    onDeleted: (id: string) => void;
+    onUpdated: (account: Account) => void;
 }
 
-export const AccountCard: FC<AccountCardProps> = ({ account }) => {
+export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdated }) => {
+    const handleDelete = async () => {
+        const confirmed = await showConfirm({
+            title: 'Delete Account',
+            body: 'Are you sure you want to delete this account?',
+        });
+        if (!confirmed) return;
+
+        showLoading(true);
+        const { error } = await AccountRepo.deleteAccount(account.id);
+        showLoading(false);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        onDeleted(account.id);
+    };
+
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-            <div className="size-12 rounded-full bg-accent"></div>
+            <img src={account.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-lg">{account.name}</p>
                 <div className="flex items-center gap-2">
@@ -26,7 +51,12 @@ export const AccountCard: FC<AccountCardProps> = ({ account }) => {
                     {
                         icon: 'lucide:pencil',
                         label: 'Edit',
-                        onClick: () => {},
+                        onClick: () => openModal(ModalAccountCreate, { account, onSuccess: onUpdated }),
+                    },
+                    {
+                        icon: 'lucide:trash',
+                        label: 'Delete',
+                        onClick: handleDelete,
                     },
                 ]}
             />
@@ -54,15 +84,7 @@ export const AccountCardSkeleton: FC<AccountCardSkeletonProps> = () => {
                 </Skeleton>
             </div>
             <Skeleton>
-                <DropdownMenu
-                    options={[
-                        {
-                            icon: 'lucide:pencil',
-                            label: 'Edit',
-                            onClick: () => {},
-                        },
-                    ]}
-                />
+                <DropdownMenu options={[]} />
             </Skeleton>
         </div>
     );

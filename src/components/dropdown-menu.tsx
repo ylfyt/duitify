@@ -20,7 +20,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ options }) => {
             </div>
             <ul
                 tabIndex={0}
-                className="dai-menu dai-dropdown-content z-[1] w-64 rounded-box border-[2px] border-base-200 bg-base-100 p-2 shadow-all-lg"
+                className="dai-menu dai-dropdown-content z-[29] w-64 rounded-box border-[2px] border-base-200 bg-base-100 p-2 shadow-all-lg"
             >
                 {options.map((el, idx) => (
                     <li key={idx}>

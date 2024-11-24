@@ -1,7 +1,8 @@
 import { LoadingButton } from '@/components/loading-button';
 import { Modal } from '@/components/modal';
-import { AccountLogo as ACCOUNT_LOGOS } from '@/constants/logo';
+import { ACCOUNT_LOGOS } from '@/constants/logo';
 import { AccountRepo } from '@/repo/account-repo';
+import { QueryResultOne } from '@/repo/base-repo';
 import { closeModal } from '@/stores/modal';
 import { Account } from '@/types/account.type';
 import { FC, useMemo, useState } from 'react';
@@ -9,40 +10,52 @@ import { toast } from 'react-toastify';
 
 interface ModalAccountCreateProps {
     onSuccess: (account: Account) => void;
+    account?: Account;
 }
 
-export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess }) => {
+export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, account }) => {
     const [loading, setLoading] = useState(false);
-    const [name, setName] = useState('');
-    const [balance, setBalance] = useState('');
-    const [selectedLogo, setSelectedLogo] = useState(0);
+    const [name, setName] = useState(account?.name ?? '');
+    const [balance, setBalance] = useState(account?.initial_balance?.toString() ?? '');
+    const [selectedLogo, setSelectedLogo] = useState(account?.logo ? ACCOUNT_LOGOS.indexOf(account.logo) : 0);
 
     const disabled = useMemo(() => !name || !balance || isNaN(parseFloat(balance)), [name, balance]);
 
     const submit = async () => {
         setLoading(true);
-        const { error, data } = await AccountRepo.createAccount({
-            name,
-            initial_balance: parseFloat(balance),
-            logo: ACCOUNT_LOGOS[selectedLogo],
-        });
+        let res: QueryResultOne<Account>;
+        if (account) {
+            res = await AccountRepo.updateAccount(account.id, {
+                name,
+                initial_balance: parseFloat(balance),
+                logo: ACCOUNT_LOGOS[selectedLogo],
+            });
+
+            if (res.data) res.data.balance += parseFloat(balance) - account.initial_balance;
+        } else {
+            res = await AccountRepo.createAccount({
+                name,
+                initial_balance: parseFloat(balance),
+                logo: ACCOUNT_LOGOS[selectedLogo],
+            });
+            if (res.data) res.data.balance = parseFloat(balance);
+        }
         setLoading(false);
-        if (error) {
-            toast.error(error.message);
+        if (res.error) {
+            toast.error(res.error.message);
             return;
         }
-        if (!data) {
+        if (!res.data) {
             toast.error('Something went wrong');
             return;
         }
-        data.balance = data.initial_balance;
-        toast.success('Account created successfully');
-        onSuccess(data);
+        toast.success(`Account ${account ? 'updated' : 'created'} successfully`);
+        onSuccess(res.data);
         closeModal();
     };
 
     return (
-        <Modal title="Create Account" className="w-[90vw] max-w-[30rem]">
+        <Modal title={account ? 'Update Account' : 'Create Account'} className="w-[90vw] max-w-[30rem]">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -84,10 +97,7 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess }) =
                                 key={idx}
                                 onClick={() => setSelectedLogo(idx)}
                                 type="button"
-                                className={
-                                    'flex-shrink-0 rounded-xl p-2 ' +
-                                    (idx === selectedLogo ? 'bg-primary' : 'bg-base-300')
-                                }
+                                className={'flex-shrink-0 rounded-xl p-1 ' + (idx === selectedLogo ? 'bg-neutral' : '')}
                             >
                                 <img className="size-12 rounded-lg" key={idx} src={el} alt="" />
                             </button>
