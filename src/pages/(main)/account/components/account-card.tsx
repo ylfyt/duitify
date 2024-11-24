@@ -41,7 +41,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
                 <p className="text-lg">{account.name}</p>
                 <div className="flex items-center gap-2">
                     <p>Balance: </p>
-                    <p className={'font-bold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
+                    <p className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
                         {formatCurrency(account.balance)}
                     </p>
                 </div>
