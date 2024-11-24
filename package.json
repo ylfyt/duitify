@@ -8,8 +8,7 @@
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "format": "prettier --write .",
-        "gen-types": "npx supabase gen types --lang=typescript --project-id <project_id> --schema user_schema > src/database.types.ts"
+        "format": "prettier --write ."
     },
     "dependencies": {
         "@supabase/supabase-js": "^2.46.1",

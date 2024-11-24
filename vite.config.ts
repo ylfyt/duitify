@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
             host: '0.0.0.0',
             port: 4000,
         },
-        base: process.env.NODE_ENV === 'production' ? '/app' : '/',
+        base: process.env.NODE_ENV === 'production' ? '/duitify' : '/',
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, 'src'),
