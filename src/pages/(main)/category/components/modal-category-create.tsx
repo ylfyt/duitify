@@ -1,46 +1,67 @@
 import { LoadingButton } from '@/components/loading-button';
 import { Modal } from '@/components/modal';
-import { ACCOUNT_LOGOS } from '@/constants/logo';
-import { AccountRepo } from '@/repo/account-repo';
+import { CATEGORY_LOGOS } from '@/constants/logo';
 import { QueryResultOne } from '@/repo/base-repo';
+import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
+import { IncomeCategoryRepo } from '@/repo/income-category-repo';
+import { TransferCategoryRepo } from '@/repo/transfer-category-repo';
 import { closeModal } from '@/stores/modal';
-import { Account } from '@/types/account.type';
+import { Category } from '@/types/category.type';
 import { FC, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
-interface ModalAccountCreateProps {
-    onSuccess: (account: Account) => void;
-    account?: Account;
+interface ModalCategoryCreateProps {
+    category?: Category;
+    onSuccess: (category: Category) => void;
+    categoryType: 'expense' | 'income' | 'transfer';
 }
 
-export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, account }) => {
+export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, category, categoryType }) => {
     const [loading, setLoading] = useState(false);
-    const [name, setName] = useState(account?.name ?? '');
-    const [balance, setBalance] = useState(account?.initial_balance?.toString() ?? '');
-    const [selectedLogo, setSelectedLogo] = useState(account?.logo ? ACCOUNT_LOGOS.indexOf(account.logo) : 0);
+    const [name, setName] = useState(category?.name ?? '');
+    const [selectedLogo, setSelectedLogo] = useState(category?.logo ? CATEGORY_LOGOS.indexOf(category.logo) : 0);
 
-    const disabled = useMemo(() => !name || !balance || isNaN(parseFloat(balance)), [name, balance]);
+    const disabled = useMemo(() => !name, [name]);
 
     const submit = async () => {
         setLoading(true);
-        let res: QueryResultOne<Account>;
-        if (account) {
-            res = await AccountRepo.updateAccount(account.id, {
-                name,
-                initial_balance: parseFloat(balance),
-                logo: ACCOUNT_LOGOS[selectedLogo],
-            });
-
-            if (res.data) res.data.balance += parseFloat(balance) - account.initial_balance;
+        let res: QueryResultOne<Category>;
+        if (!category) {
+            switch (categoryType) {
+                case 'expense':
+                    res = await ExpenseCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
+                    break;
+                case 'income':
+                    res = await IncomeCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
+                    break;
+                case 'transfer':
+                    res = await TransferCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
+                    break;
+            }
         } else {
-            res = await AccountRepo.createAccount({
-                name,
-                initial_balance: parseFloat(balance),
-                logo: ACCOUNT_LOGOS[selectedLogo],
-            });
-            if (res.data) res.data.balance = parseFloat(balance);
+            switch (categoryType) {
+                case 'expense':
+                    res = await ExpenseCategoryRepo.updateCategory(category.id, {
+                        name,
+                        logo: CATEGORY_LOGOS[selectedLogo],
+                    });
+                    break;
+                case 'income':
+                    res = await IncomeCategoryRepo.updateCategory(category.id, {
+                        name,
+                        logo: CATEGORY_LOGOS[selectedLogo],
+                    });
+                    break;
+                case 'transfer':
+                    res = await TransferCategoryRepo.updateCategory(category.id, {
+                        name,
+                        logo: CATEGORY_LOGOS[selectedLogo],
+                    });
+                    break;
+            }
         }
         setLoading(false);
+
         if (res.error) {
             toast.error(res.error.message);
             return;
@@ -49,13 +70,13 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
             toast.error('Something went wrong');
             return;
         }
-        toast.success(`Account ${account ? 'updated' : 'created'} successfully`);
+        toast.success(`Category ${category ? 'updated' : 'created'} successfully`);
         onSuccess(res.data);
         closeModal();
     };
 
     return (
-        <Modal title={account ? 'Update Account' : 'Create Account'} className="w-[90vw] max-w-[30rem]">
+        <Modal title={category ? 'Update Category' : 'Create Category'} className="w-[90vw] max-w-[30rem]">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -71,19 +92,7 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         type="text"
-                        placeholder="Account Name"
-                        className="dai-input dai-input-bordered"
-                    />
-                </label>
-                <label className="dai-form-control">
-                    <div className="dai-label">
-                        <span className="req dai-label-text">Intial Balance</span>
-                    </div>
-                    <input
-                        value={balance}
-                        onChange={(e) => setBalance(e.target.value)}
-                        type="number"
-                        placeholder="Intial Balance"
+                        placeholder="Category Name"
                         className="dai-input dai-input-bordered"
                     />
                 </label>
@@ -92,7 +101,7 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
                         <span className="req dai-label-text">Logo</span>
                     </div>
                     <div className="flex items-center gap-2 overflow-x-scroll px-2 py-2">
-                        {ACCOUNT_LOGOS.map((el, idx) => (
+                        {CATEGORY_LOGOS.map((el, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => setSelectedLogo(idx)}

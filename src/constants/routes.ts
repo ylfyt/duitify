@@ -6,5 +6,5 @@ import CategoryPage from '@/pages/(main)/category/category-page';
 export const ROUTES: Route[] = [
     { icon: 'lucide:house', link: '/', title: 'Home', el: HomePage },
     { icon: 'lucide:wallet', link: '/accounts', title: 'Account', el: AccountPage },
-    { icon: 'lucide:history', link: '/category', title: 'Categories', el: CategoryPage },
+    { icon: 'lucide:group', link: '/category', title: 'Categories', el: CategoryPage },
 ];

@@ -1,20 +1,24 @@
-import { DropdownMenu } from '@/components/dropdown-menu';
 import { QueryResultMany } from '@/repo/base-repo';
 import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { appBarCtxAtom } from '@/stores/common';
+import { openModal } from '@/stores/modal';
 import { Category } from '@/types/category.type';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { ModalCategoryCreate } from './components/modal-category-create';
+import { CategoryCard, CategoryCardSkeleton } from './components/category-card';
+import { IncomeCategoryRepo } from '@/repo/income-category-repo';
+import { TransferCategoryRepo } from '@/repo/transfer-category-repo';
 
-const CATEGORIES = ['Expense', 'Income', 'Transfer'];
+const CATEGORIES = ['expense', 'income', 'transfer'] as const;
 
 interface CategoryPageProps {}
 
 const CategoryPage: FC<CategoryPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
-    const [selected, setSelected] = useState(0);
+    const [selected, setSelected] = useState<(typeof CATEGORIES)[number]>('expense');
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -23,7 +27,15 @@ const CategoryPage: FC<CategoryPageProps> = () => {
         setAppBarCtx({
             title: 'Categories',
             actions: [
-                <button onClick={() => {}} className="dai-btn dai-btn-success dai-btn-sm">
+                <button
+                    onClick={() =>
+                        openModal(ModalCategoryCreate, {
+                            onSuccess: (category) => setCategories((prev) => [category, ...prev]),
+                            categoryType: selected,
+                        })
+                    }
+                    className="dai-btn dai-btn-success dai-btn-sm"
+                >
                     Create
                 </button>,
             ],
@@ -32,13 +44,21 @@ const CategoryPage: FC<CategoryPageProps> = () => {
 
     useEffect(() => {
         (async () => {
+            setCategories([]);
             setLoading(true);
             let res: QueryResultMany<Category>;
-            if (selected === 0) res = await ExpenseCategoryRepo.getCategories();
-            else if (selected === 1) res = await ExpenseCategoryRepo.getCategories();
-            else res = await ExpenseCategoryRepo.getCategories();
+            switch (selected) {
+                case 'expense':
+                    res = await ExpenseCategoryRepo.getCategories();
+                    break;
+                case 'income':
+                    res = await IncomeCategoryRepo.getCategories();
+                    break;
+                case 'transfer':
+                    res = await TransferCategoryRepo.getCategories();
+                    break;
+            }
             setLoading(false);
-
             if (res.error) {
                 toast.error(res.error.message);
                 return;
@@ -54,29 +74,31 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                     <button
                         key={idx}
                         role="tab"
-                        onClick={() => setSelected(idx)}
-                        className={'dai-tab ' + (idx === selected ? 'dai-tab-active' : '')}
+                        onClick={() => setSelected(el)}
+                        className={'dai-tab capitalize ' + (el === selected ? 'dai-tab-active' : '')}
                     >
                         {el}
                     </button>
                 ))}
             </div>
-            <div>
-                <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-                    <img className="size-12"></img>
-                    <div className="flex flex-1 flex-col gap-0.5">
-                        <p className="text-lg">Food</p>
-                    </div>
-                    <DropdownMenu
-                        options={[
-                            {
-                                icon: 'lucide:pencil',
-                                label: 'Edit',
-                                onClick: () => {},
-                            },
-                        ]}
-                    />
-                </div>
+            <div className="grid grid-cols-1 gap-4">
+                {loading ? (
+                    Array.from({ length: 3 }).map((_, idx) => <CategoryCardSkeleton key={idx} />)
+                ) : categories.length === 0 ? (
+                    <p className="text-center">No categories found</p>
+                ) : (
+                    categories.map((el, idx) => (
+                        <CategoryCard
+                            key={idx}
+                            category={el}
+                            categoryType={selected}
+                            onDeleted={(id) => setCategories((prev) => prev.filter((el) => el.id !== id))}
+                            onUpdated={(category) => {
+                                setCategories((prev) => prev.map((el) => (el.id === category.id ? category : el)));
+                            }}
+                        />
+                    ))
+                )}
             </div>
         </div>
     );

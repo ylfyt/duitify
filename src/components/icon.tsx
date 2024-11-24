@@ -30,6 +30,7 @@ import IconLucidePlus from '~icons/lucide/plus';
 import IconLucideSun from '~icons/lucide/sun';
 import IconLucideMoon from '~icons/lucide/moon';
 import IconLucideTrash from '~icons/lucide/trash';
+import IconLucideGroup from '~icons/lucide/group';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -63,6 +64,7 @@ const Icons = {
     'lucide:sun': IconLucideSun,
     'lucide:moon': IconLucideMoon,
     'lucide:trash': IconLucideTrash,
+    'lucide:group': IconLucideGroup,
 };
 
 export type IconName = keyof typeof Icons;
