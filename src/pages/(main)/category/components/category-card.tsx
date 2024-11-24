@@ -10,6 +10,7 @@ import { QueryResultEmpty } from '@/repo/base-repo';
 import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { toast } from 'react-toastify';
 import { IncomeCategoryRepo } from '@/repo/income-category-repo';
+import { ENV } from '@/constants/env';
 
 interface CategoryCardProps {
     category: Category;
@@ -47,7 +48,7 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
 
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-            <img src={category.logo} className="size-12"></img>
+            <img src={ENV.BASE_URL + category.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-lg">{category.name}</p>
             </div>

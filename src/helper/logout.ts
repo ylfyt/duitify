@@ -1,3 +1,4 @@
+import { ENV } from '@/constants/env';
 import { showLoading } from '@/stores/common';
 import { showConfirm } from '@/stores/confirm';
 import { supabase } from '@/supabase';
@@ -18,8 +19,5 @@ export const handleLogout = async () => {
         toast.error(error.message);
         return;
     }
-
-    let newLoc = '/login';
-    if (import.meta.env.BASE_URL !== '/') newLoc = import.meta.env.BASE_URL + newLoc;
-    window.location.href = newLoc;
+    window.location.href = ENV.BASE_URL + '/login';
 };

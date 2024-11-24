@@ -6,6 +6,7 @@ import { FC, useDeferredValue, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/supabase';
 import { toast } from 'react-toastify';
+import { ENV } from '@/constants/env';
 
 interface LoginPageProps {}
 
@@ -22,10 +23,7 @@ const LoginPage: FC<LoginPageProps> = () => {
         if (!user) return;
 
         let target = new URLSearchParams(window.location.search).get('to');
-        if (target) {
-            target = removePrefix(target, import.meta.env.BASE_URL);
-            if (!target.startsWith('/')) target = `/${target}`;
-        }
+        if (target) target = removePrefix(target, ENV.BASE_URL);
 
         const url = target ?? ROUTES[0].link;
         navigate(url);

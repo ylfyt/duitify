@@ -1,5 +1,6 @@
 import { LoadingButton } from '@/components/loading-button';
 import { Modal } from '@/components/modal';
+import { ENV } from '@/constants/env';
 import { CATEGORY_LOGOS } from '@/constants/logo';
 import { QueryResultOne } from '@/repo/base-repo';
 import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
@@ -101,7 +102,7 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
                                     (idx === selectedLogo ? 'outline-primary' : 'outline-transparent')
                                 }
                             >
-                                <img className="size-12 rounded-lg" key={idx} src={el} alt="" />
+                                <img className="size-12 rounded-lg" key={idx} src={ENV.BASE_URL + el} alt="" />
                             </button>
                         ))}
                     </div>

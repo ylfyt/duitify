@@ -9,6 +9,7 @@ import { Account } from '@/types/account.type';
 import { FC } from 'react';
 import { toast } from 'react-toastify';
 import { ModalAccountCreate } from './modal-account-create';
+import { ENV } from '@/constants/env';
 
 interface AccountCardProps {
     account: Account;
@@ -36,7 +37,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
 
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-            <img src={account.logo} className="size-12"></img>
+            <img src={ENV.BASE_URL + account.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-lg">{account.name}</p>
                 <div className="flex items-center gap-2">

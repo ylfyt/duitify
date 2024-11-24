@@ -1,5 +1,6 @@
 import { LoadingButton } from '@/components/loading-button';
 import { Modal } from '@/components/modal';
+import { ENV } from '@/constants/env';
 import { ACCOUNT_LOGOS } from '@/constants/logo';
 import { AccountRepo } from '@/repo/account-repo';
 import { QueryResultOne } from '@/repo/base-repo';
@@ -102,7 +103,7 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
                                     (idx === selectedLogo ? 'outline-primary' : 'outline-transparent')
                                 }
                             >
-                                <img className="size-12 rounded-lg" key={idx} src={el} alt="" />
+                                <img className="size-12 rounded-lg" key={idx} src={ENV.BASE_URL + el} alt="" />
                             </button>
                         ))}
                     </div>

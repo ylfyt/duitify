@@ -1,4 +1,5 @@
 export function removePrefix(str: string, prefix: string): string {
+    if (prefix === '') return str;
     if (str.startsWith(prefix)) {
         return str.slice(prefix.length);
     }
