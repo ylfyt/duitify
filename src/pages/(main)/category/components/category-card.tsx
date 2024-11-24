@@ -10,11 +10,10 @@ import { QueryResultEmpty } from '@/repo/base-repo';
 import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { toast } from 'react-toastify';
 import { IncomeCategoryRepo } from '@/repo/income-category-repo';
-import { TransferCategoryRepo } from '@/repo/transfer-category-repo';
 
 interface CategoryCardProps {
     category: Category;
-    categoryType: 'expense' | 'income' | 'transfer';
+    categoryType: 'expense' | 'income';
     onUpdated: (category: Category) => void;
     onDeleted: (id: string) => void;
 }
@@ -35,9 +34,6 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
                 break;
             case 'income':
                 res = await IncomeCategoryRepo.deleteCategory(category.id);
-                break;
-            case 'transfer':
-                res = await TransferCategoryRepo.deleteCategory(category.id);
                 break;
         }
         showLoading(false);

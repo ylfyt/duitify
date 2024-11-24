@@ -20,15 +20,6 @@ entity expense_category {
     updated_at : DATETIME
 }
 
-entity transfer_category {
-    * id : INT
-    --
-    * name : VARCHAR
-    * logo : VARCHAR
-    * created_at : DATETIME
-    updated_at : DATETIME
-}
-
 entity income_category {
     * id : INT
     --
@@ -68,7 +59,6 @@ entity transfer {
     * amount : FLOAT
     * from_account_id : INT
     * to_account_id : INT
-    * category_id : INT
     * description : VARCHAR
     * occurred_at : DATETIME
     * created_at : DATETIME
@@ -82,6 +72,5 @@ income "n" -- "1" account
 income "n" -- "1" income_category
 
 transfer "n" -- "1" account
-transfer "n" -- "1" transfer_category
 
 @enduml

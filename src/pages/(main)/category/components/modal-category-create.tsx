@@ -4,7 +4,6 @@ import { CATEGORY_LOGOS } from '@/constants/logo';
 import { QueryResultOne } from '@/repo/base-repo';
 import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { IncomeCategoryRepo } from '@/repo/income-category-repo';
-import { TransferCategoryRepo } from '@/repo/transfer-category-repo';
 import { closeModal } from '@/stores/modal';
 import { Category } from '@/types/category.type';
 import { FC, useMemo, useState } from 'react';
@@ -13,7 +12,7 @@ import { toast } from 'react-toastify';
 interface ModalCategoryCreateProps {
     category?: Category;
     onSuccess: (category: Category) => void;
-    categoryType: 'expense' | 'income' | 'transfer';
+    categoryType: 'expense' | 'income';
 }
 
 export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, category, categoryType }) => {
@@ -34,9 +33,6 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
                 case 'income':
                     res = await IncomeCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
                     break;
-                case 'transfer':
-                    res = await TransferCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
-                    break;
             }
         } else {
             switch (categoryType) {
@@ -48,12 +44,6 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
                     break;
                 case 'income':
                     res = await IncomeCategoryRepo.updateCategory(category.id, {
-                        name,
-                        logo: CATEGORY_LOGOS[selectedLogo],
-                    });
-                    break;
-                case 'transfer':
-                    res = await TransferCategoryRepo.updateCategory(category.id, {
                         name,
                         logo: CATEGORY_LOGOS[selectedLogo],
                     });
@@ -100,7 +90,7 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
                     <div className="dai-label">
                         <span className="req dai-label-text">Logo</span>
                     </div>
-                    <div className="flex items-center gap-2 overflow-x-scroll px-2 py-2">
+                    <div className="flex items-center gap-3 overflow-x-scroll px-2 py-2">
                         {CATEGORY_LOGOS.map((el, idx) => (
                             <button
                                 key={idx}

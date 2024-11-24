@@ -9,9 +9,8 @@ import { toast } from 'react-toastify';
 import { ModalCategoryCreate } from './components/modal-category-create';
 import { CategoryCard, CategoryCardSkeleton } from './components/category-card';
 import { IncomeCategoryRepo } from '@/repo/income-category-repo';
-import { TransferCategoryRepo } from '@/repo/transfer-category-repo';
 
-const CATEGORIES = ['expense', 'income', 'transfer'] as const;
+const CATEGORIES = ['expense', 'income'] as const;
 
 interface CategoryPageProps {}
 
@@ -40,7 +39,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                 </button>,
             ],
         });
-    }, []);
+    }, [selected]);
 
     useEffect(() => {
         (async () => {
@@ -53,9 +52,6 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                     break;
                 case 'income':
                     res = await IncomeCategoryRepo.getCategories();
-                    break;
-                case 'transfer':
-                    res = await TransferCategoryRepo.getCategories();
                     break;
             }
             setLoading(false);

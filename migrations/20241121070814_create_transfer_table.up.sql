@@ -3,14 +3,12 @@ CREATE TABLE IF NOT EXISTS "user_schema".transfer (
     amount NUMERIC(17, 2) NOT NULL,
     from_account_id UUID NOT NULL,
     to_account_id UUID NOT NULL,
-    category_id UUID NOT NULL,
     description VARCHAR(255) NOT NULL,
     occurred_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NULL,
     FOREIGN KEY (from_account_id) REFERENCES "user_schema".account (id),
-    FOREIGN KEY (to_account_id) REFERENCES "user_schema".account (id),
-    FOREIGN KEY (category_id) REFERENCES "user_schema".transfer_category (id)
+    FOREIGN KEY (to_account_id) REFERENCES "user_schema".account (id)
 );
 
 -- transfer created
