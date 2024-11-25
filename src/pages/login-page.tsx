@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/supabase';
 import { toast } from 'react-toastify';
 import { ENV } from '@/constants/env';
+import { LoadingButton } from '@/components/loading-button';
 
 interface LoginPageProps {}
 
@@ -41,13 +42,13 @@ const LoginPage: FC<LoginPageProps> = () => {
     };
 
     return (
-        <div className="flex min-h-dvh items-center justify-center bg-base-200">
+        <div className="flex min-h-dvh items-center justify-center">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
                     handleSubmit();
                 }}
-                className="w-80 space-y-6 rounded bg-base-100 p-6 shadow-md"
+                className="flex w-80 flex-col items-center gap-6 rounded-xl bg-base-100 p-6 shadow-md"
             >
                 <h2 className="text-center text-2xl">Login</h2>
                 <input
@@ -67,13 +68,9 @@ const LoginPage: FC<LoginPageProps> = () => {
                     className="dai-input dai-input-bordered w-full"
                     required
                 />
-                <button
-                    disabled={disabled || loading}
-                    type="submit"
-                    className="w-full rounded bg-blue-500 p-2 text-white transition duration-200 hover:bg-blue-600 disabled:opacity-50"
-                >
-                    {loading ? 'Please wait' : 'Login'}
-                </button>
+                <LoadingButton disabled={disabled} loading={loading} className="dai-btn-primary">
+                    Submit
+                </LoadingButton>
             </form>
         </div>
     );

@@ -49,7 +49,7 @@ const AccountPage: FC<AccountPageProps> = () => {
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-2">
                 {loading ? (
                     Array.from({ length: 2 }).map((_, idx) => <AccountCardSkeleton key={idx} />)
                 ) : accounts.length === 0 ? (

@@ -77,7 +77,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                     </button>
                 ))}
             </div>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-2">
                 {loading ? (
                     Array.from({ length: 3 }).map((_, idx) => <CategoryCardSkeleton key={idx} />)
                 ) : categories.length === 0 ? (
