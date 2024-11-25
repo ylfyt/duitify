@@ -64,19 +64,19 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
     };
 
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img
                 className="size-12"
                 src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.png' : el.category?.logo)}
                 alt=""
             />
-            <div className="flex w-full items-center justify-between gap-4 border-b border-b-primary/30 py-2">
+            <div className="flex w-full items-center justify-between gap-4">
                 <div className="flex flex-col gap-0.5">
                     <span className="text-lg">{el.type === 'transfer' ? 'Transfer' : el.category?.name}</span>
                     <span className="text-sm">{el.description}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end gap-2 font-semibold">
+                    <div className="flex flex-col items-end gap-1 font-semibold">
                         <span
                             className={
                                 'text-nowrap text-lg ' +
@@ -147,11 +147,11 @@ interface TransactionCardSkeletonProps {}
 
 const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
     return (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <Skeleton>
                 <div className="size-12"></div>
             </Skeleton>
-            <div className="flex w-full items-center justify-between gap-4 border-b border-b-primary/30 py-2">
+            <div className="flex w-full items-center justify-between gap-4">
                 <div className="flex flex-col gap-0.5">
                     <Skeleton>
                         <span className="text-lg">Food</span>
@@ -161,7 +161,7 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
                     </Skeleton>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end gap-2 font-semibold">
+                    <div className="flex flex-col items-end gap-1 font-semibold">
                         <Skeleton>
                             <span className={'text-nowrap text-lg'}>{formatCurrency(10_0000)}</span>
                         </Skeleton>
