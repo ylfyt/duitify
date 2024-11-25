@@ -5,17 +5,21 @@ import { useAccountAtom } from '@/stores/account';
 import { useCategoryAtom } from '@/stores/category';
 import { appBarCtxAtom } from '@/stores/common';
 import { LabelValue } from '@/types/common';
-import { TransactionType } from '@/types/transaction.type';
+import { Transaction, TransactionType } from '@/types/transaction.type';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { focusedTransactionAtom } from './_layout';
+import { formatDate } from '@/helper/format-date';
+import { QueryResultOne } from '@/repo/base-repo';
 
 interface TransactionCreatePageProps {}
 
 const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
     const navigate = useNavigate();
+    const [focusedTransaction, setFocusedTransaction] = useAtom(focusedTransactionAtom);
 
     const {
         fetched: fetchedAccounts,
@@ -31,14 +35,28 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         loading: loadingCategories,
     } = useCategoryAtom();
 
-    const [selectedType, setSelectedType] = useState<TransactionType>('expense');
-    const [amount, setAmount] = useState('');
-    const [occurredAt, setOccurredAt] = useState('');
-    const [description, setDescription] = useState('');
+    const [selectedType, setSelectedType] = useState<TransactionType>(focusedTransaction?.type ?? 'expense');
+    const [amount, setAmount] = useState(focusedTransaction?.amount.toString() ?? '');
+    const [description, setDescription] = useState(focusedTransaction?.description ?? '');
+    const [occurredAt, setOccurredAt] = useState(
+        !focusedTransaction ? '' : formatDate(focusedTransaction.occurred_at, { format: 'yyyy-MM-ddTHH:mm' }),
+    );
 
-    const [selectedAccount, setSelectedAccount] = useState<LabelValue<string>>();
-    const [selectedCategory, setSelectedCategory] = useState<LabelValue<string>>();
-    const [selectedToAccount, setSelectedToAccount] = useState<LabelValue<string>>();
+    const [selectedAccount, setSelectedAccount] = useState<LabelValue<string> | undefined>(
+        focusedTransaction?.account
+            ? { label: focusedTransaction.account.name, value: focusedTransaction.account.id }
+            : undefined,
+    );
+    const [selectedCategory, setSelectedCategory] = useState<LabelValue<string> | undefined>(
+        focusedTransaction?.category
+            ? { label: focusedTransaction.category.name, value: focusedTransaction.category.id }
+            : undefined,
+    );
+    const [selectedToAccount, setSelectedToAccount] = useState<LabelValue<string> | undefined>(
+        focusedTransaction?.to_account
+            ? { label: focusedTransaction.to_account.name, value: focusedTransaction.to_account.id }
+            : undefined,
+    );
 
     const [loading, setLoading] = useState(false);
 
@@ -65,10 +83,13 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
 
     useEffect(() => {
         setAppBarCtx({
-            title: 'Create Transaction',
+            title: focusedTransaction ? 'Edit Transaction' : 'Create Transaction',
             back: true,
         });
-    }, []);
+        return () => {
+            setFocusedTransaction(undefined);
+        };
+    }, [focusedTransaction]);
 
     useEffect(() => {
         if (fetchedAccounts) return;
@@ -87,15 +108,28 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
 
     const submit = async () => {
         setLoading(true);
-        const res = await TransactionRepo.create({
-            type: selectedType,
-            occurred_at: occurredAt,
-            description: description,
-            amount: parseFloat(amount),
-            account_id: selectedAccount!.value,
-            category_id: selectedCategory?.value,
-            to_account_id: selectedToAccount?.value,
-        });
+        let res: QueryResultOne<Transaction>;
+        if (focusedTransaction) {
+            res = await TransactionRepo.update(focusedTransaction.id, {
+                type: selectedType,
+                occurred_at: occurredAt,
+                description: description,
+                amount: parseFloat(amount),
+                account_id: selectedAccount!.value,
+                category_id: selectedCategory?.value,
+                to_account_id: selectedToAccount?.value,
+            });
+        } else {
+            res = await TransactionRepo.create({
+                type: selectedType,
+                occurred_at: occurredAt,
+                description: description,
+                amount: parseFloat(amount),
+                account_id: selectedAccount!.value,
+                category_id: selectedCategory?.value,
+                to_account_id: selectedToAccount?.value,
+            });
+        }
         setLoading(false);
         if (res.error) {
             toast.error(res.error.message);
@@ -119,6 +153,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             key={idx}
                             type="button"
                             role="tab"
+                            disabled={!!focusedTransaction}
                             onClick={() => setSelectedType(el)}
                             className={'dai-tab capitalize ' + (el === selectedType ? 'dai-tab-active' : '')}
                         >
@@ -155,6 +190,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                         <span className="req dai-label-text">Accounts</span>
                     </div>
                     <SingleSelect
+                        disabled={!!focusedTransaction}
                         value={selectedAccount}
                         options={accountOptions}
                         loading={loadingAccounts}
@@ -167,6 +203,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             <span className="req dai-label-text">To Accounts</span>
                         </div>
                         <SingleSelect
+                            disabled={!!focusedTransaction}
                             value={selectedToAccount}
                             options={accountOptions}
                             loading={loadingAccounts}

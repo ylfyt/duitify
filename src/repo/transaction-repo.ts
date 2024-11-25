@@ -1,5 +1,5 @@
-import { Transaction, TransactionCreateDto } from '@/types/transaction.type';
-import { BaseRepo, QueryResultMany, QueryResultOne } from './base-repo';
+import { Transaction, TransactionCreateDto, TransactionUpdateDto } from '@/types/transaction.type';
+import { BaseRepo, QueryResultEmpty, QueryResultMany, QueryResultOne } from './base-repo';
 
 export class TransactionRepo extends BaseRepo {
     public static async getTransactions(): Promise<QueryResultMany<Transaction>> {
@@ -14,7 +14,15 @@ export class TransactionRepo extends BaseRepo {
             .order('occurred_at', { ascending: false });
     }
 
+    public static async update(id: string, data: TransactionUpdateDto): Promise<QueryResultOne<Transaction>> {
+        return this.db.from('transaction').update(data).eq('id', id).select().single();
+    }
+
     public static async create(data: TransactionCreateDto): Promise<QueryResultOne<Transaction>> {
         return this.db.from('transaction').insert(data).select().single();
+    }
+
+    public static async delete(id: string): Promise<QueryResultEmpty> {
+        return await this.db.from('transaction').delete().eq('id', id);
     }
 }

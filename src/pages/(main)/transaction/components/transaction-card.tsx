@@ -3,15 +3,23 @@ import { Icon } from '@/components/icon';
 import { ENV } from '@/constants/env';
 import { formatCurrency } from '@/helper/format-currency';
 import { formatDate } from '@/helper/format-date';
+import { TransactionRepo } from '@/repo/transaction-repo';
+import { showLoading } from '@/stores/common';
+import { showConfirm } from '@/stores/confirm';
 import { Transaction } from '@/types/transaction.type';
+import { useAtom } from 'jotai';
 import { FC, useMemo } from 'react';
+import { toast } from 'react-toastify';
+import { focusedTransactionAtom } from '../_layout';
+import { useNavigate } from 'react-router-dom';
 
 interface TransactionGroupCardProps {
     date: string;
     transactions: Transaction[];
+    onDeleted: (id: string) => void;
 }
 
-export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, transactions }) => {
+export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, transactions, onDeleted }) => {
     return (
         <div className="flex flex-col gap-1">
             <div className="border-b-2 border-b-primary">
@@ -19,7 +27,7 @@ export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, tran
             </div>
             <div className="flex flex-col gap-1">
                 {transactions.map((el, idx) => (
-                    <TransactionCard key={idx} el={el} />
+                    <TransactionCard key={idx} el={el} onDeleted={onDeleted} />
                 ))}
             </div>
         </div>
@@ -28,10 +36,31 @@ export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, tran
 
 interface TransactionCardProps {
     el: Transaction;
+    onDeleted: (id: string) => void;
 }
 
-const TransactionCard: FC<TransactionCardProps> = ({ el }) => {
+const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
+    const [, setFocusedTransaction] = useAtom(focusedTransactionAtom);
+    const navigate = useNavigate();
+
     const amount = useMemo(() => (el.type === 'expense' ? -1 * el.amount : el.amount), [el]);
+
+    const handleDelete = async () => {
+        const confirmed = await showConfirm({
+            title: 'Delete transaction',
+            body: 'Are you sure you want to delete this transaction?',
+        });
+        if (!confirmed) return;
+
+        showLoading(true);
+        const { error } = await TransactionRepo.delete(el.id);
+        showLoading(false);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        onDeleted(el.id);
+    };
 
     return (
         <div className="flex items-center gap-4">
@@ -78,7 +107,15 @@ const TransactionCard: FC<TransactionCardProps> = ({ el }) => {
                             {
                                 icon: 'lucide:pencil',
                                 label: 'Edit',
-                                onClick: () => {},
+                                onClick: () => {
+                                    setFocusedTransaction(el);
+                                    navigate(`/transaction/create`);
+                                },
+                            },
+                            {
+                                icon: 'lucide:trash',
+                                label: 'Delete',
+                                onClick: handleDelete,
                             },
                         ]}
                     />

@@ -75,7 +75,14 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 Object.keys(groupedTransactions)
                     .sort((a, b) => (a > b ? -1 : 1))
                     .map((date, idx) => (
-                        <TransactionGroupCard key={idx} date={date} transactions={groupedTransactions[date]} />
+                        <TransactionGroupCard
+                            key={idx}
+                            date={date}
+                            transactions={groupedTransactions[date]}
+                            onDeleted={(id) => {
+                                setTransactions((prev) => prev.filter((el) => el.id !== id));
+                            }}
+                        />
                     ))
             )}
         </div>
