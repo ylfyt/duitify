@@ -1,5 +1,7 @@
 import { useAutoFocus } from '@/hooks/use-auto-focus';
 import { FC } from 'react';
+import { Icon } from './icon';
+import { closeModal } from '@/stores/modal';
 
 type ModalProps = {
     children: React.ReactNode;
@@ -19,7 +21,12 @@ export const Modal: FC<ModalProps> = ({ children, title, useFocus = true, classN
                 className
             }
         >
-            {title && <h3 className="text-lg font-bold">{title}</h3>}
+            <div className="flex items-center justify-between">
+                {title && <h3 className="text-lg font-bold">{title}</h3>}
+                <button type="button" onClick={() => closeModal()}>
+                    <Icon icon="lucide:x" />
+                </button>
+            </div>
             {children}
         </div>
     );

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { Transaction } from '@/types/transaction.type';
 import { TransactionRepo } from '@/repo/transaction-repo';
 import { toast } from 'react-toastify';
-import { TransactionGroupCard } from './components/transaction-card';
+import { TransactionGroupCard, TransactionGroupCardSkeleton } from './components/transaction-card';
 
 interface TransactionPageProps {}
 
@@ -68,7 +68,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
             {loading ? (
-                <p>Loading...</p>
+                Array.from({ length: 2 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)
             ) : transactions.length === 0 ? (
                 <p>No transactions found</p>
             ) : (

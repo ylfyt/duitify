@@ -48,7 +48,6 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
             toast.error('Something went wrong');
             return;
         }
-        toast.success(`Category ${category ? 'updated' : 'created'} successfully`);
         onSuccess(res.data);
         closeModal();
     };

@@ -12,6 +12,7 @@ import { FC, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { focusedTransactionAtom } from '../_layout';
 import { useNavigate } from 'react-router-dom';
+import Skeleton from '@/components/skeleton';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -125,4 +126,63 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
     );
 };
 
-export default TransactionCard;
+interface TransactionGroupCardSkeletonProps {}
+
+export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps> = () => {
+    return (
+        <div className="flex flex-col gap-1">
+            <div className="border-b-2 border-b-primary">
+                <span>Sep 20, 2022</span>
+            </div>
+            <div className="flex flex-col gap-1">
+                {Array.from({ length: 3 }).map((_, idx) => (
+                    <TransactionCardSkeleton key={idx} />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+interface TransactionCardSkeletonProps {}
+
+const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
+    return (
+        <div className="flex items-center gap-4">
+            <Skeleton>
+                <div className="size-12"></div>
+            </Skeleton>
+            <div className="flex w-full items-center justify-between gap-4 border-b border-b-primary/30 py-2">
+                <div className="flex flex-col gap-0.5">
+                    <Skeleton>
+                        <span className="text-lg">Food</span>
+                    </Skeleton>
+                    <Skeleton>
+                        <span className="text-sm">Lorem, ipsum.</span>
+                    </Skeleton>
+                </div>
+                <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end gap-2 font-semibold">
+                        <Skeleton>
+                            <span className={'text-nowrap text-lg'}>{formatCurrency(10_0000)}</span>
+                        </Skeleton>
+                        <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-2 text-xs">
+                                <Skeleton>
+                                    <div className="size-4"></div>
+                                </Skeleton>
+                                <Skeleton>
+                                    <span>Shopee Pay</span>
+                                </Skeleton>
+                            </div>
+                        </div>
+                    </div>
+                    <Skeleton>
+                        <DropdownMenu options={[]} />
+                    </Skeleton>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default TransactionCardSkeleton;

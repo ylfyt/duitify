@@ -50,7 +50,6 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
             toast.error('Something went wrong');
             return;
         }
-        toast.success(`Account ${account ? 'updated' : 'created'} successfully`);
         onSuccess(res.data);
         closeModal();
     };
