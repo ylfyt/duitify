@@ -6,11 +6,9 @@ import { FC } from 'react';
 import { ModalCategoryCreate } from './modal-category-create';
 import { showConfirm } from '@/stores/confirm';
 import { showLoading } from '@/stores/common';
-import { QueryResultEmpty } from '@/repo/base-repo';
-import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { toast } from 'react-toastify';
-import { IncomeCategoryRepo } from '@/repo/income-category-repo';
 import { ENV } from '@/constants/env';
+import { CategoryRepo } from '@/repo/category-repo';
 
 interface CategoryCardProps {
     category: Category;
@@ -28,15 +26,7 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
         if (!confirmed) return;
 
         showLoading(true);
-        let res: QueryResultEmpty;
-        switch (categoryType) {
-            case 'expense':
-                res = await ExpenseCategoryRepo.deleteCategory(category.id);
-                break;
-            case 'income':
-                res = await IncomeCategoryRepo.deleteCategory(category.id);
-                break;
-        }
+        const res = await CategoryRepo.deleteCategory(category.id);
         showLoading(false);
 
         if (res.error) {

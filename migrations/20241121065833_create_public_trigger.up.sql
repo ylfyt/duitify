@@ -29,86 +29,79 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- expense created
-CREATE OR REPLACE FUNCTION public.expense_created()
+-- transaction created
+CREATE OR REPLACE FUNCTION public.transaction_created()
 RETURNS TRIGGER AS $$
 BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * NEW.amount);
+    -- if transaction is an expense
+    IF NEW.type = 'expense' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * NEW.amount);
+    -- if transaction is an income
+    ELSIF NEW.type = 'income' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
+    -- if transaction is a transfer
+    ELSIF NEW.type = 'transfer' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.from_account_id, -1 * NEW.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- expense amount updated
-CREATE OR REPLACE FUNCTION public.expense_updated()
+-- transaction updated
+CREATE OR REPLACE FUNCTION public.transaction_updated()
 RETURNS TRIGGER AS $$
 BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));
+    -- if transaction is an expense
+    IF NEW.type = 'expense' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));
+    -- if transaction is an income
+    ELSIF NEW.type = 'income' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * (NEW.amount - OLD.amount));
+    -- if transaction is a transfer
+    ELSIF NEW.type = 'transfer' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.from_account_id, -1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * (NEW.amount - OLD.amount));
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- expense deleted
-CREATE OR REPLACE FUNCTION public.expense_deleted()
+-- transaction deleted
+CREATE OR REPLACE FUNCTION public.transaction_deleted()
 RETURNS TRIGGER AS $$
 BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, OLD.amount);
+    -- if transaction is an expense
+    IF OLD.type = 'expense' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, OLD.amount);
+    -- if transaction is an income
+    ELSIF OLD.type = 'income' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
+    -- if transaction is a transfer
+    ELSIF OLD.type = 'transfer' THEN
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.from_account_id, 1 * OLD.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
+    END IF;
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
--- income created
-CREATE OR REPLACE FUNCTION public.income_created()
+-- validation before insert transaction
+CREATE OR REPLACE FUNCTION public.transaction_validation()
 RETURNS TRIGGER AS $$
 BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- income updated
-CREATE OR REPLACE FUNCTION public.income_updated()
-RETURNS TRIGGER AS $$
-BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, 1 * (NEW.amount - OLD.amount));
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- income deleted
-CREATE OR REPLACE FUNCTION public.income_deleted()
-RETURNS TRIGGER AS $$
-BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
--- transfer created
-CREATE OR REPLACE FUNCTION public.transfer_created()
-RETURNS TRIGGER AS $$
-BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.to_account_id, 1 * NEW.amount);
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.from_account_id, -1 * NEW.amount);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- transfer updated
-CREATE OR REPLACE FUNCTION public.transfer_updated()
-RETURNS TRIGGER AS $$
-BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.to_account_id, 1 * (NEW.amount - OLD.amount));
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.from_account_id, -1 * (NEW.amount - OLD.amount));
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- transfer deleted
-CREATE OR REPLACE FUNCTION public.transfer_deleted()
-RETURNS TRIGGER AS $$
-BEGIN
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.to_account_id, -1 * OLD.amount);
-    CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.from_account_id, 1 * OLD.amount);
+    -- amount must be greater than 0
+    IF NEW.amount <= 0 THEN
+        RAISE EXCEPTION 'Amount must be greater than 0';
+    END IF;
+    -- if transaction is a transfer, account_id and from_account_id must be different
+    IF NEW.type = 'transfer' AND NEW.from_account_id = NEW.account_id THEN
+        RAISE EXCEPTION 'Transfer must be between different accounts';
+    END IF;
+    -- if transaction is not transfer, category_id must not be null
+    IF NEW.type != 'transfer' AND NEW.category_id IS NULL THEN
+        RAISE EXCEPTION 'Category must not be null';
+    END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

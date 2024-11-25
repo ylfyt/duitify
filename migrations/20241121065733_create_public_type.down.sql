@@ -1,0 +1,1 @@
+DROP TYPE IF EXISTS "user_schema".category_type;

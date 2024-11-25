@@ -39,60 +39,13 @@ export type Database = {
         }
         Relationships: []
       }
-      expense: {
-        Row: {
-          account_id: string
-          amount: number
-          category_id: string
-          created_at: string
-          description: string
-          id: string
-          occurred_at: string
-          updated_at: string | null
-        }
-        Insert: {
-          account_id: string
-          amount: number
-          category_id: string
-          created_at?: string
-          description: string
-          id?: string
-          occurred_at: string
-          updated_at?: string | null
-        }
-        Update: {
-          account_id?: string
-          amount?: number
-          category_id?: string
-          created_at?: string
-          description?: string
-          id?: string
-          occurred_at?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expense_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "account"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expense_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "expense_category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expense_category: {
+      category: {
         Row: {
           created_at: string
           id: string
           logo: string
           name: string
+          type: "expense" | "income"
           updated_at: string | null
         }
         Insert: {
@@ -100,6 +53,7 @@ export type Database = {
           id?: string
           logo: string
           name: string
+          type: "expense" | "income"
           updated_at?: string | null
         }
         Update: {
@@ -107,124 +61,66 @@ export type Database = {
           id?: string
           logo?: string
           name?: string
+          type?: "expense" | "income"
           updated_at?: string | null
         }
         Relationships: []
       }
-      income: {
+      transaction: {
         Row: {
           account_id: string
           amount: number
-          category_id: string
+          category_id: string | null
           created_at: string
           description: string
+          from_account_id: string
           id: string
           occurred_at: string
+          type: "expense" | "income" | "transfer"
           updated_at: string | null
         }
         Insert: {
           account_id: string
           amount: number
-          category_id: string
+          category_id?: string | null
           created_at?: string
           description: string
+          from_account_id: string
           id?: string
           occurred_at: string
+          type: "expense" | "income" | "transfer"
           updated_at?: string | null
         }
         Update: {
           account_id?: string
           amount?: number
-          category_id?: string
-          created_at?: string
-          description?: string
-          id?: string
-          occurred_at?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "income_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "account"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "income_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "income_category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      income_category: {
-        Row: {
-          created_at: string
-          id: string
-          logo: string
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          logo: string
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          logo?: string
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      transfer: {
-        Row: {
-          amount: number
-          created_at: string
-          description: string
-          from_account_id: string
-          id: string
-          occurred_at: string
-          to_account_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          description: string
-          from_account_id: string
-          id?: string
-          occurred_at: string
-          to_account_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          amount?: number
+          category_id?: string | null
           created_at?: string
           description?: string
           from_account_id?: string
           id?: string
           occurred_at?: string
-          to_account_id?: string
+          type?: "expense" | "income" | "transfer"
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "transfer_from_account_id_fkey"
-            columns: ["from_account_id"]
+            foreignKeyName: "transaction_account_id_fkey"
+            columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "account"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "transfer_to_account_id_fkey"
-            columns: ["to_account_id"]
+            foreignKeyName: "transaction_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "category"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transaction_from_account_id_fkey"
+            columns: ["from_account_id"]
             isOneToOne: false
             referencedRelation: "account"
             referencedColumns: ["id"]

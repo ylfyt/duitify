@@ -3,8 +3,7 @@ import { Modal } from '@/components/modal';
 import { ENV } from '@/constants/env';
 import { CATEGORY_LOGOS } from '@/constants/logo';
 import { QueryResultOne } from '@/repo/base-repo';
-import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
-import { IncomeCategoryRepo } from '@/repo/income-category-repo';
+import { CategoryRepo } from '@/repo/category-repo';
 import { closeModal } from '@/stores/modal';
 import { Category } from '@/types/category.type';
 import { FC, useMemo, useState } from 'react';
@@ -27,29 +26,17 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
         setLoading(true);
         let res: QueryResultOne<Category>;
         if (!category) {
-            switch (categoryType) {
-                case 'expense':
-                    res = await ExpenseCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
-                    break;
-                case 'income':
-                    res = await IncomeCategoryRepo.createCategory({ name, logo: CATEGORY_LOGOS[selectedLogo] });
-                    break;
-            }
+            res = await CategoryRepo.createCategory({
+                name,
+                logo: CATEGORY_LOGOS[selectedLogo],
+                type: categoryType,
+            });
         } else {
-            switch (categoryType) {
-                case 'expense':
-                    res = await ExpenseCategoryRepo.updateCategory(category.id, {
-                        name,
-                        logo: CATEGORY_LOGOS[selectedLogo],
-                    });
-                    break;
-                case 'income':
-                    res = await IncomeCategoryRepo.updateCategory(category.id, {
-                        name,
-                        logo: CATEGORY_LOGOS[selectedLogo],
-                    });
-                    break;
-            }
+            res = await CategoryRepo.updateCategory(category.id, {
+                name,
+                logo: CATEGORY_LOGOS[selectedLogo],
+                type: categoryType,
+            });
         }
         setLoading(false);
 

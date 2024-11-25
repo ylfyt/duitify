@@ -1,7 +1,9 @@
 import { Database } from '@/database.types';
 
-export type Category = Database['user_schema']['Tables']['expense_category']['Row'];
+export type CategoryType = Database['user_schema']['Tables']['category']['Row']['type'];
 
-export type CategoryCreateDto = Database['user_schema']['Tables']['expense_category']['Insert'];
+export type Category = Database['user_schema']['Tables']['category']['Row'];
 
-export type CategoryUpdateDto = Database['user_schema']['Tables']['expense_category']['Update'];
+export type CategoryCreateDto = Database['user_schema']['Tables']['category']['Insert'];
+
+export type CategoryUpdateDto = Database['user_schema']['Tables']['category']['Update'];

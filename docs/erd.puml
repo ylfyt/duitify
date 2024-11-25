@@ -11,66 +11,32 @@ entity account {
     updated_at : DATETIME
 }
 
-entity expense_category {
+entity category {
     * id : INT
     --
     * name : VARCHAR
     * logo : VARCHAR
+    * type : enum('expense', 'income')
     * created_at : DATETIME
     updated_at : DATETIME
 }
 
-entity income_category {
-    * id : INT
-    --
-    * name : VARCHAR
-    * logo : VARCHAR
-    * created_at : DATETIME
-    updated_at : DATETIME
-}
 
-entity expense {
+entity transaction {
     * id : INT
     --
     * amount : FLOAT
-    * category_id : INT
+    * type : enum('expense', 'income', 'transfer')
     * account_id : INT
-    * description : VARCHAR
-    * occurred_at : DATETIME
-    * created_at : DATETIME
-    updated_at : DATETIME
-}
-
-entity income {
-    * id : INT
-    --
-    * amount : FLOAT
-    * account_id : INT
-    * category_id : INT
-    * description : VARCHAR
-    * occurred_at : DATETIME
-    * created_at : DATETIME
-    updated_at : DATETIME
-}
-
-entity transfer {
-    * id : INT
-    --
-    * amount : FLOAT
     * from_account_id : INT
-    * to_account_id : INT
     * description : VARCHAR
     * occurred_at : DATETIME
     * created_at : DATETIME
+    category_id : INT
     updated_at : DATETIME
 }
 
-expense "n" -- "1" account
-expense "n" -- "1" expense_category
-
-income "n" -- "1" account
-income "n" -- "1" income_category
-
-transfer "n" -- "1" account
+transaction "n" -- "1" account
+transaction "n" -- "1" category
 
 @enduml

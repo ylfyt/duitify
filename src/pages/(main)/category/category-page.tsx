@@ -1,23 +1,19 @@
-import { QueryResultMany } from '@/repo/base-repo';
-import { ExpenseCategoryRepo } from '@/repo/expense-category-repo';
 import { appBarCtxAtom } from '@/stores/common';
 import { openModal } from '@/stores/modal';
-import { Category } from '@/types/category.type';
+import { Category, CategoryType } from '@/types/category.type';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ModalCategoryCreate } from './components/modal-category-create';
 import { CategoryCard, CategoryCardSkeleton } from './components/category-card';
-import { IncomeCategoryRepo } from '@/repo/income-category-repo';
-
-const CATEGORIES = ['expense', 'income'] as const;
+import { CategoryRepo } from '@/repo/category-repo';
 
 interface CategoryPageProps {}
 
 const CategoryPage: FC<CategoryPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
-    const [selected, setSelected] = useState<(typeof CATEGORIES)[number]>('expense');
+    const [selected, setSelected] = useState<CategoryType>('expense');
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
@@ -45,15 +41,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
         (async () => {
             setCategories([]);
             setLoading(true);
-            let res: QueryResultMany<Category>;
-            switch (selected) {
-                case 'expense':
-                    res = await ExpenseCategoryRepo.getCategories();
-                    break;
-                case 'income':
-                    res = await IncomeCategoryRepo.getCategories();
-                    break;
-            }
+            const res = await CategoryRepo.getCategoryByType(selected);
             setLoading(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -66,7 +54,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
             <div role="tablist" className="dai-tabs-boxed dai-tabs bg-base-100">
-                {CATEGORIES.map((el, idx) => (
+                {(['expense', 'income'] as CategoryType[]).map((el, idx) => (
                     <button
                         key={idx}
                         role="tab"
