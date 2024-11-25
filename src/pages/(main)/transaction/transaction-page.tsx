@@ -1,18 +1,39 @@
 import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import logoImg from '/vite.svg';
 import { Icon } from '@/components/icon';
 import { handleLogout } from '@/helper/logout';
 import { isDarkAtom } from '@/stores/theme';
 import { formatDate } from '@/helper/format-date';
-import { formatCurrency } from '@/helper/format-currency';
+import { Link } from 'react-router-dom';
+import { Transaction } from '@/types/transaction.type';
+import { TransactionRepo } from '@/repo/transaction-repo';
+import { toast } from 'react-toastify';
+import { TransactionGroupCard } from './components/transaction-card';
 
 interface TransactionPageProps {}
 
 const TransactionPage: FC<TransactionPageProps> = () => {
     const [isDark, setIsDark] = useAtom(isDarkAtom);
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
+
+    const [loading, setLoading] = useState(false);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+    const groupedTransactions = useMemo(() => {
+        return transactions.reduce(
+            (acc, transaction) => {
+                const date = formatDate(transaction.occurred_at, { format: 'yyyy-MM-dd' });
+                if (!acc[date]) {
+                    acc[date] = [];
+                }
+                acc[date].push(transaction);
+                return acc;
+            },
+            {} as Record<string, Transaction[]>,
+        );
+    }, [transactions]);
 
     useEffect(() => {
         setAppBarCtx({
@@ -24,59 +45,39 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 <button className="dai-btn dai-btn-error dai-btn-sm text-lg" onClick={handleLogout}>
                     <Icon icon="lucide:log-out" />
                 </button>,
+                <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-4">
+                    Create
+                </Link>,
             ],
         });
     }, [isDark]);
 
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            const { data, error } = await TransactionRepo.getTransactions();
+            setLoading(false);
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+            setTransactions(data ?? []);
+        })();
+    }, []);
+
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
-            <div className="flex flex-col gap-2">
-                <div className="border-b-2 border-b-primary">
-                    <span>{formatDate(new Date(), { lang: 'en-US' })}</span>
-                </div>
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-4">
-                        <img className="size-12" src="/categories/food.png" alt="" />
-                        <div className="flex w-full items-center justify-between gap-4 border-b border-b-primary py-2">
-                            <div className="flex flex-col gap-0.5">
-                                <span className="text-lg">Food</span>
-                                <span className="text-sm"></span>
-                            </div>
-                            <div className="flex flex-col items-end gap-0.5 font-semibold">
-                                <span
-                                    className={'text-nowrap text-lg ' + (-10_000 > 0 ? 'text-success' : 'text-error')}
-                                >
-                                    {formatCurrency(-10_000)}
-                                </span>
-                                <div className="flex items-center gap-2 text-sm">
-                                    <img className="size-5" src="/accounts/bri.webp" alt="" />
-                                    <span>BRI</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <img className="size-12" src="/categories/transportation.png" alt="" />
-                        <div className="flex w-full items-center justify-between gap-4 border-b border-b-primary py-2">
-                            <div className="flex flex-col gap-0.5">
-                                <span className="text-lg">Transportation</span>
-                                <span className="text-sm"></span>
-                            </div>
-                            <div className="flex flex-col items-end gap-0.5 font-semibold">
-                                <span
-                                    className={'text-nowrap text-lg ' + (-10_000 > 0 ? 'text-success' : 'text-error')}
-                                >
-                                    {formatCurrency(-10_000)}
-                                </span>
-                                <div className="flex items-center gap-1 text-sm">
-                                    <img className="size-5" src="/accounts/bri.webp" alt="" />
-                                    <span>BRI</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {loading ? (
+                <p>Loading...</p>
+            ) : transactions.length === 0 ? (
+                <p>No transactions found</p>
+            ) : (
+                Object.keys(groupedTransactions)
+                    .sort((a, b) => (a > b ? -1 : 1))
+                    .map((date, idx) => (
+                        <TransactionGroupCard key={idx} date={date} transactions={groupedTransactions[date]} />
+                    ))
+            )}
         </div>
     );
 };

@@ -3,15 +3,15 @@ CREATE TABLE IF NOT EXISTS "user_schema".transaction (
     amount NUMERIC(17, 2) NOT NULL,
     type transaction_type NOT NULL,
     account_id UUID NOT NULL,
-    from_account_id UUID NOT NULL,
     description VARCHAR(255) NOT NULL,
     occurred_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NULL,
     category_id UUID NULL,
+    to_account_id UUID NULL,
     FOREIGN KEY (category_id) REFERENCES "user_schema".category (id),
     FOREIGN KEY (account_id) REFERENCES "user_schema".account (id),
-    FOREIGN KEY (from_account_id) REFERENCES "user_schema".account (id)
+    FOREIGN KEY (to_account_id) REFERENCES "user_schema".account (id)
 );
 
 -- validation before insert and update

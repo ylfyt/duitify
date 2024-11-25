@@ -73,9 +73,9 @@ export type Database = {
           category_id: string | null
           created_at: string
           description: string
-          from_account_id: string
           id: string
           occurred_at: string
+          to_account_id: string | null
           type: "expense" | "income" | "transfer"
           updated_at: string | null
         }
@@ -85,9 +85,9 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description: string
-          from_account_id: string
           id?: string
           occurred_at: string
+          to_account_id?: string | null
           type: "expense" | "income" | "transfer"
           updated_at?: string | null
         }
@@ -97,9 +97,9 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           description?: string
-          from_account_id?: string
           id?: string
           occurred_at?: string
+          to_account_id?: string | null
           type?: "expense" | "income" | "transfer"
           updated_at?: string | null
         }
@@ -119,8 +119,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "transaction_from_account_id_fkey"
-            columns: ["from_account_id"]
+            foreignKeyName: "transaction_to_account_id_fkey"
+            columns: ["to_account_id"]
             isOneToOne: false
             referencedRelation: "account"
             referencedColumns: ["id"]

@@ -1,11 +1,11 @@
-import { AccountRepo } from '@/repo/account-repo';
-import { Account } from '@/types/account.type';
+import { CategoryRepo } from '@/repo/category-repo';
+import { Category } from '@/types/category.type';
 import { FetchAtom } from '@/types/common';
 import { atom, getDefaultStore, useAtom } from 'jotai';
 
 const store = getDefaultStore();
 
-const internalBondsAtom = atom<FetchAtom<Account[]>>({
+const internalBondsAtom = atom<FetchAtom<Category[]>>({
     loading: false,
     fetched: false,
     data: [],
@@ -13,7 +13,7 @@ const internalBondsAtom = atom<FetchAtom<Account[]>>({
 
 async function refresh(): Promise<string | undefined> {
     store.set(internalBondsAtom, (prev) => ({ ...prev, loading: true, fetched: false }));
-    const res = await AccountRepo.getAccounts();
+    const res = await CategoryRepo.getCategories();
     if (res.error) {
         store.set(internalBondsAtom, (prev) => ({ ...prev, loading: false }));
         return res.error.message;
@@ -25,12 +25,12 @@ async function refresh(): Promise<string | undefined> {
     });
 }
 
-const accountsAtom = atom((get) => ({
+const categoriesAtom = atom((get) => ({
     refresh,
     ...get(internalBondsAtom),
 }));
 
-export const useAccountAtom = () => {
-    const [accounts] = useAtom(accountsAtom);
-    return accounts;
+export const useCategoryAtom = () => {
+    const [atom] = useAtom(categoriesAtom);
+    return atom;
 };

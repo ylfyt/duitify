@@ -28,10 +28,10 @@ entity transaction {
     * amount : FLOAT
     * type : enum('expense', 'income', 'transfer')
     * account_id : INT
-    * from_account_id : INT
     * description : VARCHAR
     * occurred_at : DATETIME
     * created_at : DATETIME
+    to_account_id : INT
     category_id : INT
     updated_at : DATETIME
 }

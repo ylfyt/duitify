@@ -41,8 +41,8 @@ BEGIN
         CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
     -- if transaction is a transfer
     ELSIF NEW.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.from_account_id, -1 * NEW.amount);
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.to_account_id, 1 * NEW.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * NEW.amount);
     END IF;
     RETURN NEW;
 END;
@@ -60,8 +60,8 @@ BEGIN
         CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * (NEW.amount - OLD.amount));
     -- if transaction is a transfer
     ELSIF NEW.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.from_account_id, -1 * (NEW.amount - OLD.amount));
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.to_account_id, 1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));
     END IF;
     RETURN NEW;
 END;
@@ -79,8 +79,8 @@ BEGIN
         CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
     -- if transaction is a transfer
     ELSIF OLD.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.from_account_id, 1 * OLD.amount);
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.to_account_id, -1 * OLD.amount);
+        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, 1 * OLD.amount);
     END IF;
     RETURN OLD;
 END;
@@ -94,8 +94,11 @@ BEGIN
     IF NEW.amount <= 0 THEN
         RAISE EXCEPTION 'Amount must be greater than 0';
     END IF;
-    -- if transaction is a transfer, account_id and from_account_id must be different
-    IF NEW.type = 'transfer' AND NEW.from_account_id = NEW.account_id THEN
+    IF NEW.type = 'transfer' AND NEW.to_account_id IS NULL THEN
+        RAISE EXCEPTION 'Target account must not be null';
+    END IF;
+    -- if transaction is a transfer, account_id and to_account_id must be different
+    IF NEW.type = 'transfer' AND NEW.to_account_id = NEW.account_id THEN
         RAISE EXCEPTION 'Transfer must be between different accounts';
     END IF;
     -- if transaction is not transfer, category_id must not be null
