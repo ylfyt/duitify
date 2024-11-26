@@ -38,11 +38,12 @@ export const AppBar: FC<AppBarProps> = () => {
                                 <Icon icon="mdi:arrow-left" />
                             </button>
                         )}
-                        {typeof appBarCtx.title !== 'string' ? (
+                        {!appBarCtx.title ? null : typeof appBarCtx.title !== 'string' ? (
                             appBarCtx.title
                         ) : (
                             <span className="text-xl font-semibold">{appBarCtx.title}</span>
                         )}
+                        {appBarCtx.leftActions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
                     </div>
                     <div className="flex items-center gap-4 text-3xl">
                         {appBarCtx.actions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}

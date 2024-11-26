@@ -1,7 +1,6 @@
 import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
-import logoImg from '/vite.svg';
 import { Icon } from '@/components/icon';
 import { handleLogout } from '@/helper/logout';
 import { isDarkAtom } from '@/stores/theme';
@@ -37,14 +36,16 @@ const TransactionPage: FC<TransactionPageProps> = () => {
 
     useEffect(() => {
         setAppBarCtx({
-            title: <img src={logoImg} alt="Logo" />,
-            actions: [
-                <button className="mr-1 p-1 text-xl text-yellow-400" onClick={() => setIsDark(!isDark)}>
-                    {isDark ? <Icon icon="lucide:sun" /> : <Icon icon="lucide:moon" />}
-                </button>,
+            title: undefined,
+            leftActions: [
                 <button className="dai-btn dai-btn-error dai-btn-sm text-lg" onClick={handleLogout}>
                     <Icon icon="lucide:log-out" />
                 </button>,
+                <button className="mr-1 p-1 text-xl text-yellow-400" onClick={() => setIsDark(!isDark)}>
+                    {isDark ? <Icon icon="lucide:sun" /> : <Icon icon="lucide:moon" />}
+                </button>,
+            ],
+            actions: [
                 <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-4">
                     Create
                 </Link>,

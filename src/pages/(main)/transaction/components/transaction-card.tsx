@@ -21,10 +21,22 @@ interface TransactionGroupCardProps {
 }
 
 export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, transactions, onDeleted }) => {
+    const total = useMemo(
+        () =>
+            transactions.reduce(
+                (acc, el) => acc + (el.type === 'transfer' ? 0 : el.type === 'expense' ? -1 * el.amount : el.amount),
+                0,
+            ),
+        [transactions],
+    );
+
     return (
         <div className="flex flex-col gap-1">
-            <div className="border-b-2 border-b-primary">
+            <div className="flex items-center justify-between border-b-2 border-b-primary">
                 <span>{formatDate(date, { lang: 'en-US' })}</span>
+                <span className={'dai-badge dai-badge-sm ' + (total > 0 ? 'dai-badge-success' : 'dai-badge-error')}>
+                    {formatCurrency(total)}
+                </span>
             </div>
             <div className="flex flex-col gap-1">
                 {transactions.map((el, idx) => (
@@ -131,8 +143,13 @@ interface TransactionGroupCardSkeletonProps {}
 export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps> = () => {
     return (
         <div className="flex flex-col gap-1">
-            <div className="border-b-2 border-b-primary">
-                <span>Sep 20, 2022</span>
+            <div className="flex items-center justify-between border-b-2 border-b-primary">
+                <Skeleton>
+                    <span>Sep 20, 2022</span>
+                </Skeleton>
+                <Skeleton>
+                    <span className="dai-badge dai-badge-error dai-badge-sm">{formatCurrency(10_000)}</span>
+                </Skeleton>
             </div>
             <div className="flex flex-col gap-1">
                 {Array.from({ length: 3 }).map((_, idx) => (

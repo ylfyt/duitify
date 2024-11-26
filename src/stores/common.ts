@@ -13,9 +13,10 @@ export const expandAtom = atom<boolean>(true);
 export const showNavAtom = atom(false);
 
 type AppBarCtx = {
-    title: string | JSX.Element;
+    title?: string | JSX.Element;
     actions?: JSX.Element[];
     back?: boolean;
+    leftActions?: JSX.Element[];
 };
 export const appBarCtxAtom = atom<AppBarCtx>({
     title: 'Duitify',

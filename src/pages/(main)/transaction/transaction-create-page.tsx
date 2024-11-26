@@ -39,7 +39,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [amount, setAmount] = useState(focusedTransaction?.amount.toString() ?? '');
     const [description, setDescription] = useState(focusedTransaction?.description ?? '');
     const [occurredAt, setOccurredAt] = useState(
-        !focusedTransaction ? '' : formatDate(focusedTransaction.occurred_at, { format: 'yyyy-MM-ddTHH:mm' }),
+        formatDate(focusedTransaction?.occurred_at ?? new Date(), { format: 'yyyy-MM-ddTHH:mm' }),
     );
 
     const [selectedAccount, setSelectedAccount] = useState<LabelValue<string> | undefined>(
