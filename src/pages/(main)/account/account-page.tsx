@@ -1,20 +1,18 @@
-import { AccountRepo } from '@/repo/account-repo';
 import { appBarCtxAtom } from '@/stores/common';
-import { Account } from '@/types/account.type';
 import { useAtom } from 'jotai';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { AccountCard, AccountCardSkeleton } from './components/account-card';
 import { openModal } from '@/stores/modal';
 import { ModalAccountCreate } from './components/modal-account-create';
+import { useAccountAtom } from '@/stores/account';
 
 interface AccountPageProps {}
 
 const AccountPage: FC<AccountPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
-    const [loading, setLoading] = useState(false);
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    const { data: accounts, setData: setAccounts, loading, fetched, refresh } = useAccountAtom();
 
     useEffect(() => {
         setAppBarCtx({
@@ -35,15 +33,11 @@ const AccountPage: FC<AccountPageProps> = () => {
     }, []);
 
     useEffect(() => {
+        if (fetched) return;
         (async () => {
-            setLoading(true);
-            const { data, error } = await AccountRepo.getAccounts();
-            setLoading(false);
-            if (error) {
-                toast.error(error.message);
-                return;
-            }
-            setAccounts(data ?? []);
+            const msg = await refresh();
+            if (!msg) return;
+            toast.error(msg);
         })();
     }, []);
 

@@ -1,22 +1,26 @@
 import { appBarCtxAtom } from '@/stores/common';
 import { openModal } from '@/stores/modal';
-import { Category, CategoryType } from '@/types/category.type';
+import { CategoryType } from '@/types/category.type';
 import { useAtom } from 'jotai';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ModalCategoryCreate } from './components/modal-category-create';
 import { CategoryCard, CategoryCardSkeleton } from './components/category-card';
-import { CategoryRepo } from '@/repo/category-repo';
+import { useCategoryAtom } from '@/stores/category';
 
 interface CategoryPageProps {}
 
 const CategoryPage: FC<CategoryPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
+    const { data: globalCategories, loading, refresh, fetched, setData: setCategories } = useCategoryAtom();
+
     const [selected, setSelected] = useState<CategoryType>('expense');
 
-    const [loading, setLoading] = useState(false);
-    const [categories, setCategories] = useState<Category[]>([]);
+    const categories = useMemo(
+        () => globalCategories.filter((el) => el.type === selected),
+        [globalCategories, selected],
+    );
 
     useEffect(() => {
         setAppBarCtx({
@@ -38,18 +42,13 @@ const CategoryPage: FC<CategoryPageProps> = () => {
     }, [selected]);
 
     useEffect(() => {
+        if (fetched) return;
         (async () => {
-            setCategories([]);
-            setLoading(true);
-            const res = await CategoryRepo.getCategoryByType(selected);
-            setLoading(false);
-            if (res.error) {
-                toast.error(res.error.message);
-                return;
-            }
-            setCategories(res.data ?? []);
+            const msg = await refresh();
+            if (!msg) return;
+            toast.error(msg);
         })();
-    }, [selected]);
+    }, []);
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">

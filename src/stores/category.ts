@@ -25,8 +25,18 @@ async function refresh(): Promise<string | undefined> {
     });
 }
 
+function setData(data: Category[] | ((prev: Category[]) => Category[])) {
+    const val = store.get(internalBondsAtom);
+    if (!val.fetched) return;
+    store.set(internalBondsAtom, {
+        ...val,
+        data: typeof data === 'function' ? data(val.data) : data,
+    });
+}
+
 const categoriesAtom = atom((get) => ({
     refresh,
+    setData,
     ...get(internalBondsAtom),
 }));
 
