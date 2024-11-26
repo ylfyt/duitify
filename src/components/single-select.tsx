@@ -10,9 +10,10 @@ interface SingleSelectProps {
     onChange?: (value: any | null) => void;
     loading?: boolean;
     placeholder?: string;
+    searchable?: boolean;
 }
 
-export const SingleSelect: FC<SingleSelectProps> = ({ options, disabled, loading, value, onChange, placeholder }) => {
+export const SingleSelect: FC<SingleSelectProps> = ({ options, disabled, loading, value, onChange, placeholder, searchable }) => {
     const [colorScheme] = useAtom(colorSchemeAtom);
     const components = useMemo<any>(() => {
         const comps: any = { IndicatorSeparator: null };
@@ -77,7 +78,7 @@ export const SingleSelect: FC<SingleSelectProps> = ({ options, disabled, loading
             isDisabled={disabled || loading}
             isLoading={loading}
             isClearable={true}
-            isSearchable={!value}
+            isSearchable={!value && searchable}
             options={options}
             styles={styles}
             components={components}

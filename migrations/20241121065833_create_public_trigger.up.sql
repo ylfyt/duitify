@@ -101,12 +101,12 @@ BEGIN
     IF TG_OP = 'UPDATE' AND NEW.type != OLD.type THEN
         RAISE EXCEPTION 'Cannot change transaction type';
     END IF;
+    IF TG_OP = 'UPDATE' AND NEW.account_id != OLD.account_id THEN
+        RAISE EXCEPTION 'Cannot change account';
+    END IF;
     -- cannot change to_account_id and account_id
     IF TG_OP = 'UPDATE' AND NEW.type = 'transfer' AND NEW.to_account_id != OLD.to_account_id THEN
         RAISE EXCEPTION 'Cannot change target account';
-    END IF;
-    IF TG_OP = 'UPDATE' AND NEW.type = 'transfer' AND NEW.account_id != OLD.account_id THEN
-        RAISE EXCEPTION 'Cannot change account';
     END IF;
     -- if transaction is a transfer, account_id and to_account_id must be different
     IF NEW.type = 'transfer' AND NEW.to_account_id = NEW.account_id THEN

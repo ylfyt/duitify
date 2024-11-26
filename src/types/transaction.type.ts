@@ -25,3 +25,5 @@ export type Transaction = Database['user_schema']['Tables']['transaction']['Row'
 export type TransactionCreateDto = Database['user_schema']['Tables']['transaction']['Insert'];
 
 export type TransactionUpdateDto = Database['user_schema']['Tables']['transaction']['Update'];
+
+export type ExpenseOverview = Database['user_schema']['Views']['expense_overview']['Row'];

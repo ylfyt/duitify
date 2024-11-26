@@ -190,6 +190,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                         <span className="req dai-label-text">Accounts</span>
                     </div>
                     <SingleSelect
+                        searchable={false}
                         disabled={!!focusedTransaction}
                         value={selectedAccount}
                         options={accountOptions}
@@ -203,6 +204,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             <span className="req dai-label-text">To Accounts</span>
                         </div>
                         <SingleSelect
+                            searchable={false}
                             disabled={!!focusedTransaction}
                             value={selectedToAccount}
                             options={accountOptions}
@@ -217,6 +219,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             <span className="req dai-label-text">Category</span>
                         </div>
                         <SingleSelect
+                            searchable={false}
                             value={selectedCategory}
                             options={categoryOptions}
                             loading={loadingCategories}
