@@ -101,37 +101,39 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                 alt=""
             />
             <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex flex-col gap-0.5">
-                    <span className="text-lg">{el.type === 'transfer' ? 'Transfer' : el.category?.name}</span>
-                    <span className="text-sm">{el.description}</span>
+                <div className="flex flex-col gap-1.5">
+                    <span className="text-lg font-medium">
+                        {el.type === 'transfer' ? 'Transfer' : el.category?.name}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-1">
+                        <div className="flex items-center gap-1.5 text-xs">
+                            <img className="size-4" src={ENV.BASE_URL + el.account?.logo} alt="" />
+                            <span>{el.account?.name}</span>
+                        </div>
+                        {el.type === 'transfer' && el.to_account && (
+                            <>
+                                <span>
+                                    <Icon className="text-sm" icon="lucide:arrow-right" />
+                                </span>
+                                <div className="flex items-center gap-1.5 text-xs">
+                                    <img className="size-4" src={ENV.BASE_URL + el.to_account?.logo} alt="" />
+                                    <span>{el.to_account?.name}</span>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end gap-1 font-semibold">
+                <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-end gap-0.5">
                         <span
                             className={
-                                'text-nowrap text-lg ' +
+                                'text-nowrap text-lg font-medium ' +
                                 (el.type === 'transfer' ? 'text-primary' : amount > 0 ? 'text-success' : 'text-error')
                             }
                         >
                             {formatCurrency(amount)}
                         </span>
-                        <div className="flex items-center gap-1">
-                            <div className="flex items-center gap-2 text-xs">
-                                <img className="size-4" src={ENV.BASE_URL + el.account?.logo} alt="" />
-                                <span>{el.account?.name}</span>
-                            </div>
-                            {el.type === 'transfer' && el.to_account && (
-                                <>
-                                    <span>
-                                        <Icon className="text-sm" icon="lucide:arrow-right" />
-                                    </span>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <img className="size-4" src={ENV.BASE_URL + el.to_account?.logo} alt="" />
-                                        <span>{el.to_account?.name}</span>
-                                    </div>
-                                </>
-                            )}
-                        </div>
+                        <span className="line-clamp-1 text-xs">{el.description}</span>
                     </div>
                     <DropdownMenu
                         options={[
@@ -187,29 +189,29 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
                 <div className="size-12"></div>
             </Skeleton>
             <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col gap-1.5">
                     <Skeleton>
-                        <span className="text-lg">Food</span>
+                        <span className="text-lg font-medium">Transportation</span>
                     </Skeleton>
-                    <Skeleton>
-                        <span className="text-sm">Lorem, ipsum.</span>
-                    </Skeleton>
+                    <div className="flex flex-wrap items-center gap-1">
+                        <div className="flex items-center gap-1.5 text-xs">
+                            <Skeleton>
+                                <div className="size-4"></div>
+                            </Skeleton>
+                            <Skeleton>
+                                <span>Shopee Pay</span>
+                            </Skeleton>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <div className="flex flex-col items-end gap-1 font-semibold">
+                <div className="flex items-center gap-2">
+                    <div className="flex flex-col items-end gap-0.5">
                         <Skeleton>
                             <span className={'text-nowrap text-lg'}>{formatCurrency(10_0000)}</span>
                         </Skeleton>
-                        <div className="flex items-center gap-1">
-                            <div className="flex items-center gap-2 text-xs">
-                                <Skeleton>
-                                    <div className="size-4"></div>
-                                </Skeleton>
-                                <Skeleton>
-                                    <span>Shopee Pay</span>
-                                </Skeleton>
-                            </div>
-                        </div>
+                        <Skeleton>
+                            <span className="text-sm">Lorem, ipsum.</span>
+                        </Skeleton>
                     </div>
                     <Skeleton>
                         <DropdownMenu options={[]} />

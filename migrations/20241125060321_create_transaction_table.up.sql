@@ -37,3 +37,12 @@ CREATE TRIGGER transaction_deleted_trigger
 BEFORE DELETE ON "user_schema".transaction
 FOR EACH ROW
 EXECUTE PROCEDURE public.transaction_deleted();
+
+-- supabase row level security
+ALTER TABLE "user_schema".transaction ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow user schema"
+ON "user_schema".transaction
+TO authenticated
+USING (
+    ((( SELECT auth.jwt() AS jwt) ->> 'email'::text) = 'schema'::text)
+);

@@ -18,3 +18,12 @@ CREATE TRIGGER account_updated_trigger
 AFTER UPDATE ON "user_schema".account
 FOR EACH ROW WHEN (NEW.initial_balance != OLD.initial_balance)
 EXECUTE PROCEDURE public.account_updated();
+
+-- supabase row level security
+ALTER TABLE "user_schema".account ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow user schema"
+ON "user_schema".account
+TO authenticated
+USING (
+    ((( SELECT auth.jwt() AS jwt) ->> 'email'::text) = 'schema'::text)
+);
