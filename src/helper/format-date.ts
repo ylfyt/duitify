@@ -1,7 +1,10 @@
+const LOCAL_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 type Options = {
     placeholder?: string;
     lang?: string;
     format?: string;
+    timeZone?: string;
 };
 
 /**
@@ -11,25 +14,26 @@ type Options = {
  */
 export function formatDate(
     date: Date | string | number | undefined | null,
-    { placeholder = '-', lang, format = 'yyyy-MM-dd' }: Options = {}
+    { placeholder = '-', lang, format = 'yyyy-MM-dd', timeZone }: Options = {},
 ): string {
-    if (!date) return '';
+    if (!date) return placeholder;
     if (typeof date === 'string') date = new Date(date);
     if (typeof date === 'number') date = new Date(date);
     if (date instanceof Date === false) return placeholder;
 
+    if (!timeZone) timeZone = LOCAL_TIMEZONE;
     if (lang) {
-        const formatter = new Intl.DateTimeFormat(lang, { day: '2-digit', month: 'short', year: 'numeric' });
+        const formatter = new Intl.DateTimeFormat(lang, { day: '2-digit', month: 'short', year: 'numeric', timeZone });
         return formatter.format(date);
     }
 
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = d.getMonth() + 1;
-    const day = d.getDate();
-    const hour = d.getHours();
-    const minute = d.getMinutes();
-    const second = d.getSeconds();
+    if (timeZone !== LOCAL_TIMEZONE) date = new Date(date.toLocaleString('en-US', { timeZone }));
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const second = date.getSeconds();
     return format
         .replace('yyyy', year.toString())
         .replace('MM', month.toString().padStart(2, '0'))
