@@ -190,7 +190,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             key={idx}
                             type="button"
                             role="tab"
-                            disabled={!!focusedTransaction}
+                            disabled={!!focusedTransaction && el !== focusedTransaction.type}
                             onClick={() => setSelectedType(el)}
                             className={'dai-tab capitalize ' + (el === selectedType ? 'dai-tab-active' : '')}
                         >

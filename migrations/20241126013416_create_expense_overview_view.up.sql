@@ -1,4 +1,6 @@
-CREATE OR REPLACE VIEW "public".expense_overview AS
+CREATE OR REPLACE VIEW "public".expense_overview 
+WITH (security_invoker=ON)
+AS
 WITH expenses AS (
     SELECT
         SUM(amount) AS amount,

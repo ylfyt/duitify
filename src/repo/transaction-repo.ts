@@ -1,8 +1,17 @@
 import { Transaction, TransactionCreateDto, TransactionUpdateDto } from '@/types/transaction.type';
 import { BaseRepo, QueryResultEmpty, QueryResultMany, QueryResultOne } from './base-repo';
+import { formatDate } from '@/helper/format-date';
+import { PAGINATION_SIZES } from '@/constants/common';
+
+type PaginationFilter = {
+    cursor?: string;
+};
 
 export class TransactionRepo extends BaseRepo {
-    public static async getTransactions(): Promise<QueryResultMany<Transaction>> {
+    public static async getTransactions({ cursor }: PaginationFilter): Promise<QueryResultMany<Transaction>> {
+        const today = new Date();
+        today.setDate(today.getDate() + 1);
+
         return this.db
             .from('transaction')
             .select(
@@ -11,7 +20,9 @@ export class TransactionRepo extends BaseRepo {
                 account:account!transaction_account_id_fkey(id, name, logo),
                 to_account:account!transaction_to_account_id_fkey(id, name, logo)`,
             )
-            .order('occurred_at', { ascending: false });
+            .order('occurred_at', { ascending: false })
+            .lt('occurred_at', !cursor ? formatDate(today, { format: 'yyyy-MM-dd HH:mm:ss' }) : cursor)
+            .limit(PAGINATION_SIZES[0]);
     }
 
     public static async update(id: string, data: TransactionUpdateDto): Promise<QueryResultOne<Transaction>> {
