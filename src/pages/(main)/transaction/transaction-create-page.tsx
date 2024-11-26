@@ -19,6 +19,7 @@ interface TransactionCreatePageProps {}
 const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
     const navigate = useNavigate();
+    const { setData: setAccounts } = useAccountAtom();
     const [focusedTransaction, setFocusedTransaction] = useAtom(focusedTransactionAtom);
 
     const {
@@ -135,6 +136,38 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
             toast.error(res.error.message);
             return;
         }
+        setAccounts((prev) => {
+            const account = prev.find((el) => el.id === selectedAccount?.value);
+            if (!account) return prev;
+
+            if (focusedTransaction) {
+                if (parseFloat(amount) === focusedTransaction.amount) return prev;
+                if (selectedType === 'expense' || selectedType === 'transfer') {
+                    account.balance -= parseFloat(amount) - focusedTransaction.amount;
+                }
+                if (selectedType === 'income') {
+                    account.balance += parseFloat(amount) - focusedTransaction.amount;
+                }
+                if (selectedType === 'transfer') {
+                    const toAccount = prev.find((el) => el.id === selectedToAccount?.value);
+                    if (!toAccount) return prev;
+                    toAccount.balance += parseFloat(amount) - focusedTransaction.amount;
+                }
+                return [...prev];
+            }
+            if (selectedType === 'expense' || selectedType === 'transfer') {
+                account.balance -= parseFloat(amount);
+            }
+            if (selectedType === 'income') {
+                account.balance += parseFloat(amount);
+            }
+            if (selectedType === 'transfer') {
+                const toAccount = prev.find((el) => el.id === selectedToAccount?.value);
+                if (!toAccount) return prev;
+                toAccount.balance += parseFloat(amount);
+            }
+            return [...prev];
+        });
         navigate(-1);
     };
 

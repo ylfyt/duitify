@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { focusedTransactionAtom } from '../_layout';
 import { useNavigate } from 'react-router-dom';
 import Skeleton from '@/components/skeleton';
+import { useAccountAtom } from '@/stores/account';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -55,6 +56,7 @@ interface TransactionCardProps {
 const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
     const [, setFocusedTransaction] = useAtom(focusedTransactionAtom);
     const navigate = useNavigate();
+    const { setData } = useAccountAtom();
 
     const amount = useMemo(() => (el.type === 'expense' ? -1 * el.amount : el.amount), [el]);
 
@@ -72,6 +74,22 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
             toast.error(error.message);
             return;
         }
+        setData((prev) => {
+            const account = prev.find((el2) => el2.id === el.account_id);
+            if (!account) return prev;
+            if (el.type === 'expense' || el.type === 'transfer') {
+                account.balance += el.amount;
+            }
+            if (el.type === 'income') {
+                account.balance -= el.amount;
+            }
+            if (el.type === 'transfer') {
+                const toAccount = prev.find((el2) => el2.id === el.to_account_id);
+                if (!toAccount) return prev;
+                toAccount.balance -= el.amount;
+            }
+            return [...prev];
+        });
         onDeleted(el.id);
     };
 
