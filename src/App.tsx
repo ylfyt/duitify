@@ -2,7 +2,7 @@ import MainLayout from './pages/_layout';
 import GlobalLoading from './components/global-loading';
 import { useEffect, useState } from 'react';
 import Loader from './components/loader';
-import { userAtom } from './stores/auth';
+import { sessionAtom } from './stores/auth';
 import { GlobalModal } from './components/global-modal';
 import { useAtom } from 'jotai';
 import { themeNameAtom } from './stores/theme';
@@ -15,7 +15,7 @@ function App() {
     const [loading, setLoading] = useState(true);
     const [failed, setFailed] = useState(false);
 
-    const [, setUser] = useAtom(userAtom);
+    const [, setUser] = useAtom(sessionAtom);
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', themeName);

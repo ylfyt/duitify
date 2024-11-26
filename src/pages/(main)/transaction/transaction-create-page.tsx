@@ -13,12 +13,15 @@ import { toast } from 'react-toastify';
 import { focusedTransactionAtom } from './_layout';
 import { formatDate } from '@/helper/format-date';
 import { QueryResultOne } from '@/repo/base-repo';
+import { sessionAtom } from '@/stores/auth';
 
 interface TransactionCreatePageProps {}
 
 const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
+    const [session] = useAtom(sessionAtom);
     const navigate = useNavigate();
+
     const { setData: setAccounts } = useAccountAtom();
     const [focusedTransaction, setFocusedTransaction] = useAtom(focusedTransactionAtom);
 
@@ -129,6 +132,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 account_id: selectedAccount!.value,
                 category_id: selectedCategory?.value,
                 to_account_id: selectedToAccount?.value,
+                user_id: session!.user.id,
             });
         }
         setLoading(false);

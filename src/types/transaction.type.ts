@@ -2,9 +2,9 @@ import { Database } from '@/database.types';
 import { Account } from './account.type';
 import { Category } from './category.type';
 
-export type TransactionType = Database['user_schema']['Tables']['transaction']['Row']['type'];
+export type TransactionType = Database['public']['Tables']['transaction']['Row']['type'];
 
-export type Transaction = Database['user_schema']['Tables']['transaction']['Row'] & {
+export type Transaction = Database['public']['Tables']['transaction']['Row'] & {
     account: {
         id: Account['id'];
         name: Account['name'];
@@ -22,8 +22,8 @@ export type Transaction = Database['user_schema']['Tables']['transaction']['Row'
     } | null;
 };
 
-export type TransactionCreateDto = Database['user_schema']['Tables']['transaction']['Insert'];
+export type TransactionCreateDto = Database['public']['Tables']['transaction']['Insert'];
 
-export type TransactionUpdateDto = Database['user_schema']['Tables']['transaction']['Update'];
+export type TransactionUpdateDto = Database['public']['Tables']['transaction']['Update'];
 
-export type ExpenseOverview = Database['user_schema']['Views']['expense_overview']['Row'];
+export type ExpenseOverview = Database['public']['Views']['expense_overview']['Row'];

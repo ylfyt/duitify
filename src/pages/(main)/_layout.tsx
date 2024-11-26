@@ -2,7 +2,7 @@ import { Route, Routes, useBlocker, useNavigate } from 'react-router-dom';
 import { NotFound } from './not-found-page';
 import { useEffect, useMemo, useState } from 'react';
 import { useAtom } from 'jotai';
-import { userAtom } from '@/stores/auth';
+import { sessionAtom } from '@/stores/auth';
 import { AppBar } from '@/components/app-bar';
 import { MobileNavbar } from '@/components/navbar/mobile-navbar';
 import { ROUTES } from '@/constants/routes';
@@ -14,7 +14,7 @@ const DEFAULT = '';
 
 export const DashboardLayout = () => {
     const navigate = useNavigate();
-    const [user] = useAtom(userAtom);
+    const [user] = useAtom(sessionAtom);
     const [routes] = useState(ROUTES);
 
     const blocker = useBlocker(({ historyAction, currentLocation, nextLocation }) => {

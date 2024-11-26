@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS "user_schema".category;
+DROP TABLE IF EXISTS "public".category;

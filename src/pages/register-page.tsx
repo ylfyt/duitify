@@ -1,4 +1,4 @@
-import { userAtom } from '@/stores/auth';
+import { sessionAtom } from '@/stores/auth';
 import { useAtom } from 'jotai';
 import { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface RegisterPageProps {}
 
 export const RegisterPage: FC<RegisterPageProps> = () => {
-    const [user] = useAtom(userAtom);
+    const [user] = useAtom(sessionAtom);
     const navigate = useNavigate();
 
     useEffect(() => {

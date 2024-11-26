@@ -1,20 +1,18 @@
 -- procedure to update account balance with param schema_name, id, and delta
-CREATE OR REPLACE PROCEDURE public.update_account_balance(schema_name VARCHAR, account_id UUID, delta NUMERIC)
+CREATE OR REPLACE PROCEDURE public.update_account_balance(account_id UUID, delta NUMERIC)
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    EXECUTE format(
-        'UPDATE %I.account SET balance = balance + $1 WHERE id = $2',
-        schema_name
-    )
-    USING delta, account_id;
+    UPDATE public.account
+    SET balance = balance + delta
+    WHERE id = account_id;
 END; $$;
 
 -- account updated
 CREATE OR REPLACE FUNCTION public.account_updated()
 RETURNS TRIGGER AS $$
 BEGIN
-    CALL update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.id, NEW.initial_balance - OLD.initial_balance);
+    CALL update_account_balance(NEW.id, NEW.initial_balance - OLD.initial_balance);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -24,7 +22,7 @@ CREATE OR REPLACE FUNCTION public.account_created()
 RETURNS TRIGGER AS $$
 BEGIN
     NEW.balance := NEW.initial_balance;
-    CALL update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.id, NEW.initial_balance);
+    CALL update_account_balance(NEW.id, NEW.initial_balance);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -35,14 +33,14 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- if transaction is an expense
     IF NEW.type = 'expense' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * NEW.amount);
+        CALL public.update_account_balance(NEW.account_id, -1 * NEW.amount);
     -- if transaction is an income
     ELSIF NEW.type = 'income' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * NEW.amount);
+        CALL public.update_account_balance(NEW.account_id, 1 * NEW.amount);
     -- if transaction is a transfer
     ELSIF NEW.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.to_account_id, 1 * NEW.amount);
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * NEW.amount);
+        CALL public.update_account_balance(NEW.to_account_id, 1 * NEW.amount);
+        CALL public.update_account_balance(NEW.account_id, -1 * NEW.amount);
     END IF;
     RETURN NEW;
 END;
@@ -54,14 +52,14 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- if transaction is an expense
     IF NEW.type = 'expense' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(NEW.account_id, -1 * (NEW.amount - OLD.amount));
     -- if transaction is an income
     ELSIF NEW.type = 'income' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, 1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(NEW.account_id, 1 * (NEW.amount - OLD.amount));
     -- if transaction is a transfer
     ELSIF NEW.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.to_account_id, 1 * (NEW.amount - OLD.amount));
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, NEW.account_id, -1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(NEW.to_account_id, 1 * (NEW.amount - OLD.amount));
+        CALL public.update_account_balance(NEW.account_id, -1 * (NEW.amount - OLD.amount));
     END IF;
     RETURN NEW;
 END;
@@ -73,14 +71,14 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- if transaction is an expense
     IF OLD.type = 'expense' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, OLD.amount);
+        CALL public.update_account_balance(OLD.account_id, OLD.amount);
     -- if transaction is an income
     ELSIF OLD.type = 'income' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, -1 * OLD.amount);
+        CALL public.update_account_balance(OLD.account_id, -1 * OLD.amount);
     -- if transaction is a transfer
     ELSIF OLD.type = 'transfer' THEN
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.to_account_id, -1 * OLD.amount);
-        CALL public.update_account_balance(TG_TABLE_SCHEMA::VARCHAR, OLD.account_id, 1 * OLD.amount);
+        CALL public.update_account_balance(OLD.to_account_id, -1 * OLD.amount);
+        CALL public.update_account_balance(OLD.account_id, 1 * OLD.amount);
     END IF;
     RETURN OLD;
 END;

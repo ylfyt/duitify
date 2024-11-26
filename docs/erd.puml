@@ -1,5 +1,14 @@
 @startuml erd
 
+entity user {
+    * id : INT
+    --
+    * name : VARCHAR
+    * email : VARCHAR
+    * created_at : DATETIME
+    updated_at : DATETIME
+}
+
 entity account {
     * id : INT
     --
@@ -7,6 +16,7 @@ entity account {
     * initial_balance : FLOAT
     * balance : FLOAT
     * logo : VARCHAR
+    * user_id : INT
     * created_at : DATETIME
     updated_at : DATETIME
 }
@@ -17,6 +27,7 @@ entity category {
     * name : VARCHAR
     * logo : VARCHAR
     * type : enum('expense', 'income')
+    * user_id : INT
     * created_at : DATETIME
     updated_at : DATETIME
 }
@@ -30,12 +41,15 @@ entity transaction {
     * account_id : INT
     * description : VARCHAR
     * occurred_at : DATETIME
+    * user_id : INT
     * created_at : DATETIME
     to_account_id : INT
     category_id : INT
     updated_at : DATETIME
 }
 
+account "n" -- "1" user
+category "n" -- "1" user
 transaction "n" -- "1" account
 transaction "n" -- "1" category
 

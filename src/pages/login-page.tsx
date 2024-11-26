@@ -1,6 +1,6 @@
 import { ROUTES } from '@/constants/routes';
 import { removePrefix } from '@/helper/str';
-import { userAtom } from '@/stores/auth';
+import { sessionAtom } from '@/stores/auth';
 import { useAtom } from 'jotai';
 import { FC, useDeferredValue, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,7 @@ interface LoginPageProps {}
 
 const LoginPage: FC<LoginPageProps> = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useAtom(userAtom);
+    const [user, setUser] = useAtom(sessionAtom);
 
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');

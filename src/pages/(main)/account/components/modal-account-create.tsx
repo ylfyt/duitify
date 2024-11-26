@@ -4,8 +4,10 @@ import { ENV } from '@/constants/env';
 import { ACCOUNT_LOGOS } from '@/constants/logo';
 import { AccountRepo } from '@/repo/account-repo';
 import { QueryResultOne } from '@/repo/base-repo';
+import { sessionAtom } from '@/stores/auth';
 import { closeModal } from '@/stores/modal';
 import { Account } from '@/types/account.type';
+import { useAtom } from 'jotai';
 import { FC, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -15,6 +17,8 @@ interface ModalAccountCreateProps {
 }
 
 export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, account }) => {
+    const [user] = useAtom(sessionAtom);
+
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState(account?.name ?? '');
     const [balance, setBalance] = useState(account?.initial_balance?.toString() ?? '');
@@ -38,6 +42,7 @@ export const ModalAccountCreate: FC<ModalAccountCreateProps> = ({ onSuccess, acc
                 name,
                 initial_balance: parseFloat(balance),
                 logo: ACCOUNT_LOGOS[selectedLogo],
+                user_id: user!.user.id,
             });
             if (res.data) res.data.balance = parseFloat(balance);
         }

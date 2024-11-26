@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  user_schema: {
+  public: {
     Tables: {
       account: {
         Row: {
@@ -18,6 +18,7 @@ export type Database = {
           logo: string
           name: string
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           balance?: number
@@ -27,6 +28,7 @@ export type Database = {
           logo: string
           name: string
           updated_at?: string | null
+          user_id: string
         }
         Update: {
           balance?: number
@@ -36,6 +38,7 @@ export type Database = {
           logo?: string
           name?: string
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -45,24 +48,27 @@ export type Database = {
           id: string
           logo: string
           name: string
-          type: "expense" | "income"
+          type: Database["public"]["Enums"]["category_type"]
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           logo: string
           name: string
-          type: "expense" | "income"
+          type: Database["public"]["Enums"]["category_type"]
           updated_at?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: string
           logo?: string
           name?: string
-          type?: "expense" | "income"
+          type?: Database["public"]["Enums"]["category_type"]
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -76,8 +82,9 @@ export type Database = {
           id: string
           occurred_at: string
           to_account_id: string | null
-          type: "expense" | "income" | "transfer"
+          type: Database["public"]["Enums"]["transaction_type"]
           updated_at: string | null
+          user_id: string
         }
         Insert: {
           account_id: string
@@ -88,8 +95,9 @@ export type Database = {
           id?: string
           occurred_at: string
           to_account_id?: string | null
-          type: "expense" | "income" | "transfer"
+          type: Database["public"]["Enums"]["transaction_type"]
           updated_at?: string | null
+          user_id: string
         }
         Update: {
           account_id?: string
@@ -100,8 +108,9 @@ export type Database = {
           id?: string
           occurred_at?: string
           to_account_id?: string | null
-          type?: "expense" | "income" | "transfer"
+          type?: Database["public"]["Enums"]["transaction_type"]
           updated_at?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -152,7 +161,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      category_type: "expense" | "income"
+      transaction_type: "expense" | "income" | "transfer"
     }
     CompositeTypes: {
       [_ in never]: never

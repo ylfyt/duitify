@@ -4,8 +4,10 @@ import { ENV } from '@/constants/env';
 import { CATEGORY_LOGOS } from '@/constants/logo';
 import { QueryResultOne } from '@/repo/base-repo';
 import { CategoryRepo } from '@/repo/category-repo';
+import { sessionAtom } from '@/stores/auth';
 import { closeModal } from '@/stores/modal';
 import { Category } from '@/types/category.type';
+import { useAtom } from 'jotai';
 import { FC, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -16,6 +18,8 @@ interface ModalCategoryCreateProps {
 }
 
 export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, category, categoryType }) => {
+    const [session] = useAtom(sessionAtom);
+
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState(category?.name ?? '');
     const [selectedLogo, setSelectedLogo] = useState(category?.logo ? CATEGORY_LOGOS.indexOf(category.logo) : 0);
@@ -30,6 +34,7 @@ export const ModalCategoryCreate: FC<ModalCategoryCreateProps> = ({ onSuccess, c
                 name,
                 logo: CATEGORY_LOGOS[selectedLogo],
                 type: categoryType,
+                user_id: session!.user.id,
             });
         } else {
             res = await CategoryRepo.updateCategory(category.id, {
