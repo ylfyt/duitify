@@ -3,7 +3,7 @@ import { BaseRepo, QueryResultEmpty, QueryResultMany, QueryResultOne } from './b
 
 export class AccountRepo extends BaseRepo {
     public static async getAccounts(): Promise<QueryResultMany<Account>> {
-        return this.db.from('account').select('*').order('created_at', { ascending: false });
+        return this.db.from('account').select('*').order('name', { ascending: true });
     }
 
     public static async createAccount(data: AccountCreateDto): Promise<QueryResultOne<Account>> {

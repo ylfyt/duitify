@@ -1,9 +1,6 @@
 import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { Icon } from '@/components/icon';
-import { handleLogout } from '@/helper/logout';
-import { isDarkAtom } from '@/stores/theme';
 import { formatDate } from '@/helper/format-date';
 import { Link } from 'react-router-dom';
 import { Transaction } from '@/types/transaction.type';
@@ -12,11 +9,11 @@ import { TransactionGroupCard, TransactionGroupCardSkeleton } from './components
 import { VisibleDetector } from '@/components/visible-detector';
 import { TransactionRepo } from '@/repo/transaction-repo';
 import { PAGINATION_SIZES } from '@/constants/common';
+import { ENV } from '@/constants/env';
 
 interface TransactionPageProps {}
 
 const TransactionPage: FC<TransactionPageProps> = () => {
-    const [isDark, setIsDark] = useAtom(isDarkAtom);
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
     const [cursor, setCursor] = useState<string | undefined>(undefined);
@@ -41,22 +38,14 @@ const TransactionPage: FC<TransactionPageProps> = () => {
 
     useEffect(() => {
         setAppBarCtx({
-            title: undefined,
-            leftActions: [
-                <button className="dai-btn dai-btn-error dai-btn-sm text-lg" onClick={handleLogout}>
-                    <Icon icon="lucide:log-out" />
-                </button>,
-                <button className="mr-1 p-1 text-xl text-yellow-400" onClick={() => setIsDark(!isDark)}>
-                    {isDark ? <Icon icon="lucide:sun" /> : <Icon icon="lucide:moon" />}
-                </button>,
-            ],
+            title: <img className="size-8" src={ENV.BASE_URL + '/categories/invest.webp'} />,
             actions: [
                 <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-4">
                     Create
                 </Link>,
             ],
         });
-    }, [isDark]);
+    }, []);
 
     useEffect(() => {
         (async () => {
