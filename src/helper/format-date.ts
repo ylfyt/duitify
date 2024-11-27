@@ -23,7 +23,13 @@ export function formatDate(
 
     if (!timeZone) timeZone = LOCAL_TIMEZONE;
     if (lang) {
-        const formatter = new Intl.DateTimeFormat(lang, { day: '2-digit', month: 'short', year: 'numeric', timeZone });
+        const formatter = new Intl.DateTimeFormat(lang, {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            weekday: 'short',
+            timeZone,
+        });
         return formatter.format(date);
     }
 

@@ -43,7 +43,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [amount, setAmount] = useState(focusedTransaction?.amount.toString() ?? '');
     const [description, setDescription] = useState(focusedTransaction?.description ?? '');
     const [occurredAt, setOccurredAt] = useState(
-        formatDate(focusedTransaction?.occurred_at ?? new Date(), { format: 'yyyy-MM-ddTHH:mm', timeZone: 'UTC' }),
+        formatDate(focusedTransaction?.occurred_at ?? new Date(), { format: 'yyyy-MM-dd HH:mm' }),
     );
 
     const [selectedAccount, setSelectedAccount] = useState<LabelValue<string> | undefined>(
@@ -116,7 +116,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         if (focusedTransaction) {
             res = await TransactionRepo.update(focusedTransaction.id, {
                 type: selectedType,
-                occurred_at: occurredAt,
+                occurred_at: formatDate(occurredAt, { format: 'yyyy-MM-dd HH:mm', timeZone: 'UTC' }),
                 description: description,
                 amount: parseFloat(amount),
                 account_id: selectedAccount!.value,
@@ -126,7 +126,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         } else {
             res = await TransactionRepo.create({
                 type: selectedType,
-                occurred_at: occurredAt,
+                occurred_at: formatDate(occurredAt, { format: 'yyyy-MM-dd HH:mm', timeZone: 'UTC' }),
                 description: description,
                 amount: parseFloat(amount),
                 account_id: selectedAccount!.value,

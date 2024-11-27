@@ -78,9 +78,9 @@ const TransactionPage: FC<TransactionPageProps> = () => {
         <div className="flex flex-1 flex-col gap-4 pt-4">
             <div className="flex flex-col gap-4">
                 {loading && isFirst ? (
-                    Array.from({ length: 2 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)
+                    Array.from({ length: 4 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)
                 ) : transactions.length === 0 ? (
-                    <p>No transactions found</p>
+                    <p className="mt-4 text-center text-xl">No transactions found</p>
                 ) : (
                     Object.keys(groupedTransactions)
                         .sort((a, b) => (a > b ? -1 : 1))
