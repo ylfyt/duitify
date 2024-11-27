@@ -97,7 +97,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img
                 className="size-12"
-                src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.png' : el.category?.logo)}
+                src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.webp' : el.category?.logo)}
                 loading="lazy"
                 alt=""
             />
@@ -171,7 +171,7 @@ export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps>
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
                 <Skeleton>
-                    <span>Sep 20, 2022</span>
+                    <span>Wed, Sep 20, 2022</span>
                 </Skeleton>
                 <Skeleton>
                     <span className="dai-badge dai-badge-error dai-badge-sm">{formatCurrency(10_000)}</span>
