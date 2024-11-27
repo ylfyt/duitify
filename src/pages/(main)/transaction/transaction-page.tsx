@@ -1,6 +1,6 @@
 import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Icon } from '@/components/icon';
 import { handleLogout } from '@/helper/logout';
 import { isDarkAtom } from '@/stores/theme';
@@ -10,7 +10,8 @@ import { Transaction } from '@/types/transaction.type';
 import { toast } from 'react-toastify';
 import { TransactionGroupCard, TransactionGroupCardSkeleton } from './components/transaction-card';
 import { VisibleDetector } from '@/components/visible-detector';
-import { useTransactionAtom } from '@/stores/transaction';
+import { TransactionRepo } from '@/repo/transaction-repo';
+import { PAGINATION_SIZES } from '@/constants/common';
 
 interface TransactionPageProps {}
 
@@ -18,7 +19,11 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     const [isDark, setIsDark] = useAtom(isDarkAtom);
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
-    const { data: transactions, load, isFirst, hasMore, loading, setData: setTransactions } = useTransactionAtom();
+    const [cursor, setCursor] = useState<string | undefined>(undefined);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(false);
+    const [isFirst, setIsFirst] = useState<boolean>(true);
 
     const groupedTransactions = useMemo(() => {
         return transactions.reduce(
@@ -54,17 +59,20 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     }, [isDark]);
 
     useEffect(() => {
-        if (!isFirst) return;
         (async () => {
-            const msg = await load();
-            if (msg) toast.error(msg);
+            setLoading(true);
+            const { data, error } = await TransactionRepo.getTransactions({ cursor });
+            setLoading(false);
+            if (error) {
+                setHasMore(false);
+                toast.error(error.message);
+                return;
+            }
+            setTransactions([...transactions, ...(data ?? [])]);
+            setIsFirst(false);
+            setHasMore((data?.length ?? 0) >= PAGINATION_SIZES[0]);
         })();
-    }, [isFirst]);
-
-    const loadTransactions = async () => {
-        const msg = await load();
-        if (msg) toast.error(msg);
-    };
+    }, [cursor]);
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
@@ -89,7 +97,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 )}
             </div>
             {!isFirst && hasMore && !loading ? (
-                <VisibleDetector onVisible={loadTransactions}>
+                <VisibleDetector onVisible={() => setCursor(transactions[transactions.length - 1]?.occurred_at)}>
                     <span className="flex justify-center">
                         <span className="dai-loading dai-loading-dots dai-loading-lg invisible text-primary"></span>
                     </span>

@@ -98,6 +98,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
             <img
                 className="size-12"
                 src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.png' : el.category?.logo)}
+                loading="lazy"
                 alt=""
             />
             <div className="flex w-full items-center justify-between gap-4">
@@ -107,7 +108,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                     </span>
                     <div className="flex flex-wrap items-center gap-1">
                         <div className="flex items-center gap-1.5 text-xs">
-                            <img className="size-4" src={ENV.BASE_URL + el.account?.logo} alt="" />
+                            <img loading="lazy" className="size-4" src={ENV.BASE_URL + el.account?.logo} alt="" />
                             <span>{el.account?.name}</span>
                         </div>
                         {el.type === 'transfer' && el.to_account && (
@@ -116,7 +117,12 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                                     <Icon className="text-sm" icon="lucide:arrow-right" />
                                 </span>
                                 <div className="flex items-center gap-1.5 text-xs">
-                                    <img className="size-4" src={ENV.BASE_URL + el.to_account?.logo} alt="" />
+                                    <img
+                                        loading="lazy"
+                                        className="size-4"
+                                        src={ENV.BASE_URL + el.to_account?.logo}
+                                        alt=""
+                                    />
                                     <span>{el.to_account?.name}</span>
                                 </div>
                             </>
