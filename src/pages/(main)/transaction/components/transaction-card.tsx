@@ -14,6 +14,7 @@ import { focusedTransactionAtom } from '../_layout';
 import { useNavigate } from 'react-router-dom';
 import Skeleton from '@/components/skeleton';
 import { useAccountAtom } from '@/stores/account';
+import { AmountRevealer } from '@/components/amount-revealer';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -34,9 +35,9 @@ export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, tran
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
-                <span className="xs:text-base text-sm">{formatDate(date, { lang: 'en-US' })}</span>
+                <span className="text-sm xs:text-base">{formatDate(date, { lang: 'en-US' })}</span>
                 <span className={'dai-badge dai-badge-sm ' + (total > 0 ? 'dai-badge-success' : 'dai-badge-error')}>
-                    {formatCurrency(total)}
+                    <AmountRevealer amount={total} />
                 </span>
             </div>
             <div className="flex flex-col gap-1">
@@ -96,7 +97,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
     return (
         <div className="flex items-center gap-3 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img
-                className="xs:size-12 size-9"
+                className="size-9 xs:size-12"
                 src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.webp' : el.category?.logo)}
                 loading="lazy"
                 alt=""
@@ -104,16 +105,16 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
             <div className="flex w-full items-center justify-between">
                 <div className="flex w-full flex-col gap-2">
                     <div className="flex items-center justify-between">
-                        <span className="xs:text-base text-sm font-medium">
+                        <span className="text-sm font-medium xs:text-base">
                             {el.type === 'transfer' ? 'Transfer' : el.category?.name}
                         </span>
                         <span
                             className={
-                                'xs:text-base text-nowrap text-sm font-medium ' +
+                                'text-nowrap text-sm font-medium xs:text-base ' +
                                 (el.type === 'transfer' ? 'text-primary' : amount > 0 ? 'text-success' : 'text-error')
                             }
                         >
-                            {formatCurrency(amount)}
+                            <AmountRevealer amount={amount} />
                         </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -121,7 +122,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                             <div className="flex items-center gap-1 text-xs">
                                 <img
                                     loading="lazy"
-                                    className="xs:size-4 size-3"
+                                    className="size-3 xs:size-4"
                                     src={ENV.BASE_URL + el.account?.logo}
                                     alt=""
                                 />
@@ -135,7 +136,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                                     <div className="flex items-center gap-1 text-xs">
                                         <img
                                             loading="lazy"
-                                            className="xs:size-4 size-3"
+                                            className="size-3 xs:size-4"
                                             src={ENV.BASE_URL + el.to_account?.logo}
                                             alt=""
                                         />
@@ -178,7 +179,7 @@ export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps>
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
                 <Skeleton>
-                    <span className="xs:text-base text-sm">Wed, Sep 20, 2022</span>
+                    <span className="text-sm xs:text-base">Wed, Sep 20, 2022</span>
                 </Skeleton>
                 <Skeleton>
                     <span className="dai-badge dai-badge-error dai-badge-sm">{formatCurrency(10_000)}</span>
@@ -199,16 +200,16 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
     return (
         <div className="flex items-center gap-3 rounded-xl bg-base-100 px-3 py-2 shadow">
             <Skeleton>
-                <div className="xs:size-12 size-9"></div>
+                <div className="size-9 xs:size-12"></div>
             </Skeleton>
             <div className="flex w-full items-center justify-between">
                 <div className="flex w-full flex-col gap-2">
                     <div className="flex items-center justify-between">
                         <Skeleton>
-                            <span className="xs:text-base text-sm font-medium">Transportation</span>
+                            <span className="text-sm font-medium xs:text-base">Transportation</span>
                         </Skeleton>
                         <Skeleton>
-                            <span className="xs:text-base text-nowrap text-sm font-medium">
+                            <span className="text-nowrap text-sm font-medium xs:text-base">
                                 {formatCurrency(100_000)}
                             </span>
                         </Skeleton>
@@ -217,7 +218,7 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
                         <div className="flex flex-wrap items-center gap-0.5">
                             <div className="flex items-center gap-1 text-xs">
                                 <Skeleton>
-                                    <div className="xs:size-4 size-3"></div>
+                                    <div className="size-3 xs:size-4"></div>
                                 </Skeleton>
                                 <Skeleton>
                                     <span>Shopee Pay</span>

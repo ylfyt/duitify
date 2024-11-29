@@ -117,3 +117,13 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+-- insert settings when user created
+CREATE OR REPLACE FUNCTION public.settings_created()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO settings (user_id, pin, hide_amount, max_visible_amount)
+    VALUES (NEW.id, NULL, FALSE, NULL);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

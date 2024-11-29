@@ -2,6 +2,7 @@ import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
 import { FC, Fragment, useEffect, useState } from 'react';
 import { Icon } from '@/components/icon';
+import { revealAmountAtom, settingsAtom } from '@/stores/settings';
 
 const SCROLL_THRESHOLD = 8;
 
@@ -11,6 +12,9 @@ export const AppBar: FC<AppBarProps> = () => {
     const [appBarCtx] = useAtom(appBarCtxAtom);
     const [scrolled, setScrolled] = useState(false);
     const [scrollY, setScrollY] = useState(0);
+
+    const [settings] = useAtom(settingsAtom);
+    const [reveal, setReveal] = useAtom(revealAmountAtom);
 
     useEffect(() => {
         const onScroll = () => setScrollY(window.scrollY);
@@ -46,6 +50,11 @@ export const AppBar: FC<AppBarProps> = () => {
                         {appBarCtx.leftActions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
                     </div>
                     <div className="flex items-center gap-4 text-3xl">
+                        {settings?.hide_amount && appBarCtx.revealer && (
+                            <button onClick={() => setReveal((prev) => !prev)} className="text-2xl">
+                                {!reveal ? <Icon icon="lucide:eye-off" /> : <Icon icon="lucide:eye" />}
+                            </button>
+                        )}
                         {appBarCtx.actions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
                     </div>
                 </div>

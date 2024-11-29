@@ -17,6 +17,7 @@ type AppBarCtx = {
     actions?: JSX.Element[];
     back?: boolean;
     leftActions?: JSX.Element[];
+    revealer?: boolean;
 };
 export const appBarCtxAtom = atom<AppBarCtx>({
     title: 'Duitify',

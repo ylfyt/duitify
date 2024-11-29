@@ -10,6 +10,7 @@ import { FC } from 'react';
 import { toast } from 'react-toastify';
 import { ModalAccountCreate } from './modal-account-create';
 import { ENV } from '@/constants/env';
+import { AmountRevealer } from '@/components/amount-revealer';
 
 interface AccountCardProps {
     account: Account;
@@ -43,7 +44,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
                 <div className="flex items-center gap-2">
                     <p>Balance: </p>
                     <p className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
-                        {formatCurrency(account.balance)}
+                        <AmountRevealer amount={account.balance} />
                     </p>
                 </div>
             </div>

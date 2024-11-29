@@ -72,6 +72,30 @@ export type Database = {
         }
         Relationships: []
       }
+      settings: {
+        Row: {
+          hide_amount: boolean | null
+          id: string
+          max_visible_amount: number | null
+          pin: string | null
+          user_id: string
+        }
+        Insert: {
+          hide_amount?: boolean | null
+          id?: string
+          max_visible_amount?: number | null
+          pin?: string | null
+          user_id: string
+        }
+        Update: {
+          hide_amount?: boolean | null
+          id?: string
+          max_visible_amount?: number | null
+          pin?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       transaction: {
         Row: {
           account_id: string

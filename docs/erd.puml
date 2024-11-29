@@ -9,6 +9,15 @@ entity user {
     updated_at : DATETIME
 }
 
+entity settings {
+    * id : INT
+    --
+    * user_id : INT
+    pin : VARCHAR
+    hide_amount : BOOLEAN
+    max_visible_amount : FLOAT
+}
+
 entity account {
     * id : INT
     --
@@ -52,5 +61,6 @@ account "n" -- "1" user
 category "n" -- "1" user
 transaction "n" -- "1" account
 transaction "n" -- "1" category
+settings "1" -- "1" user
 
 @enduml

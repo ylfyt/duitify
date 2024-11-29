@@ -36,6 +36,9 @@ import IconLucideX from '~icons/lucide/x';
 import IconLucideSettings from '~icons/lucide/settings';
 import IconLucideDownload from '~icons/lucide/download';
 import IconLucideChevronRight from '~icons/lucide/chevron-right';
+import IconLucideDollarSign from '~icons/lucide/dollar-sign';
+import IconLucideKeyboard from '~icons/lucide/keyboard';
+import IconLucideCheck from '~icons/lucide/check';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -75,6 +78,9 @@ const Icons = {
     'lucide:settings': IconLucideSettings,
     'lucide:download': IconLucideDownload,
     'lucide:chevron-right': IconLucideChevronRight,
+    'lucide:dollar-sign': IconLucideDollarSign,
+    'lucide:keyboard': IconLucideKeyboard,
+    'lucide:check': IconLucideCheck,
 };
 
 export type IconName = keyof typeof Icons;

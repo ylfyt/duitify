@@ -8,6 +8,7 @@ import { ModalAccountCreate } from './components/modal-account-create';
 import { useAccountAtom } from '@/stores/account';
 import { formatCurrency } from '@/helper/format-currency';
 import Skeleton from '@/components/skeleton';
+import { AmountRevealer } from '@/components/amount-revealer';
 
 interface AccountPageProps {}
 
@@ -21,6 +22,7 @@ const AccountPage: FC<AccountPageProps> = () => {
     useEffect(() => {
         setAppBarCtx({
             title: 'Accounts',
+            revealer: true,
             actions: [
                 <button
                     onClick={() =>
@@ -28,7 +30,7 @@ const AccountPage: FC<AccountPageProps> = () => {
                             onSuccess: (account) => setAccounts((prev) => [account, ...prev]),
                         })
                     }
-                    className="dai-btn dai-btn-success dai-btn-sm"
+                    className="dai-btn dai-btn-success dai-btn-sm ml-2"
                 >
                     Create
                 </button>,
@@ -51,7 +53,11 @@ const AccountPage: FC<AccountPageProps> = () => {
                 <div className="flex items-center gap-2">
                     <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
                     <span className="font-medium text-primary">
-                        {loading ? <Skeleton>{formatCurrency(10_000_000)}</Skeleton> : formatCurrency(totalBalance)}
+                        {loading ? (
+                            <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
+                        ) : (
+                            <AmountRevealer amount={totalBalance} />
+                        )}
                     </span>
                 </div>
             </div>
