@@ -23,10 +23,10 @@ export default defineConfig(({ mode }) => {
                     name: 'Duitify',
                     short_name: 'Duitify',
                     start_url: '/duitify/',
-                    scope: 'http://192.168.0.201:4173/duitify/',
                     description: 'Manage your finances easily',
                     theme_color: COLOR_SCHEMES.light.primary,
                     display: 'standalone',
+                    orientation: 'portrait',
                     icons: [
                         {
                             src: BASE_URL + '/icons/icon-192x192.png',
