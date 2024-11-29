@@ -34,7 +34,7 @@ export const TransactionGroupCard: FC<TransactionGroupCardProps> = ({ date, tran
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
-                <span>{formatDate(date, { lang: 'en-US' })}</span>
+                <span className="xs:text-base text-sm">{formatDate(date, { lang: 'en-US' })}</span>
                 <span className={'dai-badge dai-badge-sm ' + (total > 0 ? 'dai-badge-success' : 'dai-badge-error')}>
                     {formatCurrency(total)}
                 </span>
@@ -94,53 +94,60 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
     };
 
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
+        <div className="flex items-center gap-3 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img
-                className="size-12"
+                className="xs:size-12 size-9"
                 src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.webp' : el.category?.logo)}
                 loading="lazy"
                 alt=""
             />
-            <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex flex-col gap-1.5">
-                    <span className="text-lg font-medium">
-                        {el.type === 'transfer' ? 'Transfer' : el.category?.name}
-                    </span>
-                    <div className="flex flex-wrap items-center gap-1">
-                        <div className="flex items-center gap-1.5 text-xs">
-                            <img loading="lazy" className="size-4" src={ENV.BASE_URL + el.account?.logo} alt="" />
-                            <span>{el.account?.name}</span>
-                        </div>
-                        {el.type === 'transfer' && el.to_account && (
-                            <>
-                                <span>
-                                    <Icon className="text-sm" icon="lucide:arrow-right" />
-                                </span>
-                                <div className="flex items-center gap-1.5 text-xs">
-                                    <img
-                                        loading="lazy"
-                                        className="size-4"
-                                        src={ENV.BASE_URL + el.to_account?.logo}
-                                        alt=""
-                                    />
-                                    <span>{el.to_account?.name}</span>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="flex flex-col items-end gap-0.5">
+            <div className="flex w-full items-center justify-between">
+                <div className="flex w-full flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                        <span className="xs:text-base text-sm font-medium">
+                            {el.type === 'transfer' ? 'Transfer' : el.category?.name}
+                        </span>
                         <span
                             className={
-                                'text-nowrap text-lg font-medium ' +
+                                'xs:text-base text-nowrap text-sm font-medium ' +
                                 (el.type === 'transfer' ? 'text-primary' : amount > 0 ? 'text-success' : 'text-error')
                             }
                         >
                             {formatCurrency(amount)}
                         </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center gap-0.5">
+                            <div className="flex items-center gap-1 text-xs">
+                                <img
+                                    loading="lazy"
+                                    className="xs:size-4 size-3"
+                                    src={ENV.BASE_URL + el.account?.logo}
+                                    alt=""
+                                />
+                                <span>{el.account?.name}</span>
+                            </div>
+                            {el.type === 'transfer' && el.to_account && (
+                                <>
+                                    <span>
+                                        <Icon className="text-xs" icon="lucide:arrow-right" />
+                                    </span>
+                                    <div className="flex items-center gap-1 text-xs">
+                                        <img
+                                            loading="lazy"
+                                            className="xs:size-4 size-3"
+                                            src={ENV.BASE_URL + el.to_account?.logo}
+                                            alt=""
+                                        />
+                                        <span>{el.to_account?.name}</span>
+                                    </div>
+                                </>
+                            )}
+                        </div>
                         <span className="line-clamp-1 text-xs">{el.description}</span>
                     </div>
+                </div>
+                <div className="flex items-center gap-2">
                     <DropdownMenu
                         options={[
                             {
@@ -171,7 +178,7 @@ export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps>
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
                 <Skeleton>
-                    <span>Wed, Sep 20, 2022</span>
+                    <span className="xs:text-base text-sm">Wed, Sep 20, 2022</span>
                 </Skeleton>
                 <Skeleton>
                     <span className="dai-badge dai-badge-error dai-badge-sm">{formatCurrency(10_000)}</span>
@@ -190,35 +197,39 @@ interface TransactionCardSkeletonProps {}
 
 const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
+        <div className="flex items-center gap-3 rounded-xl bg-base-100 px-3 py-2 shadow">
             <Skeleton>
-                <div className="size-12"></div>
+                <div className="xs:size-12 size-9"></div>
             </Skeleton>
-            <div className="flex w-full items-center justify-between gap-4">
-                <div className="flex flex-col gap-1.5">
-                    <Skeleton>
-                        <span className="text-lg font-medium">Transportation</span>
-                    </Skeleton>
-                    <div className="flex flex-wrap items-center gap-1">
-                        <div className="flex items-center gap-1.5 text-xs">
-                            <Skeleton>
-                                <div className="size-4"></div>
-                            </Skeleton>
-                            <Skeleton>
-                                <span>Shopee Pay</span>
-                            </Skeleton>
+            <div className="flex w-full items-center justify-between">
+                <div className="flex w-full flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                        <Skeleton>
+                            <span className="xs:text-base text-sm font-medium">Transportation</span>
+                        </Skeleton>
+                        <Skeleton>
+                            <span className="xs:text-base text-nowrap text-sm font-medium">
+                                {formatCurrency(100_000)}
+                            </span>
+                        </Skeleton>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center gap-0.5">
+                            <div className="flex items-center gap-1 text-xs">
+                                <Skeleton>
+                                    <div className="xs:size-4 size-3"></div>
+                                </Skeleton>
+                                <Skeleton>
+                                    <span>Shopee Pay</span>
+                                </Skeleton>
+                            </div>
                         </div>
+                        <Skeleton>
+                            <span className="line-clamp-1 text-xs">Lorem, ipsum.</span>
+                        </Skeleton>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex flex-col items-end gap-0.5">
-                        <Skeleton>
-                            <span className={'text-nowrap text-lg'}>{formatCurrency(10_0000)}</span>
-                        </Skeleton>
-                        <Skeleton>
-                            <span className="text-sm">Lorem, ipsum.</span>
-                        </Skeleton>
-                    </div>
                     <Skeleton>
                         <DropdownMenu options={[]} />
                     </Skeleton>

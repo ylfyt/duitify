@@ -15,13 +15,13 @@ export const MobileNavbarItem: FC<MobileNavbarItemProps> = ({ icon, title, href 
             to={href}
             className={({ isActive }) => {
                 return [
-                    'group flex w-20 flex-col items-center rounded-2xl px-3 py-1 transition-all duration-300',
+                    'xs:w-[5rem] group flex w-[4rem] flex-col items-center rounded-2xl px-3 py-1 transition-all duration-300',
                     isActive ? 'is-active bg-secondary/10 font-semibold text-secondary' : '',
                 ].join(' ');
             }}
         >
-            <Icon icon={icon} className="text-2xl" />
-            <span className="hidden text-center text-xs group-[.is-active]:block">{title}</span>
+            <Icon icon={icon} className="xs:text-2xl text-xl" />
+            <span className="text-xxs xs:text-xs hidden text-center group-[.is-active]:block">{title}</span>
         </NavLink>
     );
 };

@@ -64,7 +64,7 @@ const ReportPage: FC<ReportPageProps> = () => {
                 <div>No expense found</div>
             ) : (
                 <div className="flex items-center gap-4">
-                    <div className="aspect-square w-[14rem]">
+                    <div className="xs:w-[14rem] aspect-square w-[10rem]">
                         {loading ? (
                             <Skeleton className="h-full w-full rounded-full">
                                 <div></div>

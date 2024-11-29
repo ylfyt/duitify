@@ -8,6 +8,12 @@ const config: Config = {
     darkMode: 'class',
     theme: {
         extend: {
+            fontSize: {
+                xxs: '.6rem',
+            },
+            screens: {
+                xs: '440px',
+            },
             animation: {
                 'reverse-spin': 'reverse-spin 1s linear infinite',
             },
