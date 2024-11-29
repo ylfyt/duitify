@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
                 manifest: {
                     name: 'Duitify',
                     short_name: 'Duitify',
-                    start_url: '/duitify/',
+                    start_url: BASE_URL,
                     description: 'Manage your finances easily',
                     theme_color: COLOR_SCHEMES.light.primary,
                     display: 'standalone',
