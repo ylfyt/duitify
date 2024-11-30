@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { ModalAccountCreate } from './modal-account-create';
 import { ENV } from '@/constants/env';
 import { AmountRevealer } from '@/components/amount-revealer';
+import { Link } from 'react-router-dom';
 
 interface AccountCardProps {
     account: Account;
@@ -37,32 +38,34 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
     };
 
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
-            <img src={ENV.BASE_URL + account.logo} className="size-12"></img>
-            <div className="flex flex-1 flex-col gap-0.5">
-                <p className="text-lg">{account.name}</p>
-                <div className="flex items-center gap-2">
-                    <p>Balance: </p>
-                    <span className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
-                        <AmountRevealer amount={account.balance} />
-                    </span>
+        <Link to={`/accounts/transaction?account=${account.id}`}>
+            <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
+                <img src={ENV.BASE_URL + account.logo} className="size-12"></img>
+                <div className="flex flex-1 flex-col gap-0.5">
+                    <p className="text-lg">{account.name}</p>
+                    <div className="flex items-center gap-2">
+                        <p>Balance: </p>
+                        <span className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
+                            <AmountRevealer amount={account.balance} />
+                        </span>
+                    </div>
                 </div>
+                <DropdownMenu
+                    options={[
+                        {
+                            icon: 'lucide:pencil',
+                            label: 'Edit',
+                            onClick: () => openModal(ModalAccountCreate, { account, onSuccess: onUpdated }),
+                        },
+                        {
+                            icon: 'lucide:trash',
+                            label: 'Delete',
+                            onClick: handleDelete,
+                        },
+                    ]}
+                />
             </div>
-            <DropdownMenu
-                options={[
-                    {
-                        icon: 'lucide:pencil',
-                        label: 'Edit',
-                        onClick: () => openModal(ModalAccountCreate, { account, onSuccess: onUpdated }),
-                    },
-                    {
-                        icon: 'lucide:trash',
-                        label: 'Delete',
-                        onClick: handleDelete,
-                    },
-                ]}
-            />
-        </div>
+        </Link>
     );
 };
 

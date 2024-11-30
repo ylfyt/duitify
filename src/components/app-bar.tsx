@@ -38,14 +38,14 @@ export const AppBar: FC<AppBarProps> = () => {
                 <div className="flex w-full items-center justify-between px-6 md:w-[47rem]">
                     <div className="flex items-center gap-4 text-3xl">
                         {appBarCtx.back && (
-                            <button onClick={() => history.back()} className="flex items-center gap-4 text-3xl">
+                            <button onClick={() => history.back()} className="flex items-center gap-4 text-2xl">
                                 <Icon icon="mdi:arrow-left" />
                             </button>
                         )}
                         {!appBarCtx.title ? null : typeof appBarCtx.title !== 'string' ? (
                             appBarCtx.title
                         ) : (
-                            <span className="text-xl font-semibold">{appBarCtx.title}</span>
+                            <span className="text-lg font-semibold xs:text-xl">{appBarCtx.title}</span>
                         )}
                         {appBarCtx.leftActions?.map((el, idx) => <Fragment key={idx}>{el}</Fragment>)}
                     </div>

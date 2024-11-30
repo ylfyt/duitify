@@ -5,21 +5,22 @@ import { PAGINATION_SIZES } from '@/constants/common';
 
 type PaginationFilter = {
     cursor?: string;
+    account?: string | null;
 };
 
 export class TransactionRepo extends BaseRepo {
-    public static async getTransactions({ cursor }: PaginationFilter): Promise<QueryResultMany<Transaction>> {
+    public static async getTransactions({ cursor, account }: PaginationFilter): Promise<QueryResultMany<Transaction>> {
         const today = new Date();
         today.setDate(today.getDate() + 2);
 
-        return this.db
-            .from('transaction')
-            .select(
-                `*, 
+        const q = this.db.from('transaction').select(
+            `*, 
                 category(id, name, logo),
                 account:account!transaction_account_id_fkey(id, name, logo),
                 to_account:account!transaction_to_account_id_fkey(id, name, logo)`,
-            )
+        );
+        if (account) q.or(`account_id.eq.${account}, to_account_id.eq.${account}`);
+        return q
             .order('occurred_at', { ascending: false })
             .lt('occurred_at', !cursor ? formatDate(today, { format: 'yyyy-MM-dd HH:mm:ss' }) : cursor)
             .limit(PAGINATION_SIZES[0]);

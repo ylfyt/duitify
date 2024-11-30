@@ -111,7 +111,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                         <span
                             className={
                                 'text-nowrap text-sm font-medium xs:text-base ' +
-                                (el.type === 'transfer' ? 'text-primary' : amount > 0 ? 'text-success' : 'text-error')
+                                (el.type === 'transfer' ? 'text-secondary' : amount > 0 ? 'text-success' : 'text-error')
                             }
                         >
                             <AmountRevealer amount={amount} />

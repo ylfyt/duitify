@@ -2,7 +2,7 @@ import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { formatDate } from '@/helper/format-date';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Transaction } from '@/types/transaction.type';
 import { toast } from 'react-toastify';
 import { TransactionGroupCard, TransactionGroupCardSkeleton } from './components/transaction-card';
@@ -16,11 +16,19 @@ interface TransactionPageProps {}
 const TransactionPage: FC<TransactionPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
 
+    const [search] = useSearchParams();
+
+    const [account, setAccount] = useState<string | null>(search.get('account'));
     const [cursor, setCursor] = useState<string | undefined>(undefined);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(false);
     const [isFirst, setIsFirst] = useState<boolean>(true);
+
+    const selectedAccount = useMemo(
+        () => transactions.find((t) => t.account_id === account)?.account,
+        [account, transactions],
+    );
 
     const groupedTransactions = useMemo(() => {
         return transactions.reduce(
@@ -37,21 +45,37 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     }, [transactions]);
 
     useEffect(() => {
+        setIsFirst(true);
+        setHasMore(false);
+        setTransactions([]);
+        setCursor(undefined);
+        setAccount(search.get('account'));
+    }, [search]);
+
+    useEffect(() => {
         setAppBarCtx({
             revealer: true,
-            title: <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />,
+            back: !!account,
+            title: selectedAccount ? (
+                selectedAccount.name
+            ) : (
+                <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />
+            ),
             actions: [
                 <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-2">
                     Create
                 </Link>,
             ],
         });
-    }, []);
+    }, [selectedAccount, account]);
 
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const { data, error } = await TransactionRepo.getTransactions({ cursor });
+            const { data, error } = await TransactionRepo.getTransactions({
+                cursor,
+                account,
+            });
             setLoading(false);
             if (error) {
                 setHasMore(false);
@@ -62,7 +86,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
             setIsFirst(false);
             setHasMore((data?.length ?? 0) >= PAGINATION_SIZES[0]);
         })();
-    }, [cursor]);
+    }, [cursor, account]);
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-4">
