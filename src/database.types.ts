@@ -162,24 +162,7 @@ export type Database = {
       }
     }
     Views: {
-      expense_overview: {
-        Row: {
-          amount: number | null
-          category_id: string | null
-          count: number | null
-          logo: string | null
-          name: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "transaction_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "category"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       [_ in never]: never

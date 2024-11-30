@@ -43,9 +43,9 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
                 <p className="text-lg">{account.name}</p>
                 <div className="flex items-center gap-2">
                     <p>Balance: </p>
-                    <p className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
+                    <span className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
                         <AmountRevealer amount={account.balance} />
-                    </p>
+                    </span>
                 </div>
             </div>
             <DropdownMenu

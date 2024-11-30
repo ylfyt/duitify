@@ -25,5 +25,3 @@ export type Transaction = Database['public']['Tables']['transaction']['Row'] & {
 export type TransactionCreateDto = Database['public']['Tables']['transaction']['Insert'];
 
 export type TransactionUpdateDto = Database['public']['Tables']['transaction']['Update'];
-
-export type ExpenseOverview = Database['public']['Views']['expense_overview']['Row'];

@@ -1,5 +1,4 @@
 import { ReportRepo } from '@/repo/report-repo';
-import { ExpenseOverview } from '@/types/transaction.type';
 import { ChartData } from 'chart.js';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -12,8 +11,16 @@ import { useAtom } from 'jotai';
 import { appBarCtxAtom } from '@/stores/common';
 import Skeleton from '@/components/skeleton';
 import { AmountRevealer } from '@/components/amount-revealer';
+import { Icon } from '@/components/icon';
+import { ExpenseOverview } from '@/types/report.type';
+import { DropdownMenu } from '@/components/dropdown-menu';
 
 ChartJS.register(Title, Tooltip, ArcElement, CategoryScale, LinearScale);
+
+const formarter = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    year: 'numeric',
+});
 
 interface ReportPageProps {}
 
@@ -23,12 +30,14 @@ const ReportPage: FC<ReportPageProps> = () => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ExpenseOverview[]>([]);
 
+    const [expenseDate, setExpenseDate] = useState<Date | undefined>(new Date());
+
     const total = useMemo(() => data.reduce((acc, el) => acc + (el.amount ?? 0), 0), [data]);
 
     const colors = useMemo(() => data.map((_, idx) => COLOR_RANKS[idx] ?? COLOR_RANKS[COLOR_RANKS.length - 1]), [data]);
     const chartData = useMemo<ChartData<'doughnut', number[], string>>(
         () => ({
-            labels: data.map((el) => el.name ?? 'unknown'),
+            labels: data.map((el) => el.category?.name ?? 'unknown'),
             datasets: [
                 {
                     data: data.map((el) => el.amount ?? 0),
@@ -50,7 +59,7 @@ const ReportPage: FC<ReportPageProps> = () => {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const res = await ReportRepo.getExpenseOverview();
+            const res = await ReportRepo.getExpenseOverview(expenseDate);
             setLoading(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -58,15 +67,52 @@ const ReportPage: FC<ReportPageProps> = () => {
             }
             setData(res.data ?? []);
         })();
-    }, []);
+    }, [expenseDate]);
 
     return (
-        <div className="flex flex-1 flex-col items-center gap-4 pt-4">
+        <div className="flex flex-1 flex-col items-center gap-4 pt-2">
+            <div className="flex w-full items-center rounded-xl bg-base-100 p-2">
+                <div className="flex-1"></div>
+                <div className="flex items-center justify-center gap-2">
+                    <button
+                        disabled={loading || !expenseDate}
+                        onClick={() =>
+                            setExpenseDate((prev) => (!prev ? undefined : new Date(prev.setMonth(prev.getMonth() - 1))))
+                        }
+                        className="text-xl disabled:opacity-20"
+                    >
+                        <Icon icon="lucide:chevron-left" />
+                    </button>
+                    <span className="w-[10rem] text-center">
+                        {!expenseDate ? 'All time' : formarter.format(expenseDate)}
+                    </span>
+                    <button
+                        disabled={loading || !expenseDate || expenseDate.getMonth() === new Date().getMonth()}
+                        onClick={() =>
+                            setExpenseDate((prev) => (!prev ? undefined : new Date(prev.setMonth(prev.getMonth() + 1))))
+                        }
+                        className="text-xl disabled:opacity-20"
+                    >
+                        <Icon icon="lucide:chevron-right" />
+                    </button>
+                </div>
+                <div className="flex flex-1 justify-end">
+                    <DropdownMenu
+                        options={[
+                            {
+                                icon: 'lucide:calendar-days',
+                                label: expenseDate ? 'All time' : 'This month',
+                                onClick: () => setExpenseDate((prev) => (prev ? undefined : new Date())),
+                            },
+                        ]}
+                    />
+                </div>
+            </div>
             {!loading && data.length === 0 ? (
                 <div>No expense found</div>
             ) : (
                 <div className="flex items-center gap-4">
-                    <div className="aspect-square w-[10rem] xs:w-[14rem]">
+                    <div className="aspect-square w-[60vw] max-w-[20rem]">
                         {loading ? (
                             <Skeleton className="h-full w-full rounded-full">
                                 <div></div>
@@ -89,19 +135,21 @@ const ReportPage: FC<ReportPageProps> = () => {
                             />
                         )}
                     </div>
-                    <div className="flex flex-col gap-1">
-                        {loading
-                            ? Array.from({ length: 14 }).map((_, idx) => <ChartLegendSkeleton key={idx} />)
-                            : data.map((el, idx) => (
-                                  <ChartLegend key={idx} name={el.name ?? 'unknown'} color={colors[idx]} />
-                              ))}
-                    </div>
                 </div>
             )}
             <div className="grid w-full grid-cols-1 gap-1 md:grid-cols-2">
                 {loading
-                    ? Array.from({ length: 5 }).map((_, idx) => <ReportExpenseCardSkeleton key={idx} />)
-                    : data.map((el, idx) => <ReportExpenseCard key={idx} el={el} total={total} />)}
+                    ? Array.from({ length: 14 }).map((_, idx) => <ReportExpenseCardSkeleton key={idx} />)
+                    : data.length === 0
+                      ? null
+                      : data.map((el, idx) => (
+                            <ReportExpenseCard
+                                key={idx}
+                                el={el}
+                                total={total}
+                                color={colors[idx] ?? colors[colors.length - 1]}
+                            />
+                        ))}
             </div>
         </div>
     );
@@ -112,15 +160,19 @@ export default ReportPage;
 interface ReportExpenseCardProps {
     el: ExpenseOverview;
     total: number;
+    color: string;
 }
 
-const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total }) => {
+const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total, color }) => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
-            <img className="size-12" src={ENV.BASE_URL + el.logo} alt="" />
+            <img className="size-12" src={ENV.BASE_URL + el.category?.logo} alt="" />
             <div className="flex w-full flex-col gap-1">
                 <div className="flex items-center justify-between">
-                    <span>{el.name}</span>
+                    <div className="flex items-center gap-1.5">
+                        <span style={{ backgroundColor: color }} className="h-2 w-4"></span>
+                        <span>{el.category?.name}</span>
+                    </div>
                     <span className="font-medium text-error">
                         <AmountRevealer amount={-1 * (el.amount ?? 0)} />
                     </span>
@@ -148,9 +200,14 @@ const ReportExpenseCardSkeleton: FC<ReportExpenseCardSkeletonProps> = () => {
             </Skeleton>
             <div className="flex w-full flex-col gap-1">
                 <div className="flex justify-between">
-                    <Skeleton>
-                        <span>Food</span>
-                    </Skeleton>
+                    <div className="flex items-center gap-1.5">
+                        <Skeleton className="h-2 w-[1rem]">
+                            <div></div>
+                        </Skeleton>
+                        <Skeleton>
+                            <span>Transportation</span>
+                        </Skeleton>
+                    </div>
                     <Skeleton>
                         <span className="font-medium text-error">{formatCurrency(-1 * 10_000)}</span>
                     </Skeleton>
@@ -162,35 +219,6 @@ const ReportExpenseCardSkeleton: FC<ReportExpenseCardSkeletonProps> = () => {
                     </span>
                 </div>
             </div>
-        </div>
-    );
-};
-
-interface ChartLegendProps {
-    color: string;
-    name: string;
-}
-
-const ChartLegend: FC<ChartLegendProps> = ({ name, color }) => {
-    return (
-        <div className="flex items-center gap-2">
-            <span style={{ backgroundColor: color }} className="h-2 w-4"></span>
-            <span>{name}</span>
-        </div>
-    );
-};
-
-interface ChartLegendSkeletonProps {}
-
-const ChartLegendSkeleton: FC<ChartLegendSkeletonProps> = () => {
-    return (
-        <div className="flex items-center gap-2">
-            <Skeleton className="h-2 w-4">
-                <div></div>
-            </Skeleton>
-            <Skeleton>
-                <span>Transportation</span>
-            </Skeleton>
         </div>
     );
 };
