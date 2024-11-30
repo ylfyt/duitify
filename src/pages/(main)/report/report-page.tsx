@@ -11,6 +11,7 @@ import { ENV } from '@/constants/env';
 import { useAtom } from 'jotai';
 import { appBarCtxAtom } from '@/stores/common';
 import Skeleton from '@/components/skeleton';
+import { AmountRevealer } from '@/components/amount-revealer';
 
 ChartJS.register(Title, Tooltip, ArcElement, CategoryScale, LinearScale);
 
@@ -42,6 +43,7 @@ const ReportPage: FC<ReportPageProps> = () => {
     useEffect(() => {
         setAppBar({
             title: 'Report',
+            revealer: true,
         });
     }, []);
 
@@ -64,7 +66,7 @@ const ReportPage: FC<ReportPageProps> = () => {
                 <div>No expense found</div>
             ) : (
                 <div className="flex items-center gap-4">
-                    <div className="xs:w-[14rem] aspect-square w-[10rem]">
+                    <div className="aspect-square w-[10rem] xs:w-[14rem]">
                         {loading ? (
                             <Skeleton className="h-full w-full rounded-full">
                                 <div></div>
@@ -117,9 +119,11 @@ const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total }) => {
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img className="size-12" src={ENV.BASE_URL + el.logo} alt="" />
             <div className="flex w-full flex-col gap-1">
-                <div className="flex justify-between">
+                <div className="flex items-center justify-between">
                     <span>{el.name}</span>
-                    <span className="font-medium text-error">{formatCurrency(-1 * (el.amount ?? 0))}</span>
+                    <span className="font-medium text-error">
+                        <AmountRevealer amount={-1 * (el.amount ?? 0)} />
+                    </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <progress

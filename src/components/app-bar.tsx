@@ -51,7 +51,10 @@ export const AppBar: FC<AppBarProps> = () => {
                     </div>
                     <div className="flex items-center gap-4 text-3xl">
                         {settings?.hide_amount && appBarCtx.revealer && (
-                            <button onClick={() => setReveal((prev) => !prev)} className="text-2xl">
+                            <button
+                                onClick={() => setReveal((prev) => !prev)}
+                                className="text-xl text-secondary-content"
+                            >
                                 {!reveal ? <Icon icon="lucide:eye-off" /> : <Icon icon="lucide:eye" />}
                             </button>
                         )}

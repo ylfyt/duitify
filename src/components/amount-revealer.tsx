@@ -16,6 +16,20 @@ export const AmountRevealer: FC<AmountRevealerProps> = ({ amount }) => {
     if (!settings?.hide_amount || reveal || absAmount <= (settings.max_visible_amount ?? 0))
         return formatCurrency(amount);
 
-    if (absAmount >= 10_000) return '***********';
-    return '*********';
+    if (absAmount >= 1_000_000) return <Dots num={9} />;
+    return <Dots num={7} />;
+};
+
+interface DotsProps {
+    num: number;
+}
+
+const Dots: FC<DotsProps> = ({ num }) => {
+    return (
+        <div className="flex items-center gap-1">
+            {Array.from({ length: num }).map((_, idx) => (
+                <span key={idx} className="size-2 rounded-full bg-current"></span>
+            ))}
+        </div>
+    );
 };
