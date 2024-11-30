@@ -35,7 +35,7 @@ export const AppBar: FC<AppBarProps> = () => {
                     (scrolled ? 'opacity-90' : '')
                 }
             >
-                <div className="flex w-full items-center justify-between px-6 lg:w-[50rem]">
+                <div className="flex w-full items-center justify-between px-6 md:w-[47rem]">
                     <div className="flex items-center gap-4 text-3xl">
                         {appBarCtx.back && (
                             <button onClick={() => history.back()} className="flex items-center gap-4 text-3xl">

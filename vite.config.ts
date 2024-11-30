@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
                     short_name: 'Duitify',
                     start_url: BASE_URL,
                     description: 'Manage your finances easily',
-                    theme_color: COLOR_SCHEMES.light.primary,
+                    theme_color: COLOR_SCHEMES.light.secondary,
                     display: 'standalone',
                     orientation: 'portrait',
                     icons: [

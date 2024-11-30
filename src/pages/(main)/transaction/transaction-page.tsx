@@ -39,7 +39,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     useEffect(() => {
         setAppBarCtx({
             revealer: true,
-            title: <img className="size-8" src={ENV.BASE_URL + '/categories/invest.webp'} />,
+            title: <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />,
             actions: [
                 <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-2">
                     Create

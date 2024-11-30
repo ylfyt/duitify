@@ -13,8 +13,7 @@ import Loader from '@/components/loader';
 import { supabase } from '@/supabase';
 import errorImg from '/error.svg';
 import { settingsAtom } from '@/stores/settings';
-
-const DEFAULT = '';
+import { ENV } from '@/constants/env';
 
 export const DashboardLayout = () => {
     const navigate = useNavigate();
@@ -26,15 +25,13 @@ export const DashboardLayout = () => {
     const [message, setMessage] = useState('');
     const [count, setCount] = useState(0);
 
+    const defaultPage = useMemo(() => routes[0].link, [routes]);
+
     const blocker = useBlocker(({ historyAction, currentLocation, nextLocation }) => {
         return (
-            historyAction === 'POP' &&
-            currentLocation.pathname === ROUTES[0].link &&
-            nextLocation.pathname !== ROUTES[0].link
+            historyAction === 'POP' && currentLocation.pathname === defaultPage && nextLocation.pathname !== defaultPage
         );
     });
-
-    const defaultPage = useMemo(() => (!DEFAULT ? routes[0].link : DEFAULT), [routes]);
 
     useEffect(() => {
         if (blocker.state !== 'blocked') return;
@@ -42,25 +39,16 @@ export const DashboardLayout = () => {
     }, [blocker]);
 
     useEffect(() => {
-        if (user) {
-            if (defaultPage !== '/') {
-                let isRoot = false;
-                if (import.meta.env.BASE_URL === '/' && window.location.pathname === '/') isRoot = true;
-                if (
-                    import.meta.env.BASE_URL !== '/' &&
-                    removeSuffix(window.location.pathname, '/') === import.meta.env.BASE_URL
-                )
-                    isRoot = true;
-
-                if (isRoot) navigate(defaultPage, { replace: true });
-            }
+        let location = window.location.pathname;
+        if (!user) {
+            const url = location !== '/' ? `/login?${new URLSearchParams({ to: location }).toString()}` : `/login`;
+            navigate(url, { replace: true });
             return;
         }
-        const url =
-            window.location.pathname !== '/'
-                ? `/login?${new URLSearchParams({ to: window.location.pathname }).toString()}`
-                : `/login`;
-        navigate(url, { replace: true });
+        if (defaultPage === '/') return;
+
+        const isRoot = removeSuffix(location, '/') === ENV.BASE_URL;
+        if (isRoot) navigate(defaultPage, { replace: true });
     }, [user]);
 
     useEffect(() => {
@@ -108,7 +96,7 @@ export const DashboardLayout = () => {
         <div className="flex min-h-dvh flex-col items-center bg-base-200 text-base-content">
             <ScrollToTop />
             <AppBar />
-            <main className="grid w-full flex-1 px-4 lg:w-[50rem]">
+            <main className="grid w-full flex-1 px-4 md:w-[47rem]">
                 <Routes>
                     {routes.map((el) => (
                         <Route path={el.link + (el.layout ? '/*' : '')} element={<el.el />} key={el.link} />

@@ -148,25 +148,23 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                         <span className="line-clamp-1 text-xs">{el.description}</span>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <DropdownMenu
-                        options={[
-                            {
-                                icon: 'lucide:pencil',
-                                label: 'Edit',
-                                onClick: () => {
-                                    setFocusedTransaction(el);
-                                    navigate(`/transaction/create`);
-                                },
+                <DropdownMenu
+                    options={[
+                        {
+                            icon: 'lucide:pencil',
+                            label: 'Edit',
+                            onClick: () => {
+                                setFocusedTransaction(el);
+                                navigate(`/transaction/create`);
                             },
-                            {
-                                icon: 'lucide:trash',
-                                label: 'Delete',
-                                onClick: handleDelete,
-                            },
-                        ]}
-                    />
-                </div>
+                        },
+                        {
+                            icon: 'lucide:trash',
+                            label: 'Delete',
+                            onClick: handleDelete,
+                        },
+                    ]}
+                />
             </div>
         </div>
     );
@@ -230,11 +228,9 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
                         </Skeleton>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Skeleton>
-                        <DropdownMenu options={[]} />
-                    </Skeleton>
-                </div>
+                <Skeleton>
+                    <DropdownMenu options={[]} />
+                </Skeleton>
             </div>
         </div>
     );

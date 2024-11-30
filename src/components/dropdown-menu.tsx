@@ -15,7 +15,7 @@ interface DropdownMenuProps {
 export const DropdownMenu: FC<DropdownMenuProps> = ({ options }) => {
     return (
         <div className="dai-dropdown dai-dropdown-end dai-dropdown-left">
-            <div tabIndex={0} role="button" className="dai-btn dai-btn-ghost dai-btn-sm">
+            <div tabIndex={0} role="button" className="dai-btn dai-btn-ghost dai-btn-xs">
                 <Icon icon="lucide:more-vertical" />
             </div>
             <ul
