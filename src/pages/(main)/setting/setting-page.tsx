@@ -1,6 +1,7 @@
 import { Icon } from '@/components/icon';
 import { ENV } from '@/constants/env';
 import { formatCurrency } from '@/helper/format-currency';
+import { formatNumberToDate } from '@/helper/format-number-to-date';
 import { handleLogout } from '@/helper/logout';
 import { sessionAtom } from '@/stores/auth';
 import { appBarCtxAtom, showLoading } from '@/stores/common';
@@ -22,6 +23,9 @@ const SettingPage: FC<SettingPageProps> = () => {
 
     const [isEditMaxAmount, setIsEditMaxAmount] = useState(false);
     const [maxAmount, setMaxAmount] = useState(settings?.max_visible_amount?.toString() ?? '');
+
+    const [isEditStartMonth, setIsEditStartMonth] = useState(false);
+    const [startMonth, setStartMonth] = useState(settings?.month_start_date?.toString() ?? '1');
 
     useEffect(() => {
         setAppBar({
@@ -62,6 +66,26 @@ const SettingPage: FC<SettingPageProps> = () => {
         }
         setSettings({ ...settings!, max_visible_amount: parseFloat(maxAmount) });
         setIsEditMaxAmount(false);
+    };
+
+    const handleEditStartMonth = async () => {
+        if (!isEditStartMonth) {
+            setIsEditStartMonth(true);
+            return;
+        }
+
+        showLoading(true);
+        const res = await supabase
+            .from('settings')
+            .update({ month_start_date: parseInt(startMonth) })
+            .eq('id', settings?.id ?? 0);
+        showLoading(false);
+        if (res.error) {
+            toast.error(res.error.message);
+            return;
+        }
+        setSettings({ ...settings!, month_start_date: parseInt(startMonth) });
+        setIsEditStartMonth(false);
     };
 
     return (
@@ -122,6 +146,39 @@ const SettingPage: FC<SettingPageProps> = () => {
                                     onClick={handleEditMaxAmount}
                                 >
                                     {isEditMaxAmount ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                    <span className="font-medium">Report</span>
+                    <div className="flex flex-col gap-2">
+                        <div className="flex items-center justify-between rounded-xl bg-base-100 p-3 shadow">
+                            <div className="flex items-center gap-2">
+                                <Icon icon="lucide:calendar-days" />
+                                <span>Start of the month</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                {!isEditStartMonth ? (
+                                    <span>{formatNumberToDate(settings?.month_start_date ?? 1)}</span>
+                                ) : (
+                                    <input
+                                        min={0}
+                                        type="number"
+                                        value={startMonth}
+                                        onChange={(e) => setStartMonth(e.target.value)}
+                                        className="dai-input dai-input-xs dai-input-bordered max-w-24 text-end"
+                                    />
+                                )}
+                                <button
+                                    disabled={
+                                        isEditStartMonth &&
+                                        (!startMonth || isNaN(parseFloat(startMonth)) || parseFloat(startMonth) < 0)
+                                    }
+                                    onClick={handleEditStartMonth}
+                                >
+                                    {isEditStartMonth ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
                                 </button>
                             </div>
                         </div>

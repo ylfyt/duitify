@@ -16,6 +16,7 @@ entity settings {
     pin : VARCHAR
     hide_amount : BOOLEAN
     max_visible_amount : FLOAT
+    month_start_date : INT    
 }
 
 entity account {

@@ -77,6 +77,7 @@ export type Database = {
           hide_amount: boolean | null
           id: string
           max_visible_amount: number | null
+          month_start_date: number | null
           pin: string | null
           user_id: string
         }
@@ -84,6 +85,7 @@ export type Database = {
           hide_amount?: boolean | null
           id?: string
           max_visible_amount?: number | null
+          month_start_date?: number | null
           pin?: string | null
           user_id: string
         }
@@ -91,6 +93,7 @@ export type Database = {
           hide_amount?: boolean | null
           id?: string
           max_visible_amount?: number | null
+          month_start_date?: number | null
           pin?: string | null
           user_id?: string
         }
