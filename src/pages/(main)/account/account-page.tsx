@@ -52,7 +52,7 @@ const AccountPage: FC<AccountPageProps> = () => {
             <div className="rounded-xl bg-base-100 p-4">
                 <div className="flex items-center gap-2">
                     <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
-                    <span className="font-semibold text-primary">
+                    <span className="font-semibold text-success">
                         {loading ? (
                             <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
                         ) : (

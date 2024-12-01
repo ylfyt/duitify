@@ -42,7 +42,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
     return (
         <div
             onClick={() => navigate(`/accounts/transaction?account=${account.id}`)}
-            className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md"
+            className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md hover:cursor-pointer"
         >
             <img src={ENV.BASE_URL + account.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
