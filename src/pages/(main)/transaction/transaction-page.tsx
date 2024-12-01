@@ -94,7 +94,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 {loading && isFirst ? (
                     Array.from({ length: 4 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)
                 ) : transactions.length === 0 ? (
-                    <p className="mt-4 text-center text-xl">No transactions found</p>
+                    <p className="text-center text-xl">No transactions found</p>
                 ) : (
                     Object.keys(groupedTransactions)
                         .sort((a, b) => (a > b ? -1 : 1))

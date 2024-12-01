@@ -108,35 +108,44 @@ const ReportPage: FC<ReportPageProps> = () => {
                     />
                 </div>
             </div>
-            {!loading && data.length === 0 ? (
-                <div>No expense found</div>
-            ) : (
-                <div className="flex items-center gap-4">
-                    <div className="aspect-square w-[60vw] max-w-[20rem]">
-                        {loading ? (
-                            <Skeleton className="h-full w-full rounded-full">
-                                <div></div>
-                            </Skeleton>
-                        ) : (
-                            <Doughnut
-                                data={chartData}
-                                options={{
-                                    responsive: true,
-                                    plugins: {
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function (tooltipItem) {
-                                                    return `${tooltipItem.label}: ${formatCurrency(parseFloat(tooltipItem.raw as string))}`;
-                                                },
+
+            <div className="flex flex-col items-center gap-4">
+                <div className="aspect-square w-[60vw] max-w-[20rem]">
+                    {loading ? (
+                        <Skeleton className="h-full w-full rounded-full">
+                            <div></div>
+                        </Skeleton>
+                    ) : data.length === 0 ? (
+                        <div className="h-full w-full rounded-full bg-base-300"></div>
+                    ) : (
+                        <Doughnut
+                            data={chartData}
+                            options={{
+                                responsive: true,
+                                plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (tooltipItem) {
+                                                return `${tooltipItem.label}: ${formatCurrency(parseFloat(tooltipItem.raw as string))}`;
                                             },
                                         },
                                     },
-                                }}
-                            />
-                        )}
-                    </div>
+                                },
+                            }}
+                        />
+                    )}
                 </div>
-            )}
+                <div className="flex items-center gap-2">
+                    <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
+                    <span className="font-bold text-error">
+                        {loading ? (
+                            <Skeleton>{formatCurrency(-1 * 10_000)}</Skeleton>
+                        ) : (
+                            <AmountRevealer amount={-1 * total} />
+                        )}
+                    </span>
+                </div>
+            </div>
             <div className="grid w-full grid-cols-1 gap-1 md:grid-cols-2">
                 {loading
                     ? Array.from({ length: 14 }).map((_, idx) => <ReportExpenseCardSkeleton key={idx} />)
@@ -167,7 +176,7 @@ const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total, color }) => 
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img className="size-12" src={ENV.BASE_URL + el.category?.logo} alt="" />
-            <div className="flex w-full flex-col gap-1">
+            <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
                         <span style={{ backgroundColor: color }} className="h-2 w-4"></span>
@@ -196,13 +205,13 @@ const ReportExpenseCardSkeleton: FC<ReportExpenseCardSkeletonProps> = () => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <Skeleton>
-                <img className="size-12"></img>
+                <div className="h-12 w-12"></div>
             </Skeleton>
-            <div className="flex w-full flex-col gap-1">
+            <div className="flex flex-1 flex-col gap-1">
                 <div className="flex justify-between">
                     <div className="flex items-center gap-1.5">
-                        <Skeleton className="h-2 w-[1rem]">
-                            <div></div>
+                        <Skeleton>
+                            <div className="h-2 w-[1rem]"></div>
                         </Skeleton>
                         <Skeleton>
                             <span>Transportation</span>
