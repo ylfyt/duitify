@@ -77,7 +77,7 @@ export type Database = {
           hide_amount: boolean | null
           id: string
           max_visible_amount: number | null
-          month_start_date: number | null
+          month_end_date: number | null
           pin: string | null
           user_id: string
         }
@@ -85,7 +85,7 @@ export type Database = {
           hide_amount?: boolean | null
           id?: string
           max_visible_amount?: number | null
-          month_start_date?: number | null
+          month_end_date?: number | null
           pin?: string | null
           user_id: string
         }
@@ -93,7 +93,7 @@ export type Database = {
           hide_amount?: boolean | null
           id?: string
           max_visible_amount?: number | null
-          month_start_date?: number | null
+          month_end_date?: number | null
           pin?: string | null
           user_id?: string
         }
@@ -168,7 +168,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_transaction_flow: {
+        Args: {
+          trx_user_id: string
+          trx_type: Database["public"]["Enums"]["transaction_type"]
+          month_end_date: number
+          day_flow: boolean
+        }
+        Returns: {
+          amount: number
+          occurred_at: string
+        }[]
+      }
     }
     Enums: {
       category_type: "expense" | "income"

@@ -1,3 +1,4 @@
+import { Database } from '@/database.types';
 import { Category } from './category.type';
 
 export type ExpenseOverview = {
@@ -8,3 +9,5 @@ export type ExpenseOverview = {
         logo: Category['logo'];
     } | null;
 };
+
+export type TransactionFlow = Database['public']['Functions']['get_transaction_flow']['Returns'];

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS settings (
     pin VARCHAR(255) NULL,
     hide_amount BOOLEAN NULL,
     max_visible_amount FLOAT NULL,
-    month_start_date INT NULL,
+    month_end_date INT NULL,
     FOREIGN KEY (user_id) REFERENCES "auth".users (id)
 );
 

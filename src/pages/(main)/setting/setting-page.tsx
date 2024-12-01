@@ -24,8 +24,8 @@ const SettingPage: FC<SettingPageProps> = () => {
     const [isEditMaxAmount, setIsEditMaxAmount] = useState(false);
     const [maxAmount, setMaxAmount] = useState(settings?.max_visible_amount?.toString() ?? '');
 
-    const [isEditStartMonth, setIsEditStartMonth] = useState(false);
-    const [startMonth, setStartMonth] = useState(settings?.month_start_date?.toString() ?? '1');
+    const [isEditEndMonth, setIsEditEndMonth] = useState(false);
+    const [endMonth, setEndMonth] = useState(settings?.month_end_date?.toString() ?? '');
 
     useEffect(() => {
         setAppBar({
@@ -68,24 +68,26 @@ const SettingPage: FC<SettingPageProps> = () => {
         setIsEditMaxAmount(false);
     };
 
-    const handleEditStartMonth = async () => {
-        if (!isEditStartMonth) {
-            setIsEditStartMonth(true);
+    const handleEditEndMonth = async () => {
+        if (!isEditEndMonth) {
+            setIsEditEndMonth(true);
             return;
         }
+
+        const month_end_date = !endMonth ? null : parseInt(endMonth);
 
         showLoading(true);
         const res = await supabase
             .from('settings')
-            .update({ month_start_date: parseInt(startMonth) })
+            .update({ month_end_date })
             .eq('id', settings?.id ?? 0);
         showLoading(false);
         if (res.error) {
             toast.error(res.error.message);
             return;
         }
-        setSettings({ ...settings!, month_start_date: parseInt(startMonth) });
-        setIsEditStartMonth(false);
+        setSettings({ ...settings!, month_end_date });
+        setIsEditEndMonth(false);
     };
 
     return (
@@ -157,28 +159,31 @@ const SettingPage: FC<SettingPageProps> = () => {
                         <div className="flex items-center justify-between rounded-xl bg-base-100 p-3 shadow">
                             <div className="flex items-center gap-2">
                                 <Icon icon="lucide:calendar-days" />
-                                <span>Start of the month</span>
+                                <span>End of the month</span>
                             </div>
                             <div className="flex items-center gap-4">
-                                {!isEditStartMonth ? (
-                                    <span>{formatNumberToDate(settings?.month_start_date ?? 1)}</span>
+                                {!isEditEndMonth ? (
+                                    <span>
+                                        {!settings?.month_end_date ? '' : formatNumberToDate(settings.month_end_date)}
+                                    </span>
                                 ) : (
                                     <input
                                         min={0}
                                         type="number"
-                                        value={startMonth}
-                                        onChange={(e) => setStartMonth(e.target.value)}
+                                        value={endMonth}
+                                        onChange={(e) => setEndMonth(e.target.value)}
                                         className="dai-input dai-input-xs dai-input-bordered max-w-24 text-end"
                                     />
                                 )}
                                 <button
                                     disabled={
-                                        isEditStartMonth &&
-                                        (!startMonth || isNaN(parseFloat(startMonth)) || parseFloat(startMonth) < 0)
+                                        isEditEndMonth &&
+                                        !!endMonth &&
+                                        (isNaN(parseFloat(endMonth)) || parseFloat(endMonth) < 2)
                                     }
-                                    onClick={handleEditStartMonth}
+                                    onClick={handleEditEndMonth}
                                 >
-                                    {isEditStartMonth ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
+                                    {isEditEndMonth ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
                                 </button>
                             </div>
                         </div>
