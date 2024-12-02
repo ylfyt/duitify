@@ -103,7 +103,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                 alt=""
             />
             <div className="flex w-full items-center justify-between">
-                <div className="flex w-full flex-col gap-2">
+                <div className="flex w-full flex-col gap-1">
                     <div className="flex items-center justify-between">
                         <span className="text-sm font-medium xs:text-base">
                             {el.type === 'transfer' ? 'Transfer' : el.category?.name}
@@ -176,12 +176,13 @@ export const TransactionGroupCardSkeleton: FC<TransactionGroupCardSkeletonProps>
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b-2 border-b-primary">
-                <Skeleton>
-                    <span className="text-sm xs:text-base">Wed, Sep 20, 2022</span>
-                </Skeleton>
-                <Skeleton>
-                    <span className="dai-badge dai-badge-error dai-badge-sm">{formatCurrency(10_000)}</span>
-                </Skeleton>
+                <span className="text-sm xs:text-base">
+                    <Skeleton>Wed, Sep 20, 2022</Skeleton>
+                </span>
+
+                <span className="dai-badge dai-badge-error dai-skeleton dai-badge-sm text-transparent">
+                    {formatCurrency(10_000)}
+                </span>
             </div>
             <div className="flex flex-col gap-1">
                 {Array.from({ length: 3 }).map((_, idx) => (
@@ -201,7 +202,7 @@ const TransactionCardSkeleton: FC<TransactionCardSkeletonProps> = () => {
                 <div className="size-9 xs:size-12"></div>
             </Skeleton>
             <div className="flex w-full items-center justify-between">
-                <div className="flex w-full flex-col gap-2">
+                <div className="flex w-full flex-col gap-1">
                     <div className="flex items-center justify-between">
                         <Skeleton>
                             <span className="text-sm font-medium xs:text-base">Transportation</span>

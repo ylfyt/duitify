@@ -2,7 +2,7 @@ import { ENV } from '@/constants/env';
 import { showLoading } from '@/stores/common';
 import { showConfirm } from '@/stores/confirm';
 import { supabase } from '@/supabase';
-import { toast } from 'react-toastify';
+import { removePrefix } from './str';
 
 export const handleLogout = async () => {
     const confirmed = await showConfirm({
@@ -15,9 +15,9 @@ export const handleLogout = async () => {
     showLoading(true);
     const { error } = await supabase.auth.signOut();
     showLoading(false);
-    if (error) {
-        toast.error(error.message);
-        return;
-    }
+    console.error(error);
+
+    const PROJECT_ID = removePrefix(ENV.SUPABASE_PROJECT_URL, 'https://').split('.')[0];
+    localStorage.removeItem(`sb-${PROJECT_ID}-auth-token`);
     window.location.href = ENV.BASE_URL + '/login';
 };
