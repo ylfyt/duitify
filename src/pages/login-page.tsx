@@ -89,6 +89,7 @@ const LoginPage: FC<LoginPageProps> = () => {
                 </span>
                 <div>
                     <button
+                        disabled
                         onClick={handleSigninWithGoogle}
                         className="dai-btn dai-btn-primary dai-btn-sm dai-btn-wide"
                     >
