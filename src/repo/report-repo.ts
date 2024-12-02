@@ -8,17 +8,21 @@ import { getDefaultStore } from 'jotai';
 const store = getDefaultStore();
 
 export class ReportRepo extends BaseRepo {
-    private static getDateRanges(date?: Date) {
+    private static getDateRanges(useOffset: boolean, date?: Date, monthEnd?: Date): { start: Date; end: Date } {
         if (!date)
             return {
                 start: new Date(0),
                 end: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1),
             };
 
-        const settings = store.get(settingsAtom);
         const start = new Date(date.getFullYear(), date.getMonth(), 1);
-        const end = new Date(start.getFullYear(), start.getMonth() + 1, 1);
-        if (settings?.month_end_date) {
+        const end = new Date(
+            monthEnd?.getFullYear() ?? date.getFullYear(),
+            (monthEnd?.getMonth() ?? date.getMonth()) + 1,
+            1,
+        );
+        const settings = store.get(settingsAtom);
+        if (useOffset && settings?.month_end_date) {
             start.setMonth(start.getMonth() - 1);
             start.setDate(settings.month_end_date + 1);
             end.setMonth(end.getMonth() - 1);
@@ -27,8 +31,8 @@ export class ReportRepo extends BaseRepo {
         return { start, end };
     }
 
-    public static async getExpenseOverview(date?: Date): Promise<QueryResultMany<ExpenseOverview>> {
-        const { start, end } = this.getDateRanges(date);
+    public static async getExpenseOverview(month?: Date): Promise<QueryResultMany<ExpenseOverview>> {
+        const { start, end } = this.getDateRanges(true, month);
 
         const { data, error } = await this.db
             .from('transaction')
@@ -44,22 +48,45 @@ export class ReportRepo extends BaseRepo {
         };
     }
 
-    public static async getExpenseFlowEveryMonth(
+    public static async getCashFlowEveryMonth(
         userId: string,
+        trx_type: 'expense' | 'income',
         year: number,
+        yearEnd?: number,
     ): Promise<QueryResultOne<TransactionFlow>> {
-        const start = formatDate(new Date(year, 0, 1), { format: 'yyyy-MM' });
-        const end = formatDate(new Date(year + 1, 0, 1), { format: 'yyyy-MM' });
+        const { start, end } = this.getDateRanges(false, new Date(year, 0), new Date(yearEnd ?? year + 1, 0));
+        const { data, error } = await supabase
+            .rpc('get_transaction_flow', {
+                trx_type,
+                day_flow: false,
+                month_end_date: 24,
+                trx_user_id: userId,
+            })
+            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM' }))
+            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM' }));
+        return {
+            data,
+            error,
+        };
+    }
+
+    public static async getCashFlowEveryDay(
+        userId: string,
+        trx_type: 'expense' | 'income',
+        month: Date,
+        monthEnd?: Date,
+    ): Promise<QueryResultOne<TransactionFlow>> {
+        const { start, end } = this.getDateRanges(true, month, monthEnd);
 
         const { data, error } = await supabase
             .rpc('get_transaction_flow', {
-                day_flow: false,
+                day_flow: true,
                 month_end_date: 24,
-                trx_type: 'expense',
+                trx_type: trx_type,
                 trx_user_id: userId,
             })
-            .gte('occurred_at', start)
-            .lt('occurred_at', end);
+            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd' }))
+            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd' }));
         return {
             data,
             error,

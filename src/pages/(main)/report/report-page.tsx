@@ -7,8 +7,6 @@ import { Doughnut } from 'react-chartjs-2';
 import { formatCurrency } from '@/helper/format-currency';
 import { COLOR_RANKS } from '@/constants/color-ranks';
 import { ENV } from '@/constants/env';
-import { useAtom } from 'jotai';
-import { appBarCtxAtom } from '@/stores/common';
 import Skeleton from '@/components/skeleton';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { Icon } from '@/components/icon';
@@ -25,8 +23,6 @@ const formarter = new Intl.DateTimeFormat('en-US', {
 interface ReportPageProps {}
 
 const ReportPage: FC<ReportPageProps> = () => {
-    const [, setAppBar] = useAtom(appBarCtxAtom);
-
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ExpenseOverview[]>([]);
 
@@ -48,13 +44,6 @@ const ReportPage: FC<ReportPageProps> = () => {
         }),
         [data, colors],
     );
-
-    useEffect(() => {
-        setAppBar({
-            title: 'Report',
-            revealer: true,
-        });
-    }, []);
 
     useEffect(() => {
         (async () => {

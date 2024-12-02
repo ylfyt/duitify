@@ -15,13 +15,13 @@ export const MobileNavbarItem: FC<MobileNavbarItemProps> = ({ icon, title, href 
             to={href}
             className={({ isActive }) => {
                 return [
-                    'xs:w-[5rem] group flex w-[4rem] flex-col items-center rounded-2xl px-3 py-1 transition-all duration-300',
+                    'group flex w-[4rem] flex-col items-center rounded-2xl px-3 py-1 transition-all duration-300 xs:w-[5rem]',
                     isActive ? 'is-active bg-secondary/10 font-semibold text-secondary' : '',
                 ].join(' ');
             }}
         >
-            <Icon icon={icon} className="xs:text-2xl text-xl" />
-            <span className="text-xxs xs:text-xs hidden text-center group-[.is-active]:block">{title}</span>
+            <Icon icon={icon} className="text-xl xs:text-2xl" />
+            <span className="hidden text-center text-xxs group-[.is-active]:block xs:text-xs">{title}</span>
         </NavLink>
     );
 };
@@ -34,7 +34,7 @@ export const MobileNavbar: FC<MobileNavbarProps> = ({ routes }) => {
     return (
         <div>
             <div className="fixed bottom-0 left-0 z-20 grid h-16 w-full place-items-center bg-base-100 shadow-t-md">
-                <div className="flex w-full items-center justify-evenly py-1 lg:w-[50rem]">
+                <div className="flex w-full items-center justify-evenly py-1 md:w-[47rem]">
                     {routes.map((el, idx) => (
                         <MobileNavbarItem key={idx} href={el.link} title={el.title} icon={el.icon} />
                     ))}

@@ -96,7 +96,7 @@ export const DashboardLayout = () => {
         <div className="flex min-h-dvh flex-col items-center bg-base-200 text-base-content">
             <ScrollToTop />
             <AppBar />
-            <main className="grid w-full flex-1 px-4 md:w-[47rem]">
+            <main className="grid w-full flex-1 px-2 md:w-[47rem]">
                 <Routes>
                     {routes.map((el) => (
                         <Route path={el.link + (el.layout ? '/*' : '')} element={<el.el />} key={el.link} />

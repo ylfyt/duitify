@@ -10,16 +10,17 @@ export type DropdownMenuOption = {
 
 interface DropdownMenuProps {
     options: DropdownMenuOption[];
+    disabled?: boolean;
 }
 
-export const DropdownMenu: FC<DropdownMenuProps> = ({ options }) => {
+export const DropdownMenu: FC<DropdownMenuProps> = ({ options, disabled }) => {
     return (
         <div className="dai-dropdown dai-dropdown-end dai-dropdown-left">
             <div
-                onClick={(e) => e.stopPropagation()}
                 tabIndex={0}
                 role="button"
-                className="dai-btn dai-btn-ghost dai-btn-xs"
+                onClick={(e) => e.stopPropagation()}
+                className={'dai-btn dai-btn-ghost dai-btn-xs ' + (disabled ? 'dai-btn-disabled' : '')}
             >
                 <Icon icon="lucide:more-vertical" />
             </div>
