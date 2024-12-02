@@ -91,9 +91,9 @@ const SettingPage: FC<SettingPageProps> = () => {
     };
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-4">
+        <div className="flex flex-1 flex-col gap-4 pt-2">
             <div className="flex items-center gap-4 rounded-xl bg-base-100 p-4">
-                <img src={ENV.BASE_URL + '/categories/invest.webp'} className="size-16" alt="" />
+                <img src={ENV.BASE_URL + '/icons/icon-192x192.png'} className="size-16" alt="" />
                 <div className="flex flex-col gap-0.5">
                     <span>{session?.user.email}</span>
                 </div>

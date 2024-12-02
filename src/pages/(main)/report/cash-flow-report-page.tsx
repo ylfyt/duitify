@@ -173,7 +173,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                 </div>
                 <div className="flex w-full items-center">
                     <div className="flex flex-1 items-center pl-2">
-                        {loading && <span className="dai-loading dai-loading-sm bg-accent"></span>}
+                        {loading && <span className="dai-loading dai-loading-sm bg-primary"></span>}
                     </div>
                     <div className="flex items-center justify-center gap-4">
                         <button

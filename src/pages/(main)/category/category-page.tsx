@@ -33,7 +33,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                             categoryType: selected,
                         })
                     }
-                    className="dai-btn dai-btn-success dai-btn-sm"
+                    className="dai-btn dai-btn-success dai-btn-xs xs:dai-btn-sm"
                 >
                     Create
                 </button>,
@@ -51,7 +51,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-4">
+        <div className="flex flex-1 flex-col gap-4 pt-2">
             <div role="tablist" className="dai-tabs-boxed dai-tabs bg-base-100">
                 {(['expense', 'income'] as CategoryType[]).map((el, idx) => (
                     <button
@@ -66,7 +66,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
             </div>
             <div className="grid grid-cols-1 gap-2">
                 {loading ? (
-                    Array.from({ length: 3 }).map((_, idx) => <CategoryCardSkeleton key={idx} />)
+                    Array.from({ length: 14 }).map((_, idx) => <CategoryCardSkeleton key={idx} />)
                 ) : categories.length === 0 ? (
                     <p className="text-center">No categories found</p>
                 ) : (

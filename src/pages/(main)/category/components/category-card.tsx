@@ -37,7 +37,7 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
     };
 
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
             <img src={ENV.BASE_URL + category.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-lg">{category.name}</p>
@@ -64,7 +64,7 @@ interface CategoryCardSkeletonProps {}
 
 export const CategoryCardSkeleton: FC<CategoryCardSkeletonProps> = () => {
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 p-5 text-sm shadow-md">
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
             <Skeleton>
                 <div className="size-12"></div>
             </Skeleton>

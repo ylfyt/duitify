@@ -31,14 +31,17 @@ export const AppBar: FC<AppBarProps> = () => {
         <div>
             <div
                 className={
-                    'fixed left-0 top-0 z-20 grid h-16 w-full place-items-center bg-secondary text-secondary-content shadow-md ' +
+                    'fixed left-0 top-0 z-20 grid h-14 w-full place-items-center bg-secondary text-secondary-content shadow-md xs:h-16 ' +
                     (scrolled ? 'opacity-90' : '')
                 }
             >
                 <div className="flex w-full items-center justify-between px-6 md:w-[47rem]">
                     <div className="flex items-center gap-4 text-3xl">
                         {appBarCtx.back && (
-                            <button onClick={() => history.back()} className="flex items-center gap-4 text-2xl">
+                            <button
+                                onClick={() => history.back()}
+                                className="flex items-center gap-4 text-xl xs:text-2xl"
+                            >
                                 <Icon icon="mdi:arrow-left" />
                             </button>
                         )}
@@ -53,7 +56,7 @@ export const AppBar: FC<AppBarProps> = () => {
                         {settings?.hide_amount && appBarCtx.revealer && (
                             <button
                                 onClick={() => setReveal((prev) => !prev)}
-                                className="text-xl text-secondary-content"
+                                className="text-lg text-secondary-content xs:text-xl"
                             >
                                 {!reveal ? <Icon icon="lucide:eye-off" /> : <Icon icon="lucide:eye" />}
                             </button>
@@ -62,7 +65,7 @@ export const AppBar: FC<AppBarProps> = () => {
                     </div>
                 </div>
             </div>
-            <div className="h-16"></div>
+            <div className="h-14 xs:h-16"></div>
         </div>
     );
 };

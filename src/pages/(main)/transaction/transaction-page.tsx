@@ -62,7 +62,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />
             ),
             actions: [
-                <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-sm ml-2">
+                <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-xs ml-2 xs:dai-btn-sm">
                     Create
                 </Link>,
             ],
@@ -89,7 +89,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     }, [cursor, account]);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-4">
+        <div className="flex flex-1 flex-col gap-4 pt-2">
             <div className="flex flex-col gap-4">
                 {loading && isFirst ? (
                     Array.from({ length: 4 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)

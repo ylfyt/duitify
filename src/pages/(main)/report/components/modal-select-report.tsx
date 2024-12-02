@@ -27,7 +27,7 @@ const ModalSelectReport: FC<ModalSelectReportProps> = ({ onClose, reports }) => 
                     <button
                         key={el.value}
                         onClick={() => onClick(el.value)}
-                        className="dai-btn dai-btn-secondary dai-btn-wide"
+                        className="dai-btn dai-btn-primary dai-btn-sm dai-btn-wide"
                     >
                         {el.label}
                     </button>

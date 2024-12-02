@@ -30,7 +30,7 @@ const AccountPage: FC<AccountPageProps> = () => {
                             onSuccess: (account) => setAccounts((prev) => [account, ...prev]),
                         })
                     }
-                    className="dai-btn dai-btn-success dai-btn-sm ml-2"
+                    className="dai-btn dai-btn-success dai-btn-xs ml-2 xs:dai-btn-sm"
                 >
                     Create
                 </button>,
@@ -48,7 +48,7 @@ const AccountPage: FC<AccountPageProps> = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-4">
+        <div className="flex flex-1 flex-col gap-4 pt-2">
             <div className="rounded-xl bg-base-100 p-4">
                 <div className="flex items-center gap-2">
                     <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
@@ -63,7 +63,7 @@ const AccountPage: FC<AccountPageProps> = () => {
             </div>
             <div className="grid grid-cols-1 gap-2">
                 {loading ? (
-                    Array.from({ length: 2 }).map((_, idx) => <AccountCardSkeleton key={idx} />)
+                    Array.from({ length: 10 }).map((_, idx) => <AccountCardSkeleton key={idx} />)
                 ) : accounts.length === 0 ? (
                     <p className="text-center">No accounts found</p>
                 ) : (

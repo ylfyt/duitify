@@ -1,7 +1,7 @@
 export const COLOR_SCHEMES = {
     light: {
         primary: '#007bff',
-        'primary-content': '#000516',
+        'primary-content': '#eddaff',
         secondary: '#007985',
         'secondary-content': '#d3e3e6',
         accent: '#d20000',
@@ -22,8 +22,8 @@ export const COLOR_SCHEMES = {
         'error-content': '#160607',
     },
     dark: {
-        primary: '#003bff',
-        'primary-content': '#cbdeff',
+        primary: '#22d3ee',
+        'primary-content': '#001014',
         secondary: '#007985',
         'secondary-content': '#d3e3e6',
         accent: '#00df00',
