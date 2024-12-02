@@ -1,5 +1,4 @@
 import { LoadingButton } from '@/components/loading-button';
-import { SingleSelect } from '@/components/single-select';
 import { TransactionRepo } from '@/repo/transaction-repo';
 import { useAccountAtom } from '@/stores/account';
 import { useCategoryAtom } from '@/stores/category';
@@ -25,19 +24,9 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const { setData: setAccounts } = useAccountAtom();
     const [focusedTransaction, setFocusedTransaction] = useAtom(focusedTransactionAtom);
 
-    const {
-        fetched: fetchedAccounts,
-        refresh: refreshAccounts,
-        data: accounts,
-        loading: loadingAccounts,
-    } = useAccountAtom();
+    const { fetched: fetchedAccounts, refresh: refreshAccounts, data: accounts } = useAccountAtom();
 
-    const {
-        fetched: fetchedCategories,
-        refresh: refreshCategories,
-        data: categories,
-        loading: loadingCategories,
-    } = useCategoryAtom();
+    const { fetched: fetchedCategories, refresh: refreshCategories, data: categories } = useCategoryAtom();
 
     const [selectedType, setSelectedType] = useState<TransactionType>(focusedTransaction?.type ?? 'expense');
     const [amount, setAmount] = useState(focusedTransaction?.amount.toString() ?? '');
@@ -46,34 +35,21 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         formatDate(focusedTransaction?.occurred_at ?? new Date(), { format: 'yyyy-MM-dd HH:mm' }),
     );
 
-    const [selectedAccount, setSelectedAccount] = useState<LabelValue<string> | undefined>(
-        focusedTransaction?.account
-            ? { label: focusedTransaction.account.name, value: focusedTransaction.account.id }
-            : undefined,
-    );
-    const [selectedCategory, setSelectedCategory] = useState<LabelValue<string> | undefined>(
-        focusedTransaction?.category
-            ? { label: focusedTransaction.category.name, value: focusedTransaction.category.id }
-            : undefined,
-    );
-    const [selectedToAccount, setSelectedToAccount] = useState<LabelValue<string> | undefined>(
-        focusedTransaction?.to_account
-            ? { label: focusedTransaction.to_account.name, value: focusedTransaction.to_account.id }
-            : undefined,
-    );
+    const [category, setCategory] = useState<string>(focusedTransaction?.category?.id ?? '');
+    const [fromAccount, setFromAccount] = useState<string | undefined>(focusedTransaction?.account?.id ?? '');
+    const [targetAccount, setTargetAccount] = useState<string | undefined>(focusedTransaction?.to_account?.id ?? '');
 
     const [loading, setLoading] = useState(false);
 
     const disabled = useMemo(
         () =>
             !amount ||
-            !selectedAccount ||
+            !fromAccount ||
             isNaN(parseFloat(amount)) ||
-            (selectedType === 'transfer' && !selectedToAccount) ||
-            (selectedType !== 'transfer' && !selectedCategory) ||
-            (selectedType !== 'transfer' &&
-                categories.find((el) => el.id === selectedCategory?.value)?.type !== selectedType),
-        [amount, selectedAccount, selectedCategory, selectedToAccount, selectedType, categories],
+            (selectedType === 'transfer' && !targetAccount) ||
+            (selectedType !== 'transfer' && !category) ||
+            (selectedType !== 'transfer' && categories.find((el) => el.id === category)?.type !== selectedType),
+        [amount, fromAccount, category, targetAccount, selectedType, categories],
     );
 
     const accountOptions = useMemo<LabelValue<string>[]>(
@@ -119,9 +95,9 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 occurred_at: formatDate(occurredAt, { format: 'yyyy-MM-dd HH:mm', timeZone: 'UTC' }),
                 description: description,
                 amount: parseFloat(amount),
-                account_id: selectedAccount!.value,
-                category_id: selectedCategory?.value,
-                to_account_id: selectedToAccount?.value,
+                account_id: fromAccount!,
+                category_id: category,
+                to_account_id: targetAccount,
             });
         } else {
             res = await TransactionRepo.create({
@@ -129,9 +105,9 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 occurred_at: formatDate(occurredAt, { format: 'yyyy-MM-dd HH:mm', timeZone: 'UTC' }),
                 description: description,
                 amount: parseFloat(amount),
-                account_id: selectedAccount!.value,
-                category_id: selectedCategory?.value,
-                to_account_id: selectedToAccount?.value,
+                account_id: fromAccount!,
+                category_id: category,
+                to_account_id: targetAccount,
                 user_id: session!.user.id,
             });
         }
@@ -141,7 +117,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
             return;
         }
         setAccounts((prev) => {
-            const account = prev.find((el) => el.id === selectedAccount?.value);
+            const account = prev.find((el) => el.id === fromAccount);
             if (!account) return prev;
 
             if (focusedTransaction) {
@@ -153,7 +129,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                     account.balance += parseFloat(amount) - focusedTransaction.amount;
                 }
                 if (selectedType === 'transfer') {
-                    const toAccount = prev.find((el) => el.id === selectedToAccount?.value);
+                    const toAccount = prev.find((el) => el.id === targetAccount);
                     if (!toAccount) return prev;
                     toAccount.balance += parseFloat(amount) - focusedTransaction.amount;
                 }
@@ -166,7 +142,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 account.balance += parseFloat(amount);
             }
             if (selectedType === 'transfer') {
-                const toAccount = prev.find((el) => el.id === selectedToAccount?.value);
+                const toAccount = prev.find((el) => el.id === targetAccount);
                 if (!toAccount) return prev;
                 toAccount.balance += parseFloat(amount);
             }
@@ -191,7 +167,10 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             type="button"
                             role="tab"
                             disabled={!!focusedTransaction && el !== focusedTransaction.type}
-                            onClick={() => setSelectedType(el)}
+                            onClick={() => {
+                                setCategory('');
+                                setSelectedType(el);
+                            }}
                             className={'dai-tab capitalize ' + (el === selectedType ? 'dai-tab-active' : '')}
                         >
                             {el}
@@ -224,30 +203,44 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 </label>
                 <label className="dai-form-control">
                     <div className="dai-label">
-                        <span className="req dai-label-text">Accounts</span>
+                        <span className="req dai-label-text">Account</span>
                     </div>
-                    <SingleSelect
-                        searchable={false}
+                    <select
+                        value={fromAccount}
                         disabled={!!focusedTransaction}
-                        value={selectedAccount}
-                        options={accountOptions}
-                        loading={loadingAccounts}
-                        onChange={setSelectedAccount}
-                    />
+                        onChange={(e) => setFromAccount(e.target.value)}
+                        className="dai-select dai-select-bordered w-full"
+                    >
+                        <option value="" selected>
+                            Select account
+                        </option>
+                        {accountOptions.map((el, idx) => (
+                            <option key={idx} value={el.value}>
+                                {el.label}
+                            </option>
+                        ))}
+                    </select>
                 </label>
                 {selectedType === 'transfer' && (
                     <label className="dai-form-control">
                         <div className="dai-label">
-                            <span className="req dai-label-text">To Accounts</span>
+                            <span className="req dai-label-text">To Account</span>
                         </div>
-                        <SingleSelect
-                            searchable={false}
+                        <select
+                            value={targetAccount}
                             disabled={!!focusedTransaction}
-                            value={selectedToAccount}
-                            options={accountOptions}
-                            loading={loadingAccounts}
-                            onChange={setSelectedToAccount}
-                        />
+                            onChange={(e) => setTargetAccount(e.target.value)}
+                            className="dai-select dai-select-bordered w-full"
+                        >
+                            <option value="" selected>
+                                Select account
+                            </option>
+                            {accountOptions.map((el, idx) => (
+                                <option key={idx} value={el.value}>
+                                    {el.label}
+                                </option>
+                            ))}
+                        </select>
                     </label>
                 )}
                 {selectedType !== 'transfer' && (
@@ -255,13 +248,20 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                         <div className="dai-label">
                             <span className="req dai-label-text">Category</span>
                         </div>
-                        <SingleSelect
-                            searchable={false}
-                            value={selectedCategory}
-                            options={categoryOptions}
-                            loading={loadingCategories}
-                            onChange={setSelectedCategory}
-                        />
+                        <select
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="dai-select dai-select-bordered w-full"
+                        >
+                            <option value="" selected>
+                                Select category
+                            </option>
+                            {categoryOptions.map((el, idx) => (
+                                <option key={idx} value={el.value}>
+                                    {el.label}
+                                </option>
+                            ))}
+                        </select>
                     </label>
                 )}
                 <label className="dai-form-control col-span-full">
