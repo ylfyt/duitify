@@ -96,8 +96,8 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 description: description,
                 amount: parseFloat(amount),
                 account_id: fromAccount!,
-                category_id: category,
-                to_account_id: targetAccount,
+                category_id: !category ? null : category,
+                to_account_id: !targetAccount ? null : targetAccount,
             });
         } else {
             res = await TransactionRepo.create({
@@ -106,8 +106,8 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                 description: description,
                 amount: parseFloat(amount),
                 account_id: fromAccount!,
-                category_id: category,
-                to_account_id: targetAccount,
+                category_id: !category ? null : category,
+                to_account_id: !targetAccount ? null : targetAccount,
                 user_id: session!.user.id,
             });
         }
@@ -209,11 +209,11 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                         value={fromAccount}
                         disabled={!!focusedTransaction}
                         onChange={(e) => setFromAccount(e.target.value)}
-                        className="dai-select dai-select-bordered w-full"
+                        className={
+                            'dai-select dai-select-bordered w-full ' + (!fromAccount ? 'text-base-content/40' : '')
+                        }
                     >
-                        <option value="" selected>
-                            Select account
-                        </option>
+                        <option value="">Select account</option>
                         {accountOptions.map((el, idx) => (
                             <option key={idx} value={el.value}>
                                 {el.label}
@@ -230,11 +230,12 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                             value={targetAccount}
                             disabled={!!focusedTransaction}
                             onChange={(e) => setTargetAccount(e.target.value)}
-                            className="dai-select dai-select-bordered w-full"
+                            className={
+                                'dai-select dai-select-bordered w-full ' +
+                                (!targetAccount ? 'text-base-content/40' : '')
+                            }
                         >
-                            <option value="" selected>
-                                Select account
-                            </option>
+                            <option value="">Select account</option>
                             {accountOptions.map((el, idx) => (
                                 <option key={idx} value={el.value}>
                                     {el.label}
@@ -251,11 +252,11 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                         <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            className="dai-select dai-select-bordered w-full"
+                            className={
+                                'dai-select dai-select-bordered w-full ' + (!category ? 'text-base-content/40' : '')
+                            }
                         >
-                            <option value="" selected>
-                                Select category
-                            </option>
+                            <option value="">Select category</option>
                             {categoryOptions.map((el, idx) => (
                                 <option key={idx} value={el.value}>
                                     {el.label}
