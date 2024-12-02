@@ -4,8 +4,9 @@ CREATE OR REPLACE FUNCTION get_transaction_flow(
     month_end_date INT,
     day_flow BOOLEAN
 )
-RETURNS TABLE(amount NUMERIC, occurred_at TEXT) AS
-$$
+RETURNS TABLE(amount NUMERIC, occurred_at TEXT) 
+SET search_path = ''
+AS $$
 BEGIN
     RETURN QUERY
     SELECT
@@ -19,7 +20,7 @@ BEGIN
                 to_char(t.occurred_at, 'YYYY-MM')
         END AS occurred_at
     FROM
-        transaction t
+        public.transaction t
     WHERE
         user_id = trx_user_id
         AND type = trx_type

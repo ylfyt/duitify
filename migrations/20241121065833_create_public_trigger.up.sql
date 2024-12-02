@@ -1,6 +1,7 @@
 -- procedure to update account balance with param schema_name, id, and delta
 CREATE OR REPLACE PROCEDURE public.update_account_balance(account_id UUID, delta NUMERIC)
 LANGUAGE plpgsql
+SET search_path = ''
 AS $$
 BEGIN
     UPDATE public.account
@@ -10,26 +11,32 @@ END; $$;
 
 -- account updated
 CREATE OR REPLACE FUNCTION public.account_updated()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
-    CALL update_account_balance(NEW.id, NEW.initial_balance - OLD.initial_balance);
+    CALL public.update_account_balance(NEW.id, NEW.initial_balance - OLD.initial_balance);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- account created
 CREATE OR REPLACE FUNCTION public.account_created()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
     NEW.balance := NEW.initial_balance;
-    CALL update_account_balance(NEW.id, NEW.initial_balance);
+    CALL public.update_account_balance(NEW.id, NEW.initial_balance);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- transaction created
 CREATE OR REPLACE FUNCTION public.transaction_created()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
     -- if transaction is an expense
     IF NEW.type = 'expense' THEN
@@ -48,7 +55,9 @@ $$ LANGUAGE plpgsql;
 
 -- transaction updated
 CREATE OR REPLACE FUNCTION public.transaction_updated()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
     -- if transaction is an expense
     IF NEW.type = 'expense' THEN
@@ -67,7 +76,9 @@ $$ LANGUAGE plpgsql;
 
 -- transaction deleted
 CREATE OR REPLACE FUNCTION public.transaction_deleted()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
     -- if transaction is an expense
     IF OLD.type = 'expense' THEN
@@ -86,7 +97,9 @@ $$ LANGUAGE plpgsql;
 
 -- validation before insert transaction
 CREATE OR REPLACE FUNCTION public.transaction_validation()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
     -- amount must be greater than 0
     IF NEW.amount <= 0 THEN
@@ -120,9 +133,11 @@ $$ LANGUAGE plpgsql;
 
 -- insert settings when user created
 CREATE OR REPLACE FUNCTION public.settings_created()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER 
+SET search_path = ''
+AS $$
 BEGIN
-    INSERT INTO settings (user_id, pin, hide_amount, max_visible_amount)
+    INSERT INTO public.settings (user_id, pin, hide_amount, max_visible_amount)
     VALUES (NEW.id, NULL, FALSE, NULL);
     RETURN NEW;
 END;

@@ -30,7 +30,13 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ options, disabled }) => {
             >
                 {options.map((el, idx) => (
                     <li key={idx}>
-                        <button className={'font-semibold ' + el.style} onClick={el.onClick}>
+                        <button
+                            className={'font-semibold ' + el.style}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                el.onClick();
+                            }}
+                        >
                             <Icon className="text-lg" icon={el.icon} />
                             {el.label}
                         </button>
