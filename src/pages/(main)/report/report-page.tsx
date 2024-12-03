@@ -12,13 +12,25 @@ import { AmountRevealer } from '@/components/amount-revealer';
 import { Icon } from '@/components/icon';
 import { ExpenseOverview } from '@/types/report.type';
 import { DropdownMenu } from '@/components/dropdown-menu';
+import { getDefaultStore } from 'jotai';
+import { settingsAtom } from '@/stores/settings';
 
 ChartJS.register(Title, Tooltip, ArcElement, CategoryScale, LinearScale);
 
+const store = getDefaultStore();
 const formarter = new Intl.DateTimeFormat('en-US', {
     month: 'long',
     year: 'numeric',
 });
+
+const getNowDate = () => {
+    const settings = store.get(settingsAtom);
+    const now = new Date();
+    if (!settings?.month_end_date || now.getDate() <= settings.month_end_date) return now;
+    now.setMonth(now.getMonth() + 1);
+
+    return now;
+};
 
 interface ReportPageProps {}
 
@@ -26,7 +38,7 @@ const ReportPage: FC<ReportPageProps> = () => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ExpenseOverview[]>([]);
 
-    const [expenseDate, setExpenseDate] = useState<Date | undefined>(new Date());
+    const [expenseDate, setExpenseDate] = useState<Date | undefined>(getNowDate);
 
     const total = useMemo(() => data.reduce((acc, el) => acc + (el.amount ?? 0), 0), [data]);
 
@@ -91,7 +103,7 @@ const ReportPage: FC<ReportPageProps> = () => {
                             {
                                 icon: 'lucide:calendar-days',
                                 label: expenseDate ? 'All time' : 'This month',
-                                onClick: () => setExpenseDate((prev) => (prev ? undefined : new Date())),
+                                onClick: () => setExpenseDate((prev) => (prev ? undefined : getNowDate())),
                             },
                         ]}
                     />

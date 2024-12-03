@@ -4,6 +4,8 @@ import { formatNumeric } from '@/helper/format-numeric';
 import { QueryResultOne } from '@/repo/base-repo';
 import { ReportRepo } from '@/repo/report-repo';
 import { sessionAtom } from '@/stores/auth';
+import { useCategoryAtom } from '@/stores/category';
+import { settingsAtom } from '@/stores/settings';
 import { colorSchemeAtom } from '@/stores/theme';
 import { TransactionFlow } from '@/types/report.type';
 import {
@@ -18,13 +20,14 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
-import { useAtom } from 'jotai';
+import { getDefaultStore, useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { toast } from 'react-toastify';
 
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, LogarithmicScale);
 
+const store = getDefaultStore();
 const formarterDay = new Intl.DateTimeFormat('en-US', {
     month: 'long',
     year: 'numeric',
@@ -34,13 +37,26 @@ const formarterMonth = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
 });
 
+const getNowDate = () => {
+    const settings = store.get(settingsAtom);
+    const now = new Date();
+    if (!settings?.month_end_date || now.getDate() <= settings.month_end_date) return now;
+    now.setMonth(now.getMonth() + 1);
+
+    return now;
+};
+
 interface CashFlowReportPageProps {}
 
 const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
     const [session] = useAtom(sessionAtom);
     const [colorScheme] = useAtom(colorSchemeAtom);
 
-    const [flowDate, setFlowDate] = useState<Date | undefined>(new Date());
+    const { data: categories, fetched, refresh } = useCategoryAtom();
+    const [expenseCategory, setExpenseCategory] = useState<string>('');
+    const [incomeCategory, setIncomeCategory] = useState<string>('');
+
+    const [flowDate, setFlowDate] = useState<Date | undefined>(getNowDate());
     const [flowScale, setFlowScale] = useState<'everyday' | 'everymonth'>('everyday');
     const [showExpense, setShowExpense] = useState(true);
     const [showIncome, setShowIncome] = useState(false);
@@ -81,6 +97,14 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
     }, [expenseData, incomeData, colorScheme]);
 
     useEffect(() => {
+        if (fetched) return;
+        (async () => {
+            const msg = await refresh();
+            if (msg) toast.error(msg);
+        })();
+    }, []);
+
+    useEffect(() => {
         if (!showExpense) {
             setExpenseData([]);
             return;
@@ -89,13 +113,19 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             setLoadingExpense(true);
             let res: QueryResultOne<TransactionFlow>;
             if (flowScale === 'everyday')
-                res = await ReportRepo.getCashFlowEveryDay(session?.user.id ?? '', 'expense', flowDate ?? new Date());
+                res = await ReportRepo.getCashFlowEveryDay({
+                    trx_type: 'expense',
+                    userId: session?.user.id ?? '',
+                    month: flowDate ?? new Date(),
+                    categories: !expenseCategory ? [] : [expenseCategory],
+                });
             else
-                res = await ReportRepo.getCashFlowEveryMonth(
-                    session?.user.id ?? '',
-                    'expense',
-                    flowDate?.getFullYear() ?? new Date().getFullYear(),
-                );
+                res = await ReportRepo.getCashFlowEveryMonth({
+                    trx_type: 'expense',
+                    userId: session?.user.id ?? '',
+                    year: flowDate?.getFullYear() ?? new Date().getFullYear(),
+                    categories: !expenseCategory ? [] : [expenseCategory],
+                });
             setLoadingExpense(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -103,7 +133,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             }
             setExpenseData(res.data ?? []);
         })();
-    }, [session, flowDate, showExpense]);
+    }, [session, flowDate, showExpense, expenseCategory]);
 
     useEffect(() => {
         if (!showIncome) {
@@ -114,13 +144,19 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             setLoadingIncome(true);
             let res: QueryResultOne<TransactionFlow>;
             if (flowScale === 'everyday')
-                res = await ReportRepo.getCashFlowEveryDay(session?.user.id ?? '', 'income', flowDate ?? new Date());
+                res = await ReportRepo.getCashFlowEveryDay({
+                    trx_type: 'income',
+                    userId: session?.user.id ?? '',
+                    month: flowDate ?? new Date(),
+                    categories: !incomeCategory ? [] : [incomeCategory],
+                });
             else
-                res = await ReportRepo.getCashFlowEveryMonth(
-                    session?.user.id ?? '',
-                    'income',
-                    flowDate?.getFullYear() ?? new Date().getFullYear(),
-                );
+                res = await ReportRepo.getCashFlowEveryMonth({
+                    trx_type: 'income',
+                    userId: session?.user.id ?? '',
+                    year: flowDate?.getFullYear() ?? new Date().getFullYear(),
+                    categories: !incomeCategory ? [] : [incomeCategory],
+                });
             setLoadingIncome(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -128,7 +164,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             }
             setIncomeData(res.data ?? []);
         })();
-    }, [session, flowDate, showIncome]);
+    }, [session, flowDate, showIncome, incomeCategory]);
 
     return (
         <div className="flex flex-1 flex-col items-center gap-4 overflow-x-auto pt-2">
@@ -201,7 +237,12 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                                   : formarterDay.format(flowDate)}
                         </span>
                         <button
-                            disabled={loading || !flowDate}
+                            disabled={
+                                loading ||
+                                !flowDate ||
+                                (flowScale === 'everymonth' && flowDate.getFullYear() === new Date().getFullYear()) ||
+                                (flowScale === 'everyday' && flowDate.getMonth() === getNowDate().getMonth())
+                            }
                             onClick={() =>
                                 setFlowDate((prev) =>
                                     !prev
@@ -229,7 +270,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                                         : flowScale === 'everymonth'
                                           ? 'This year'
                                           : 'This month',
-                                    onClick: () => setFlowDate((prev) => (prev ? undefined : new Date())),
+                                    onClick: () => setFlowDate((prev) => (prev ? undefined : getNowDate())),
                                 },
                             ]}
                         />
@@ -266,6 +307,43 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                     }}
                 />
             </div>
+            {(showExpense || showIncome) && (
+                <div className="grid w-full gap-2 rounded-xl bg-base-100 p-4">
+                    <span className="font-semibold">Filter category</span>
+                    <div className="grid w-full gap-2 text-xs xs:text-sm">
+                        <select
+                            disabled={!showExpense || loading}
+                            value={expenseCategory}
+                            onChange={(e) => setExpenseCategory(e.target.value)}
+                            className="dai-select dai-select-bordered w-full"
+                        >
+                            <option value="">Select expense</option>
+                            {categories
+                                .filter((el) => el.type === 'expense')
+                                .map((el, idx) => (
+                                    <option key={idx} value={el.id}>
+                                        {el.name}
+                                    </option>
+                                ))}
+                        </select>
+                        <select
+                            disabled={!showIncome || loading}
+                            value={incomeCategory}
+                            onChange={(e) => setIncomeCategory(e.target.value)}
+                            className="dai-select dai-select-bordered w-full"
+                        >
+                            <option value="">Select income</option>
+                            {categories
+                                .filter((el) => el.type === 'income')
+                                .map((el, idx) => (
+                                    <option key={idx} value={el.id}>
+                                        {el.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

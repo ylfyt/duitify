@@ -48,12 +48,19 @@ export class ReportRepo extends BaseRepo {
         };
     }
 
-    public static async getCashFlowEveryMonth(
-        userId: string,
-        trx_type: 'expense' | 'income',
-        year: number,
-        yearEnd?: number,
-    ): Promise<QueryResultOne<TransactionFlow>> {
+    public static async getCashFlowEveryMonth({
+        userId,
+        trx_type,
+        year,
+        yearEnd,
+        categories,
+    }: {
+        userId: string;
+        trx_type: 'expense' | 'income';
+        year: number;
+        yearEnd?: number;
+        categories: string[];
+    }): Promise<QueryResultOne<TransactionFlow>> {
         const { start, end } = this.getDateRanges(false, new Date(year, 0), new Date(yearEnd ?? year + 1, 0));
         const { data, error } = await supabase
             .rpc('get_transaction_flow', {
@@ -61,6 +68,7 @@ export class ReportRepo extends BaseRepo {
                 day_flow: false,
                 month_end_date: 24,
                 trx_user_id: userId,
+                categories,
             })
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM' }))
             .lt('occurred_at', formatDate(end, { format: 'yyyy-MM' }));
@@ -70,12 +78,19 @@ export class ReportRepo extends BaseRepo {
         };
     }
 
-    public static async getCashFlowEveryDay(
-        userId: string,
-        trx_type: 'expense' | 'income',
-        month: Date,
-        monthEnd?: Date,
-    ): Promise<QueryResultOne<TransactionFlow>> {
+    public static async getCashFlowEveryDay({
+        userId,
+        trx_type,
+        month,
+        monthEnd,
+        categories,
+    }: {
+        userId: string;
+        trx_type: 'expense' | 'income';
+        month: Date;
+        monthEnd?: Date;
+        categories: string[];
+    }): Promise<QueryResultOne<TransactionFlow>> {
         const { start, end } = this.getDateRanges(true, month, monthEnd);
 
         const { data, error } = await supabase
@@ -84,6 +99,7 @@ export class ReportRepo extends BaseRepo {
                 month_end_date: 24,
                 trx_type: trx_type,
                 trx_user_id: userId,
+                categories,
             })
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd' }))
             .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd' }));

@@ -174,6 +174,7 @@ export type Database = {
           trx_type: Database["public"]["Enums"]["transaction_type"]
           month_end_date: number
           day_flow: boolean
+          categories: string[]
         }
         Returns: {
           amount: number

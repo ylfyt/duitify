@@ -2,7 +2,8 @@ CREATE OR REPLACE FUNCTION get_transaction_flow(
     trx_user_id UUID,
     trx_type transaction_type,
     month_end_date INT,
-    day_flow BOOLEAN
+    day_flow BOOLEAN,
+    categories UUID[]
 )
 RETURNS TABLE(amount NUMERIC, occurred_at TEXT) 
 SET search_path = ''
@@ -24,6 +25,7 @@ BEGIN
     WHERE
         user_id = trx_user_id
         AND type = trx_type
+        AND (ARRAY_LENGTH(categories, 1) IS NULL OR category_id = ANY(categories))
     GROUP BY
         2
     ORDER BY 2;
