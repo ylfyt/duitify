@@ -1,5 +1,5 @@
 import { FC, useEffect, useMemo } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import ReportPage from './report-page';
 import CashFlowReportPage from './cash-flow-report-page';
 import { appBarCtxAtom } from '@/stores/common';
@@ -15,6 +15,7 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
     const [, setAppBar] = useAtom(appBarCtxAtom);
 
     const navigate = useNavigate();
+    const { pathname } = useLocation();
 
     const reports = useMemo<LabelValue<string>[]>(() => {
         return [
@@ -29,9 +30,13 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
         ];
     }, []);
 
+    const selectedReport = useMemo(() => {
+        return reports.find((el) => pathname === el.value);
+    }, [reports, pathname]);
+
     useEffect(() => {
         setAppBar({
-            title: 'Report',
+            title: !selectedReport ? 'Report' : `${selectedReport.label} Report`,
             revealer: true,
             actions: [
                 <button
@@ -47,7 +52,7 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
                 </button>,
             ],
         });
-    }, []);
+    }, [selectedReport]);
 
     return (
         <Routes>
