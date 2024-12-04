@@ -7,6 +7,7 @@ import { registerSW } from 'virtual:pwa-register';
 
 const updateSW = registerSW({
     onNeedRefresh() {
+        console.log('Content is ready to be updated.');
         alert('New content is available, please refresh.');
         updateSW(true);
     },

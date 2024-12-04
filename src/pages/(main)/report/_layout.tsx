@@ -36,7 +36,7 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
 
     useEffect(() => {
         setAppBar({
-            title: !selectedReport ? 'Report' : `${selectedReport.label} Report`,
+            title: selectedReport?.label ?? 'Report',
             revealer: true,
             actions: [
                 <button
