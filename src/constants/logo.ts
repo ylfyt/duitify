@@ -8,6 +8,8 @@ export const ACCOUNT_LOGOS: string[] = [
     '/accounts/bri.webp',
     '/accounts/invest.webp',
     '/accounts/loan.webp',
+    '/accounts/bni.webp',
+    '/accounts/livin-mandiri.webp',
 ] as const;
 
 export const CATEGORY_LOGOS: string[] = [
