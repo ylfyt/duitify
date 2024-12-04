@@ -67,34 +67,45 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
     const [incomeData, setIncomeData] = useState<TransactionFlow>([]);
 
     const loading = useMemo(() => loadingExpense || loadingIncome, [loadingExpense, loadingIncome]);
-    const expenseChart = useMemo<ChartData<'line', (number | Point | null)[], string>>(() => {
-        const labels = expenseData.map((el) => el.occurred_at);
-        labels.push(...incomeData.map((el) => el.occurred_at));
-        const unique = [...new Set(labels)];
 
+    const labels = useMemo(
+        () => [
+            ...new Set([
+                ...expenseData.map((el) => parseInt(el.occurred_at.split('-').join(''))),
+                ...incomeData.map((el) => parseInt(el.occurred_at.split('-').join(''))),
+            ]),
+        ],
+        [incomeData, expenseData],
+    );
+
+    const expenseChart = useMemo<ChartData<'line', (number | Point | null)[], number>>(() => {
         return {
-            labels: unique.map((el) => {
-                const strs = el.split('-');
-                return strs[strs.length - 1];
-            }),
+            labels: labels,
             datasets: [
                 {
                     label: 'Expense Flow',
                     fill: false,
                     tension: 0.2,
                     borderColor: colorScheme.error,
-                    data: expenseData.map((el) => el.amount),
+                    data: expenseData.map<Point>((el) => ({
+                        y: el.amount,
+                        x: parseInt(el.occurred_at.split('-').join('')),
+                    })),
+                    pointHitRadius: 10,
                 },
                 {
                     label: 'Income Flow',
                     fill: false,
                     tension: 0.2,
                     borderColor: colorScheme.success,
-                    data: incomeData.map((el) => el.amount),
+                    data: incomeData.map<Point>((el) => ({
+                        y: el.amount,
+                        x: parseInt(el.occurred_at.split('-').join('')),
+                    })),
                 },
             ],
         };
-    }, [expenseData, incomeData, colorScheme]);
+    }, [expenseData, incomeData, colorScheme, labels]);
 
     useEffect(() => {
         if (fetched) return;
@@ -301,6 +312,10 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                             x: {
                                 ticks: {
                                     color: colorScheme['base-content'],
+                                    callback: (value, idx) => {
+                                        if (typeof value === 'string') return value;
+                                        return labels[idx] % 100;
+                                    },
                                 },
                             },
                         },
