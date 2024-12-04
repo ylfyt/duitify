@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
                 },
                 workbox: {
                     globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,xml,ttf,otf,woff,woff2}'],
+                    cleanupOutdatedCaches: true,
                 },
             }),
         ],
