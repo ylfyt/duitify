@@ -40,7 +40,7 @@ export const COLOR_SCHEMES = {
         'success-content': '#00100b',
         warning: '#b86900',
         'warning-content': '#0c0400',
-        error: '#cc0033',
-        'error-content': '#fcd6d4',
+        error: '#ff878e',
+        'error-content': '#160607',
     },
 } as const;
