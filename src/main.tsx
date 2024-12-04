@@ -7,12 +7,15 @@ import { registerSW } from 'virtual:pwa-register';
 
 const updateSW = registerSW({
     onNeedRefresh() {
-        console.log('New content is available, please refresh.');
-        console.log('New content is available, please refresh.2');
         alert('New content is available, please refresh.');
         updateSW(true);
     },
-    onOfflineReady() {},
+    onOfflineReady() {
+        console.log('Content is now offline ready.');
+    },
+    onRegisteredSW() {
+        console.log('Service worker has been registered.');
+    },
 });
 
 const router = createBrowserRouter(createRoutesFromElements(<Route path="*" element={<App />} />), {

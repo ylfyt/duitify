@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
             react(),
             Icons({ compiler: 'jsx', jsx: 'react' }),
             VitePWA({
-                registerType: 'autoUpdate',
+                registerType: 'prompt',
                 devOptions: {
                     enabled: true,
                 },
