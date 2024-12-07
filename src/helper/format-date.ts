@@ -1,4 +1,4 @@
-const LOCAL_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
+export const LOCAL_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 type Options = {
     placeholder?: string;

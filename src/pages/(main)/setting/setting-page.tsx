@@ -146,6 +146,7 @@ const SettingPage: FC<SettingPageProps> = () => {
                                         (!maxAmount || isNaN(parseFloat(maxAmount)) || parseFloat(maxAmount) < 0)
                                     }
                                     onClick={handleEditMaxAmount}
+                                    className="disabled:opacity-20"
                                 >
                                     {isEditMaxAmount ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
                                 </button>
@@ -159,7 +160,7 @@ const SettingPage: FC<SettingPageProps> = () => {
                         <div className="flex items-center justify-between rounded-xl bg-base-100 p-3 shadow">
                             <div className="flex items-center gap-2">
                                 <Icon icon="lucide:calendar-days" />
-                                <span>End of the month</span>
+                                <span>End of month</span>
                             </div>
                             <div className="flex items-center gap-4">
                                 {!isEditEndMonth ? (
@@ -182,6 +183,7 @@ const SettingPage: FC<SettingPageProps> = () => {
                                         (isNaN(parseFloat(endMonth)) || parseFloat(endMonth) < 2)
                                     }
                                     onClick={handleEditEndMonth}
+                                    className="disabled:opacity-20"
                                 >
                                     {isEditEndMonth ? <Icon icon="lucide:check" /> : <Icon icon="lucide:pencil" />}
                                 </button>

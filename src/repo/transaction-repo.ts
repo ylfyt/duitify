@@ -11,7 +11,7 @@ type PaginationFilter = {
 export class TransactionRepo extends BaseRepo {
     public static async getTransactions({ cursor, account }: PaginationFilter): Promise<QueryResultMany<Transaction>> {
         const today = new Date();
-        today.setDate(today.getDate() + 2);
+        today.setMonth(today.getMonth() + 1);
 
         const q = this.db.from('transaction').select(
             `*, 

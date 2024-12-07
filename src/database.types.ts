@@ -175,6 +175,7 @@ export type Database = {
           month_end_date: number
           day_flow: boolean
           categories: string[]
+          time_zone: string
         }
         Returns: {
           amount: number

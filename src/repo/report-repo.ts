@@ -1,5 +1,5 @@
 import { BaseRepo, QueryResultMany, QueryResultOne } from './base-repo';
-import { formatDate } from '@/helper/format-date';
+import { formatDate, LOCAL_TIMEZONE } from '@/helper/format-date';
 import { settingsAtom } from '@/stores/settings';
 import { supabase } from '@/supabase';
 import { ExpenseOverview, TransactionFlow } from '@/types/report.type';
@@ -37,8 +37,8 @@ export class ReportRepo extends BaseRepo {
         const { data, error } = await this.db
             .from('transaction')
             .select(`amount:amount.sum(), category(id, name, logo)`)
-            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss' }))
-            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss' }))
+            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
+            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
             .eq('type', 'expense');
         const data2 = data as unknown as ExpenseOverview[];
         data2.sort((a, b) => b.amount - a.amount);
@@ -66,9 +66,10 @@ export class ReportRepo extends BaseRepo {
             .rpc('get_transaction_flow', {
                 trx_type,
                 day_flow: false,
-                month_end_date: 24,
+                month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
                 trx_user_id: userId,
                 categories,
+                time_zone: LOCAL_TIMEZONE,
             })
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM' }))
             .lt('occurred_at', formatDate(end, { format: 'yyyy-MM' }));
@@ -96,10 +97,11 @@ export class ReportRepo extends BaseRepo {
         const { data, error } = await supabase
             .rpc('get_transaction_flow', {
                 day_flow: true,
-                month_end_date: 24,
+                month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
                 trx_type: trx_type,
                 trx_user_id: userId,
                 categories,
+                time_zone: LOCAL_TIMEZONE,
             })
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd' }))
             .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd' }));
