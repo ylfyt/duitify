@@ -6,12 +6,13 @@ import { PAGINATION_SIZES } from '@/constants/common';
 type PaginationFilter = {
     cursor?: string;
     account?: string | null;
+    category?: string | null;
 };
 
 export class TransactionRepo extends BaseRepo {
     public static async getTransactions(
         userId: string,
-        { cursor, account }: PaginationFilter,
+        { cursor, account, category }: PaginationFilter,
     ): Promise<QueryResultMany<Transaction>> {
         const today = new Date();
         today.setMonth(today.getMonth() + 1);
@@ -25,6 +26,8 @@ export class TransactionRepo extends BaseRepo {
                 to_account:account!transaction_to_account_id_fkey(id, name, logo)`,
             )
             .eq('user_id', userId);
+
+        if (category) q.eq('category_id', category);
         if (account) q.or(`account_id.eq.${account}, to_account_id.eq.${account}`);
         return q
             .order('occurred_at', { ascending: false })

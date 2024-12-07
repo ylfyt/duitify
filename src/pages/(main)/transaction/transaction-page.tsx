@@ -21,6 +21,8 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     const [search] = useSearchParams();
 
     const [account, setAccount] = useState<string | null>(search.get('account'));
+    const [category, setCategory] = useState<string | null>(search.get('category'));
+
     const [cursor, setCursor] = useState<string | undefined>(undefined);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -28,8 +30,13 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     const [isFirst, setIsFirst] = useState<boolean>(true);
 
     const selectedAccount = useMemo(
-        () => transactions.find((t) => t.account_id === account)?.account,
+        () => (!account ? null : transactions.find((t) => t.account_id === account)?.account),
         [account, transactions],
+    );
+
+    const selectedCategory = useMemo(
+        () => (!category ? null : transactions.find((t) => t.category_id === category)?.category),
+        [category, transactions],
     );
 
     const groupedTransactions = useMemo(() => {
@@ -52,15 +59,14 @@ const TransactionPage: FC<TransactionPageProps> = () => {
         setTransactions([]);
         setCursor(undefined);
         setAccount(search.get('account'));
+        setCategory(search.get('category'));
     }, [search]);
 
     useEffect(() => {
         setAppBarCtx({
             revealer: true,
-            back: !!account,
-            title: selectedAccount ? (
-                selectedAccount.name
-            ) : (
+            back: !!selectedAccount || !!selectedCategory,
+            title: (selectedAccount || selectedCategory)?.name ?? (
                 <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />
             ),
             actions: [
@@ -69,7 +75,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 </Link>,
             ],
         });
-    }, [selectedAccount, account]);
+    }, [selectedAccount, selectedCategory]);
 
     useEffect(() => {
         if (!session?.user.id) return;
@@ -78,6 +84,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
             const { data, error } = await TransactionRepo.getTransactions(session.user.id, {
                 cursor,
                 account,
+                category,
             });
             setLoading(false);
             if (error) {
@@ -89,7 +96,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
             setIsFirst(false);
             setHasMore((data?.length ?? 0) >= PAGINATION_SIZES[0]);
         })();
-    }, [cursor, account, session]);
+    }, [cursor, account, session, category]);
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-2">

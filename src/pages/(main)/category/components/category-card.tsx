@@ -9,6 +9,7 @@ import { showLoading } from '@/stores/common';
 import { toast } from 'react-toastify';
 import { ENV } from '@/constants/env';
 import { CategoryRepo } from '@/repo/category-repo';
+import { useNavigate } from 'react-router-dom';
 
 interface CategoryCardProps {
     category: Category;
@@ -18,6 +19,8 @@ interface CategoryCardProps {
 }
 
 export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, onUpdated, onDeleted }) => {
+    const navigate = useNavigate();
+
     const handleDelete = async () => {
         const confirmed = await showConfirm({
             title: 'Delete category',
@@ -37,7 +40,10 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
     };
 
     return (
-        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
+        <div
+            onClick={() => navigate(`/accounts/transaction?category=${category.id}`)}
+            className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer"
+        >
             <img src={ENV.BASE_URL + category.logo} className="size-12"></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-lg">{category.name}</p>
