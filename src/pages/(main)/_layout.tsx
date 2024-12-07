@@ -10,10 +10,10 @@ import ScrollToTop from '@/components/scroll-to-top';
 import { removeSuffix } from '@/helper/str';
 import { handleLogout } from '@/helper/logout';
 import Loader from '@/components/loader';
-import { supabase } from '@/supabase';
 import errorImg from '/error.svg';
 import { settingsAtom } from '@/stores/settings';
 import { ENV } from '@/constants/env';
+import { SettingRepo } from '@/repo/setting-repo';
 
 export const DashboardLayout = () => {
     const navigate = useNavigate();
@@ -55,7 +55,7 @@ export const DashboardLayout = () => {
         if (!user) return;
         (async () => {
             setLoadingSettings(true);
-            const { data, error } = await supabase.from('settings').select('*').single();
+            const { data, error } = await SettingRepo.getSetting(user.user.id);
             setLoadingSettings(false);
             if (error) {
                 setMessage(error.message);

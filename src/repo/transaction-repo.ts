@@ -9,16 +9,22 @@ type PaginationFilter = {
 };
 
 export class TransactionRepo extends BaseRepo {
-    public static async getTransactions({ cursor, account }: PaginationFilter): Promise<QueryResultMany<Transaction>> {
+    public static async getTransactions(
+        userId: string,
+        { cursor, account }: PaginationFilter,
+    ): Promise<QueryResultMany<Transaction>> {
         const today = new Date();
         today.setMonth(today.getMonth() + 1);
 
-        const q = this.db.from('transaction').select(
-            `*, 
+        const q = this.db
+            .from('transaction')
+            .select(
+                `*, 
                 category(id, name, logo),
                 account:account!transaction_account_id_fkey(id, name, logo),
                 to_account:account!transaction_to_account_id_fkey(id, name, logo)`,
-        );
+            )
+            .eq('user_id', userId);
         if (account) q.or(`account_id.eq.${account}, to_account_id.eq.${account}`);
         return q
             .order('occurred_at', { ascending: false })

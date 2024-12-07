@@ -2,6 +2,7 @@ import { CategoryRepo } from '@/repo/category-repo';
 import { Category } from '@/types/category.type';
 import { FetchAtom } from '@/types/common';
 import { atom, getDefaultStore, useAtom } from 'jotai';
+import { sessionAtom } from './auth';
 
 const store = getDefaultStore();
 
@@ -13,7 +14,7 @@ const internalBondsAtom = atom<FetchAtom<Category[]>>({
 
 async function refresh(): Promise<string | undefined> {
     store.set(internalBondsAtom, (prev) => ({ ...prev, loading: true, fetched: false }));
-    const res = await CategoryRepo.getCategories();
+    const res = await CategoryRepo.getCategories(store.get(sessionAtom)?.user.id ?? '');
     if (res.error) {
         store.set(internalBondsAtom, (prev) => ({ ...prev, loading: false }));
         return res.error.message;

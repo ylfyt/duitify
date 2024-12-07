@@ -1,13 +1,9 @@
-import { Category, CategoryCreateDto, CategoryType, CategoryUpdateDto } from '@/types/category.type';
+import { Category, CategoryCreateDto, CategoryUpdateDto } from '@/types/category.type';
 import { BaseRepo, QueryResultEmpty, QueryResultMany, QueryResultOne } from './base-repo';
 
 export class CategoryRepo extends BaseRepo {
-    public static async getCategories(): Promise<QueryResultMany<Category>> {
-        return this.db.from('category').select('*').order('name', { ascending: true });
-    }
-
-    public static async getCategoryByType(type: CategoryType): Promise<QueryResultMany<Category>> {
-        return this.db.from('category').select('*').eq('type', type).order('name', { ascending: true });
+    public static async getCategories(userId: string): Promise<QueryResultMany<Category>> {
+        return this.db.from('category').select('*').eq('user_id', userId).order('name', { ascending: true });
     }
 
     public static async createCategory(data: CategoryCreateDto): Promise<QueryResultOne<Category>> {

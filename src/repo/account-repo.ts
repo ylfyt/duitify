@@ -2,8 +2,8 @@ import { Account, AccountCreateDto, AccountUpdateDto } from '@/types/account.typ
 import { BaseRepo, QueryResultEmpty, QueryResultMany, QueryResultOne } from './base-repo';
 
 export class AccountRepo extends BaseRepo {
-    public static async getAccounts(): Promise<QueryResultMany<Account>> {
-        return this.db.from('account').select('*').order('name', { ascending: true });
+    public static async getAccounts(userId: string): Promise<QueryResultMany<Account>> {
+        return this.db.from('account').select('*').eq('user_id', userId).order('name', { ascending: true });
     }
 
     public static async createAccount(data: AccountCreateDto): Promise<QueryResultOne<Account>> {

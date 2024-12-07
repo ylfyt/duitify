@@ -10,11 +10,13 @@ import { VisibleDetector } from '@/components/visible-detector';
 import { TransactionRepo } from '@/repo/transaction-repo';
 import { PAGINATION_SIZES } from '@/constants/common';
 import { ENV } from '@/constants/env';
+import { sessionAtom } from '@/stores/auth';
 
 interface TransactionPageProps {}
 
 const TransactionPage: FC<TransactionPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
+    const [session] = useAtom(sessionAtom);
 
     const [search] = useSearchParams();
 
@@ -70,9 +72,10 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     }, [selectedAccount, account]);
 
     useEffect(() => {
+        if (!session?.user.id) return;
         (async () => {
             setLoading(true);
-            const { data, error } = await TransactionRepo.getTransactions({
+            const { data, error } = await TransactionRepo.getTransactions(session.user.id, {
                 cursor,
                 account,
             });
@@ -86,7 +89,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
             setIsFirst(false);
             setHasMore((data?.length ?? 0) >= PAGINATION_SIZES[0]);
         })();
-    }, [cursor, account]);
+    }, [cursor, account, session]);
 
     return (
         <div className="flex flex-1 flex-col gap-4 pt-2">

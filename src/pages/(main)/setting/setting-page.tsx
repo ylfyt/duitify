@@ -3,11 +3,11 @@ import { ENV } from '@/constants/env';
 import { formatCurrency } from '@/helper/format-currency';
 import { formatNumberToDate } from '@/helper/format-number-to-date';
 import { handleLogout } from '@/helper/logout';
+import { SettingRepo } from '@/repo/setting-repo';
 import { sessionAtom } from '@/stores/auth';
 import { appBarCtxAtom, showLoading } from '@/stores/common';
 import { settingsAtom } from '@/stores/settings';
 import { isDarkAtom } from '@/stores/theme';
-import { supabase } from '@/supabase';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -36,10 +36,7 @@ const SettingPage: FC<SettingPageProps> = () => {
     const updateHideAmount = async () => {
         const hide_amount = !settings?.hide_amount;
         showLoading(true);
-        const res = await supabase
-            .from('settings')
-            .update({ hide_amount })
-            .eq('id', settings?.id ?? 0);
+        const res = await SettingRepo.update(settings!.id, 'hide_amount', hide_amount);
         showLoading(false);
         if (res.error) {
             toast.error(res.error.message);
@@ -55,10 +52,7 @@ const SettingPage: FC<SettingPageProps> = () => {
         }
 
         showLoading(true);
-        const res = await supabase
-            .from('settings')
-            .update({ max_visible_amount: parseFloat(maxAmount) })
-            .eq('id', settings?.id ?? 0);
+        const res = await SettingRepo.update(settings!.id, 'max_visible_amount', parseFloat(maxAmount));
         showLoading(false);
         if (res.error) {
             toast.error(res.error.message);
@@ -77,10 +71,7 @@ const SettingPage: FC<SettingPageProps> = () => {
         const month_end_date = !endMonth ? null : parseInt(endMonth);
 
         showLoading(true);
-        const res = await supabase
-            .from('settings')
-            .update({ month_end_date })
-            .eq('id', settings?.id ?? 0);
+        const res = await SettingRepo.update(settings!.id, 'month_end_date', month_end_date);
         showLoading(false);
         if (res.error) {
             toast.error(res.error.message);

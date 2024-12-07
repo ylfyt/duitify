@@ -12,8 +12,9 @@ import { AmountRevealer } from '@/components/amount-revealer';
 import { Icon } from '@/components/icon';
 import { ExpenseOverview } from '@/types/report.type';
 import { DropdownMenu } from '@/components/dropdown-menu';
-import { getDefaultStore } from 'jotai';
+import { getDefaultStore, useAtom } from 'jotai';
 import { settingsAtom } from '@/stores/settings';
+import { sessionAtom } from '@/stores/auth';
 
 ChartJS.register(Title, Tooltip, ArcElement, CategoryScale, LinearScale);
 
@@ -35,6 +36,7 @@ const getNowDate = () => {
 interface ReportPageProps {}
 
 const ReportPage: FC<ReportPageProps> = () => {
+    const [session] = useAtom(sessionAtom);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ExpenseOverview[]>([]);
     const [loadingIncome, setLoadingIncome] = useState(false);
@@ -60,9 +62,10 @@ const ReportPage: FC<ReportPageProps> = () => {
     );
 
     useEffect(() => {
+        if (!session?.user.id) return;
         (async () => {
             setLoading(true);
-            const res = await ReportRepo.getExpenseOverview(expenseDate);
+            const res = await ReportRepo.getExpenseOverview(session.user.id, expenseDate);
             setLoading(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -70,12 +73,13 @@ const ReportPage: FC<ReportPageProps> = () => {
             }
             setData(res.data ?? []);
         })();
-    }, [expenseDate]);
+    }, [expenseDate, session]);
 
     useEffect(() => {
+        if (!session?.user.id) return;
         (async () => {
             setLoadingIncome(true);
-            const res = await ReportRepo.getIncomeTotal(expenseDate);
+            const res = await ReportRepo.getIncomeTotal(session.user.id, expenseDate);
             setLoadingIncome(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -83,7 +87,7 @@ const ReportPage: FC<ReportPageProps> = () => {
             }
             setTotalIncome(res.data ?? 0);
         })();
-    }, [expenseDate]);
+    }, [expenseDate, session]);
 
     return (
         <div className="flex flex-1 flex-col items-center gap-4 pt-2">

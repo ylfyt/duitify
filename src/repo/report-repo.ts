@@ -31,15 +31,17 @@ export class ReportRepo extends BaseRepo {
         return { start, end };
     }
 
-    public static async getExpenseOverview(month?: Date): Promise<QueryResultMany<ExpenseOverview>> {
+    public static async getExpenseOverview(userId: string, month?: Date): Promise<QueryResultMany<ExpenseOverview>> {
         const { start, end } = this.getDateRanges(true, month);
 
         const { data, error } = await this.db
             .from('transaction')
             .select(`amount:amount.sum(), category(id, name, logo)`)
+            .eq('user_id', userId)
+            .eq('type', 'expense')
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
-            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
-            .eq('type', 'expense');
+            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }));
+
         const data2 = data as unknown as ExpenseOverview[];
         data2.sort((a, b) => b.amount - a.amount);
         return {
@@ -48,15 +50,16 @@ export class ReportRepo extends BaseRepo {
         };
     }
 
-    public static async getIncomeTotal(month?: Date): Promise<QueryResultOne<number>> {
+    public static async getIncomeTotal(userId: string, month?: Date): Promise<QueryResultOne<number>> {
         const { start, end } = this.getDateRanges(true, month);
 
         const { data: data2, error } = await this.db
             .from('transaction')
             .select(`amount:amount.sum()`)
+            .eq('user_id', userId)
+            .eq('type', 'income')
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
             .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
-            .eq('type', 'income')
             .single();
 
         const data = data2 as unknown as { amount: number } | null;
