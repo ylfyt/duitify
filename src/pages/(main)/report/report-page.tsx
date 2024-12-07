@@ -37,6 +37,8 @@ interface ReportPageProps {}
 const ReportPage: FC<ReportPageProps> = () => {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState<ExpenseOverview[]>([]);
+    const [loadingIncome, setLoadingIncome] = useState(false);
+    const [totalIncome, setTotalIncome] = useState(0);
 
     const [expenseDate, setExpenseDate] = useState<Date | undefined>(getNowDate);
 
@@ -67,6 +69,19 @@ const ReportPage: FC<ReportPageProps> = () => {
                 return;
             }
             setData(res.data ?? []);
+        })();
+    }, [expenseDate]);
+
+    useEffect(() => {
+        (async () => {
+            setLoadingIncome(true);
+            const res = await ReportRepo.getIncomeTotal(expenseDate);
+            setLoadingIncome(false);
+            if (res.error) {
+                toast.error(res.error.message);
+                return;
+            }
+            setTotalIncome(res.data ?? 0);
         })();
     }, [expenseDate]);
 
@@ -109,43 +124,56 @@ const ReportPage: FC<ReportPageProps> = () => {
                     />
                 </div>
             </div>
-
-            <div className="flex flex-col items-center gap-4">
-                <div className="aspect-square w-[60vw] max-w-[20rem]">
-                    {loading ? (
-                        <Skeleton className="h-full w-full rounded-full">
-                            <div></div>
-                        </Skeleton>
-                    ) : data.length === 0 ? (
-                        <div className="h-full w-full rounded-full bg-base-300"></div>
-                    ) : (
-                        <Doughnut
-                            data={chartData}
-                            options={{
-                                responsive: true,
-                                plugins: {
-                                    tooltip: {
-                                        callbacks: {
-                                            label: function (tooltipItem) {
-                                                return `${tooltipItem.label}: ${formatCurrency(parseFloat(tooltipItem.raw as string))}`;
-                                            },
+            <div className="aspect-square w-[60vw] max-w-[20rem]">
+                {loading ? (
+                    <Skeleton className="h-full w-full rounded-full">
+                        <div></div>
+                    </Skeleton>
+                ) : data.length === 0 ? (
+                    <div className="h-full w-full rounded-full bg-base-300"></div>
+                ) : (
+                    <Doughnut
+                        data={chartData}
+                        options={{
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (tooltipItem) {
+                                            return `${tooltipItem.label}: ${formatCurrency(parseFloat(tooltipItem.raw as string))}`;
                                         },
                                     },
                                 },
-                            }}
-                        />
-                    )}
-                </div>
-                <div className="flex items-center gap-2">
-                    <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
-                    <span className="font-bold text-error">
-                        {loading ? (
-                            <Skeleton>{formatCurrency(-1 * 10_000)}</Skeleton>
-                        ) : (
-                            <AmountRevealer amount={-1 * total} />
-                        )}
-                    </span>
-                </div>
+                            },
+                        }}
+                    />
+                )}
+            </div>
+            <div
+                className={
+                    'flex w-full items-center justify-evenly gap-2 rounded-xl px-3 py-2 text-xs font-medium ' +
+                    (loading || loadingIncome ? 'dai-skeleton' : 'bg-base-100')
+                }
+            >
+                <span className={loading ? 'text-transparent' : 'text-error'}>
+                    <AmountRevealer count={6} amount={loading ? -1000_000 : -1 * total} />
+                </span>
+                <div className="h-full w-[1px] bg-base-300"></div>
+                <span className={loadingIncome ? 'text-transparent' : 'text-success'}>
+                    <AmountRevealer count={6} amount={loadingIncome ? 1000_000 : totalIncome} />
+                </span>
+                <div className="h-full w-[1px] bg-base-300"></div>
+                <span
+                    className={
+                        loading || loadingIncome
+                            ? 'text-transparent'
+                            : total > totalIncome
+                              ? 'text-error'
+                              : 'text-success'
+                    }
+                >
+                    <AmountRevealer count={6} amount={loading || loadingIncome ? 1000_000 : totalIncome - total} />
+                </span>
             </div>
             <div className="grid w-full grid-cols-1 gap-1 md:grid-cols-2">
                 {loading

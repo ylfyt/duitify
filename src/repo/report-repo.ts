@@ -48,6 +48,24 @@ export class ReportRepo extends BaseRepo {
         };
     }
 
+    public static async getIncomeTotal(month?: Date): Promise<QueryResultOne<number>> {
+        const { start, end } = this.getDateRanges(true, month);
+
+        const { data: data2, error } = await this.db
+            .from('transaction')
+            .select(`amount:amount.sum()`)
+            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
+            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))
+            .eq('type', 'income')
+            .single();
+
+        const data = data2 as unknown as { amount: number } | null;
+        return {
+            error,
+            data: data?.amount ?? 0,
+        };
+    }
+
     public static async getCashFlowEveryMonth({
         userId,
         trx_type,
