@@ -1,5 +1,5 @@
 import { useAutoFocus } from '@/hooks/use-auto-focus';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { Icon } from './icon';
 import { closeModal } from '@/stores/modal';
 
@@ -29,5 +29,25 @@ export const Modal: FC<ModalProps> = ({ children, title, useFocus = true, classN
             </div>
             {children}
         </div>
+    );
+};
+
+interface ModalWithResultProps {
+    modalId?: number;
+    onClose?: (modalId?: number) => void;
+}
+
+export const ModalWithResult: FC<ModalWithResultProps> = ({ modalId, onClose }) => {
+    useEffect(() => {
+        return () => onClose?.(modalId);
+    }, [modalId, onClose]);
+
+    return (
+        <Modal>
+            <div>
+                <h1>{modalId}</h1>
+                <button onClick={() => closeModal(modalId)}>close</button>
+            </div>
+        </Modal>
     );
 };
