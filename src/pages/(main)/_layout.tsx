@@ -14,6 +14,7 @@ import errorImg from '/error.svg';
 import { settingsAtom } from '@/stores/settings';
 import { ENV } from '@/constants/env';
 import { SettingRepo } from '@/repo/setting-repo';
+import PinPage from './pin-page';
 
 export const DashboardLayout = () => {
     const navigate = useNavigate();
@@ -91,6 +92,7 @@ export const DashboardLayout = () => {
                 )}
             </div>
         );
+    if (true) return <PinPage />;
 
     return (
         <div className="flex min-h-dvh flex-col items-center bg-base-200 text-base-content">
