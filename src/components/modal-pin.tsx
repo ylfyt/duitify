@@ -77,6 +77,7 @@ const ModalPin: FC<ModalPinProps> = ({ onClose }) => {
                     <input
                         key={idx}
                         type="password"
+                        inputMode="numeric"
                         value={values[idx] ?? ''}
                         onChange={(e) =>
                             setValues((prev) => {
