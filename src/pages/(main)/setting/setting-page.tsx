@@ -1,12 +1,16 @@
 import { Icon } from '@/components/icon';
+import ModalPin from '@/components/modal-pin';
 import { ENV } from '@/constants/env';
+import { generateSalt, sha256 } from '@/helper/crypto';
 import { formatCurrency } from '@/helper/format-currency';
 import { formatNumberToDate } from '@/helper/format-number-to-date';
 import { handleLogout } from '@/helper/logout';
 import { SettingRepo } from '@/repo/setting-repo';
 import { sessionAtom } from '@/stores/auth';
 import { appBarCtxAtom, showLoading } from '@/stores/common';
-import { settingsAtom } from '@/stores/settings';
+import { showConfirm } from '@/stores/confirm';
+import { openModal } from '@/stores/modal';
+import { pinAuthenticatedAtom, settingsAtom } from '@/stores/settings';
 import { isDarkAtom } from '@/stores/theme';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useState } from 'react';
@@ -20,6 +24,7 @@ const SettingPage: FC<SettingPageProps> = () => {
     const [isDark, setIsDark] = useAtom(isDarkAtom);
 
     const [settings, setSettings] = useAtom(settingsAtom);
+    const [, setPinAuthenticatedAtom] = useAtom(pinAuthenticatedAtom);
 
     const [isEditMaxAmount, setIsEditMaxAmount] = useState(false);
     const [maxAmount, setMaxAmount] = useState(settings?.max_visible_amount?.toString() ?? '');
@@ -81,6 +86,44 @@ const SettingPage: FC<SettingPageProps> = () => {
         setIsEditEndMonth(false);
     };
 
+    const handlePin = async (pin: string) => {
+        if (!pin) return;
+
+        showLoading(true);
+        const salt = generateSalt();
+        const realSalt = salt + session?.user.id;
+        const hash = await sha256(pin, realSalt);
+        if (!hash) {
+            showLoading(false);
+            toast.error('Failed to generate hash');
+            return;
+        }
+        const { error } = await SettingRepo.update(settings!.id, 'pin', hash + ':' + salt);
+        showLoading(false);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        setPinAuthenticatedAtom(true);
+        setSettings({ ...settings!, pin: hash + ':' + salt });
+    };
+
+    const handleDisablePin = async () => {
+        const confirmed = await showConfirm({
+            title: 'Disable PIN?',
+            body: 'Are you sure you want to disable PIN?',
+        });
+        if (!confirmed) return;
+
+        showLoading(true);
+        const { error } = await SettingRepo.update(settings!.id, 'pin', null);
+        showLoading(false);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        setSettings({ ...settings!, pin: null });
+    };
     return (
         <div className="flex flex-1 flex-col gap-4 pt-2">
             <div className="flex items-center gap-4 rounded-xl bg-base-100 p-4">
@@ -98,9 +141,25 @@ const SettingPage: FC<SettingPageProps> = () => {
                                 <Icon icon="lucide:keyboard" />
                                 <span>PIN</span>
                             </div>
-                            <button>
-                                <Icon icon="lucide:pencil" />
-                            </button>
+                            <div className="flex items-center gap-4">
+                                {settings?.pin && (
+                                    <span className="dai-badge dai-badge-success dai-badge-sm">Enabled</span>
+                                )}
+                                <button
+                                    onClick={() => {
+                                        openModal(ModalPin, {
+                                            onClose: handlePin,
+                                        });
+                                    }}
+                                >
+                                    <Icon icon="lucide:pencil" />
+                                </button>
+                                {settings?.pin && (
+                                    <button onClick={handleDisablePin} className="text-error">
+                                        <Icon icon="lucide:x-circle" />
+                                    </button>
+                                )}
+                            </div>
                         </div>
                         <div className="flex items-center justify-between rounded-xl bg-base-100 p-3 shadow">
                             <div className="flex items-center gap-2">

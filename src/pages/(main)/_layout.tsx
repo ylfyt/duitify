@@ -11,7 +11,7 @@ import { removeSuffix } from '@/helper/str';
 import { handleLogout } from '@/helper/logout';
 import Loader from '@/components/loader';
 import errorImg from '/error.svg';
-import { settingsAtom } from '@/stores/settings';
+import { pinAuthenticatedAtom, settingsAtom } from '@/stores/settings';
 import { ENV } from '@/constants/env';
 import { SettingRepo } from '@/repo/setting-repo';
 import PinPage from './pin-page';
@@ -22,7 +22,8 @@ export const DashboardLayout = () => {
     const [routes] = useState(ROUTES);
 
     const [loadingSettings, setLoadingSettings] = useState(true);
-    const [_, setSettings] = useAtom(settingsAtom);
+    const [settings, setSettings] = useAtom(settingsAtom);
+    const [pinAuthenticated] = useAtom(pinAuthenticatedAtom);
     const [message, setMessage] = useState('');
     const [count, setCount] = useState(0);
 
@@ -71,6 +72,8 @@ export const DashboardLayout = () => {
     }, [user, count]);
 
     if (!user) return null;
+    if (settings && settings.pin && !pinAuthenticated) return <PinPage />;
+
     if (loadingSettings || message)
         return (
             <div className="grid min-h-dvh place-items-center">
@@ -92,7 +95,6 @@ export const DashboardLayout = () => {
                 )}
             </div>
         );
-    if (true) return <PinPage />;
 
     return (
         <div className="flex min-h-dvh flex-col items-center bg-base-200 text-base-content">
