@@ -48,7 +48,7 @@ const AccountPage: FC<AccountPageProps> = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-2">
+        <div className="flex flex-1 flex-col gap-4 p-2">
             <div className="rounded-xl bg-base-100 p-4">
                 <div className="flex items-center gap-2">
                     <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>

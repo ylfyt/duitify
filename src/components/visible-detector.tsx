@@ -7,7 +7,7 @@ interface VisibleDetectorProps {
     offset?: number; // by default is 75, based on bottom navigation bar height
 }
 
-export const VisibleDetector: FC<VisibleDetectorProps> = ({ children, onInvisible, onVisible, offset = 75 }) => {
+export const VisibleDetector: FC<VisibleDetectorProps> = ({ children, onInvisible, onVisible, offset = 0 }) => {
     const ref = useRef<HTMLDivElement>(null);
 
     const [isVisible, setIsVisible] = useState(false);

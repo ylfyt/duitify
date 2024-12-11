@@ -51,7 +51,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-2">
+        <div className="flex flex-1 flex-col gap-4 p-2">
             <div role="tablist" className="dai-tabs-boxed dai-tabs bg-base-100">
                 {(['expense', 'income'] as CategoryType[]).map((el, idx) => (
                     <button

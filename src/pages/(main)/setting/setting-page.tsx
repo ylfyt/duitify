@@ -131,7 +131,7 @@ const SettingPage: FC<SettingPageProps> = () => {
         setSettings({ ...settings!, pin: null });
     };
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-2">
+        <div className="flex flex-1 flex-col gap-4 p-2">
             <div className="flex items-center gap-4 rounded-xl bg-base-100 p-4">
                 <img src={ENV.BASE_URL + '/icons/icon-192x192.png'} className="size-16" alt="" />
                 <div className="flex flex-col gap-0.5">

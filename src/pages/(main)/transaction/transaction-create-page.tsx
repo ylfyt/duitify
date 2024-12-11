@@ -152,7 +152,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     };
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-4">
+        <div className="flex flex-1 flex-col gap-4 p-2">
             <form
                 onSubmit={(e) => {
                     e.preventDefault();

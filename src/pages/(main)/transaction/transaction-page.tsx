@@ -99,7 +99,7 @@ const TransactionPage: FC<TransactionPageProps> = () => {
     }, [cursor, account, session, category]);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 pt-2">
+        <div className="flex flex-1 flex-col gap-4 p-2">
             <div className="flex flex-col gap-4">
                 {loading && isFirst ? (
                     Array.from({ length: 4 }).map((_, idx) => <TransactionGroupCardSkeleton key={idx} />)
@@ -122,15 +122,15 @@ const TransactionPage: FC<TransactionPageProps> = () => {
             </div>
             {!isFirst && hasMore && !loading ? (
                 <VisibleDetector onVisible={() => setCursor(transactions[transactions.length - 1]?.occurred_at)}>
-                    <span className="flex justify-center">
-                        <span className="dai-loading dai-loading-dots dai-loading-lg invisible text-primary"></span>
+                    <span className="invisible flex justify-center">
+                        <span className="dai-loading dai-loading-dots dai-loading-sm text-primary"></span>
                     </span>
                 </VisibleDetector>
-            ) : loading && !isFirst ? (
-                <span className="flex justify-center">
-                    <span className="dai-loading dai-loading-dots dai-loading-lg text-primary"></span>
+            ) : (
+                <span className={'flex justify-center ' + (loading && !isFirst ? 'visible' : 'invisible')}>
+                    <span className="dai-loading dai-loading-dots dai-loading-sm text-primary"></span>
                 </span>
-            ) : null}
+            )}
         </div>
     );
 };

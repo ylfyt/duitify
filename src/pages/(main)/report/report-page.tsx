@@ -90,7 +90,7 @@ const ReportPage: FC<ReportPageProps> = () => {
     }, [expenseDate, session]);
 
     return (
-        <div className="flex flex-1 flex-col items-center gap-4 pt-2">
+        <div className="flex flex-1 flex-col items-center gap-4 p-2">
             <div className="flex w-full items-center rounded-xl bg-base-100 p-2">
                 <div className="flex-1"></div>
                 <div className="flex items-center justify-center gap-2">
