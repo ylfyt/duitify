@@ -44,6 +44,7 @@ import IconLucideCalendarDays from '~icons/lucide/calendar-days';
 import IconLucideMenu from '~icons/lucide/menu';
 import IconLucideCirclePlus from '~icons/lucide/circle-plus';
 import IconLucideCircleMinus from '~icons/lucide/circle-minus';
+import IconLucideAppWindow from '~icons/lucide/app-window';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -91,6 +92,7 @@ const Icons = {
     'lucide:menu': IconLucideMenu,
     'lucide:circle-plus': IconLucideCirclePlus,
     'lucide:circle-minus': IconLucideCircleMinus,
+    'lucide:app-window': IconLucideAppWindow,
 };
 
 export type IconName = keyof typeof Icons;

@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS settings (
     id UUID PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     pin VARCHAR(255) NULL,
+    pin_desktop_only BOOLEAN NULL,
     hide_amount BOOLEAN NULL,
     max_visible_amount FLOAT NULL,
     month_end_date INT NULL,

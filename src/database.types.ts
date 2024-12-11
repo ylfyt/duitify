@@ -79,6 +79,7 @@ export type Database = {
           max_visible_amount: number | null
           month_end_date: number | null
           pin: string | null
+          pin_desktop_only: boolean | null
           user_id: string
         }
         Insert: {
@@ -87,6 +88,7 @@ export type Database = {
           max_visible_amount?: number | null
           month_end_date?: number | null
           pin?: string | null
+          pin_desktop_only?: boolean | null
           user_id: string
         }
         Update: {
@@ -95,6 +97,7 @@ export type Database = {
           max_visible_amount?: number | null
           month_end_date?: number | null
           pin?: string | null
+          pin_desktop_only?: boolean | null
           user_id?: string
         }
         Relationships: []

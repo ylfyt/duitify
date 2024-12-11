@@ -14,6 +14,7 @@ entity settings {
     --
     * user_id : INT
     pin : VARCHAR
+    pin_desktop_only : BOOLEAN
     hide_amount : BOOLEAN
     max_visible_amount : FLOAT
     month_end_date : INT    

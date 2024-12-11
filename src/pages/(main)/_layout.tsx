@@ -15,6 +15,7 @@ import { pinAuthenticatedAtom, settingsAtom } from '@/stores/settings';
 import { ENV } from '@/constants/env';
 import { SettingRepo } from '@/repo/setting-repo';
 import PinPage from './pin-page';
+import { isMobile } from '@/helper/is-mobile';
 
 export const DashboardLayout = () => {
     const navigate = useNavigate();
@@ -72,7 +73,8 @@ export const DashboardLayout = () => {
     }, [user, count]);
 
     if (!user) return null;
-    if (settings && settings.pin && !pinAuthenticated) return <PinPage />;
+    if (settings && settings.pin && !pinAuthenticated && (!settings.pin_desktop_only || !isMobile()))
+        return <PinPage />;
 
     if (loadingSettings || message)
         return (

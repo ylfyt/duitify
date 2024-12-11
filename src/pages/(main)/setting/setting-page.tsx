@@ -86,7 +86,7 @@ const SettingPage: FC<SettingPageProps> = () => {
         setIsEditEndMonth(false);
     };
 
-    const handlePin = async (pin: string) => {
+    const handlePin = async (pin: string, desktopOnly?: boolean) => {
         if (!pin) return;
 
         showLoading(true);
@@ -98,6 +98,12 @@ const SettingPage: FC<SettingPageProps> = () => {
             toast.error('Failed to generate hash');
             return;
         }
+        const res = await SettingRepo.update(settings!.id, 'pin_desktop_only', desktopOnly ?? false);
+        if (res.error) {
+            showLoading(false);
+            toast.error(res.error.message);
+            return;
+        }
         const { error } = await SettingRepo.update(settings!.id, 'pin', hash + ':' + salt);
         showLoading(false);
         if (error) {
@@ -105,7 +111,7 @@ const SettingPage: FC<SettingPageProps> = () => {
             return;
         }
         setPinAuthenticatedAtom(true);
-        setSettings({ ...settings!, pin: hash + ':' + salt });
+        setSettings({ ...settings!, pin: hash + ':' + salt, pin_desktop_only: desktopOnly ?? false });
     };
 
     const handleDisablePin = async () => {
@@ -142,13 +148,18 @@ const SettingPage: FC<SettingPageProps> = () => {
                                 <span>PIN</span>
                             </div>
                             <div className="flex items-center gap-4">
+                                {settings?.pin && settings.pin_desktop_only && (
+                                    <Icon className="text-accent" icon="lucide:app-window" />
+                                )}
                                 {settings?.pin && (
                                     <span className="dai-badge dai-badge-success dai-badge-sm">Enabled</span>
                                 )}
+                                {settings?.pin && <div className="h-5 w-[1px] bg-base-300"></div>}
                                 <button
                                     onClick={() => {
                                         openModal(ModalPin, {
                                             onClose: handlePin,
+                                            desktopOption: true,
                                         });
                                     }}
                                 >

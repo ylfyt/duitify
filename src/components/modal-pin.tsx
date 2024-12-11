@@ -3,13 +3,16 @@ import { closeModal } from '@/stores/modal';
 import { ClipboardEvent, FC, KeyboardEvent, useEffect, useMemo, useRef } from 'react';
 
 interface ModalPinProps {
-    onClose: (pin: string) => void;
+    onClose: (pin: string, desktopOnly?: boolean) => void;
+    desktopOption?: boolean;
 }
 
-const ModalPin: FC<ModalPinProps> = ({ onClose }) => {
+const ModalPin: FC<ModalPinProps> = ({ onClose, desktopOption }) => {
     const pinLength = useMemo(() => 6, []);
     const ref = useRef<HTMLInputElement[]>([]);
     const [values, setValues, valuesRef] = useStateWithRef<string[]>([]);
+    const [desktopOnly, setDesktopOnly, desktopOnlyRef] = useStateWithRef(false);
+    const isCancel = useRef(true);
 
     const disabled = useMemo(
         () => values.length < pinLength || values.findIndex((el) => !el) !== -1,
@@ -21,7 +24,7 @@ const ModalPin: FC<ModalPinProps> = ({ onClose }) => {
     }, [ref.current]);
 
     useEffect(() => {
-        return () => onClose(valuesRef.current.join(''));
+        return () => onClose(isCancel.current ? '' : valuesRef.current.join(''), desktopOnlyRef.current);
     }, []);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, idx: number) => {
@@ -64,6 +67,7 @@ const ModalPin: FC<ModalPinProps> = ({ onClose }) => {
         <form
             onSubmit={(e) => {
                 e.preventDefault();
+                isCancel.current = false;
                 closeModal();
             }}
             className="flex flex-col items-center gap-8 rounded-xl border border-base-300 bg-base-100 px-8 py-12 shadow-md"
@@ -96,13 +100,26 @@ const ModalPin: FC<ModalPinProps> = ({ onClose }) => {
                     />
                 ))}
             </div>
-            <button
-                type="submit"
-                disabled={disabled}
-                className="dai-btn dai-btn-primary dai-btn-sm dai-btn-wide sm:dai-btn-md"
-            >
-                Submit
-            </button>
+            <div className="flex w-full flex-col items-center gap-2">
+                <button
+                    type="submit"
+                    disabled={disabled}
+                    className="dai-btn dai-btn-primary dai-btn-sm dai-btn-wide sm:dai-btn-md"
+                >
+                    Submit
+                </button>
+                {desktopOption && (
+                    <label className="dai-label cursor-pointer gap-2">
+                        <input
+                            type="checkbox"
+                            checked={desktopOnly}
+                            onChange={(e) => setDesktopOnly(e.target.checked)}
+                            className="dai-checkbox-primary dai-checkbox dai-checkbox-sm"
+                        />
+                        <span className="dai-label-text">Desktop Only</span>
+                    </label>
+                )}
+            </div>
         </form>
     );
 };
