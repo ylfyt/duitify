@@ -171,14 +171,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_balance_at: {
+        Args: {
+          trx_user_id: string
+          month_end_date: number
+          day_flow: boolean
+          end_str: string
+          time_zone: string
+        }
+        Returns: number
+      }
       get_transaction_flow: {
         Args: {
           trx_user_id: string
-          trx_type: Database["public"]["Enums"]["transaction_type"]
+          trx_type: Database["public"]["Enums"]["transaction_type"][]
           month_end_date: number
           day_flow: boolean
           categories: string[]
           time_zone: string
+          start_str: string
+          end_str: string
         }
         Returns: {
           amount: number

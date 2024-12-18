@@ -8,7 +8,7 @@ import { getDefaultStore } from 'jotai';
 const store = getDefaultStore();
 
 export class ReportRepo extends BaseRepo {
-    private static getDateRanges(useOffset: boolean, date?: Date, monthEnd?: Date): { start: Date; end: Date } {
+    public static getDateRanges(useOffset: boolean, date?: Date, monthEnd?: Date): { start: Date; end: Date } {
         if (!date)
             return {
                 start: new Date(0),
@@ -77,23 +77,23 @@ export class ReportRepo extends BaseRepo {
         categories,
     }: {
         userId: string;
-        trx_type: 'expense' | 'income';
+        trx_type: ('expense' | 'income')[];
         year: number;
         yearEnd?: number;
         categories: string[];
     }): Promise<QueryResultOne<TransactionFlow>> {
         const { start, end } = this.getDateRanges(false, new Date(year, 0), new Date(yearEnd ?? year + 1, 0));
-        const { data, error } = await supabase
-            .rpc('get_transaction_flow', {
-                trx_type,
-                day_flow: false,
-                month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
-                trx_user_id: userId,
-                categories,
-                time_zone: LOCAL_TIMEZONE,
-            })
-            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM' }))
-            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM' }));
+        end.setDate(end.getDate() - 1);
+        const { data, error } = await supabase.rpc('get_transaction_flow', {
+            trx_type: trx_type,
+            day_flow: false,
+            month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
+            trx_user_id: userId,
+            categories,
+            time_zone: LOCAL_TIMEZONE,
+            end_str: formatDate(end, { format: 'yyyy-MM' }),
+            start_str: formatDate(start, { format: 'yyyy-MM' }),
+        });
         return {
             data,
             error,
@@ -108,24 +108,38 @@ export class ReportRepo extends BaseRepo {
         categories,
     }: {
         userId: string;
-        trx_type: 'expense' | 'income';
+        trx_type: ('expense' | 'income')[];
         month: Date;
         monthEnd?: Date;
         categories: string[];
     }): Promise<QueryResultOne<TransactionFlow>> {
         const { start, end } = this.getDateRanges(true, month, monthEnd);
+        end.setDate(end.getDate() - 1);
+        const { data, error } = await supabase.rpc('get_transaction_flow', {
+            day_flow: true,
+            month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
+            trx_type: trx_type,
+            trx_user_id: userId,
+            categories,
+            time_zone: LOCAL_TIMEZONE,
+            end_str: formatDate(end, { format: 'yyyy-MM-dd' }),
+            start_str: formatDate(start, { format: 'yyyy-MM-dd' }),
+        });
+        return {
+            data,
+            error,
+        };
+    }
 
-        const { data, error } = await supabase
-            .rpc('get_transaction_flow', {
-                day_flow: true,
-                month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
-                trx_type: trx_type,
-                trx_user_id: userId,
-                categories,
-                time_zone: LOCAL_TIMEZONE,
-            })
-            .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd' }))
-            .lt('occurred_at', formatDate(end, { format: 'yyyy-MM-dd' }));
+    public static async getCurrentBalanceAt(opts: { userId: string; lastDate: Date }): Promise<QueryResultOne<number>> {
+        const { data, error } = await supabase.rpc('get_current_balance_at', {
+            trx_user_id: opts.userId,
+            day_flow: true,
+            end_str: formatDate(opts.lastDate, { format: 'yyyy-MM-dd' }),
+            month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
+            time_zone: LOCAL_TIMEZONE,
+        });
+
         return {
             data,
             error,

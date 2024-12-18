@@ -8,6 +8,7 @@ import { Icon } from '@/components/icon';
 import { openModal } from '@/stores/modal';
 import ModalSelectReport from './components/modal-select-report';
 import { LabelValue } from '@/types/common';
+import AssetsFlowReportPage from './assets-flow-report-page';
 
 interface LayoutReportProps {}
 
@@ -26,6 +27,10 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
             {
                 value: '/report/cash-flow',
                 label: 'Cash Flow',
+            },
+            {
+                value: '/report/assets-flow',
+                label: 'Assets Flow',
             },
         ];
     }, []);
@@ -58,6 +63,7 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
         <Routes>
             <Route path="/" element={<ReportPage />} />
             <Route path="/cash-flow" element={<CashFlowReportPage />} />
+            <Route path="/assets-flow" element={<AssetsFlowReportPage />} />
         </Routes>
     );
 };

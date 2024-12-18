@@ -15,7 +15,7 @@ interface DropdownMenuProps {
 
 export const DropdownMenu: FC<DropdownMenuProps> = ({ options, disabled }) => {
     return (
-        <div className="dai-dropdown dai-dropdown-end dai-dropdown-left">
+        <div className="dai-dropdown dai-dropdown-end dai-dropdown-bottom">
             <div
                 tabIndex={0}
                 role="button"

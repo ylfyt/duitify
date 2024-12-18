@@ -125,14 +125,14 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             let res: QueryResultOne<TransactionFlow>;
             if (flowScale === 'everyday')
                 res = await ReportRepo.getCashFlowEveryDay({
-                    trx_type: 'expense',
+                    trx_type: ['expense'],
                     userId: session?.user.id ?? '',
                     month: flowDate ?? new Date(),
                     categories: !expenseCategory ? [] : [expenseCategory],
                 });
             else
                 res = await ReportRepo.getCashFlowEveryMonth({
-                    trx_type: 'expense',
+                    trx_type: ['expense'],
                     userId: session?.user.id ?? '',
                     year: flowDate?.getFullYear() ?? new Date().getFullYear(),
                     categories: !expenseCategory ? [] : [expenseCategory],
@@ -142,6 +142,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                 toast.error(res.error.message);
                 return;
             }
+            res.data?.forEach((el) => (el.amount = Math.abs(el.amount)));
             setExpenseData(res.data ?? []);
         })();
     }, [session, flowDate, showExpense, expenseCategory]);
@@ -156,14 +157,14 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
             let res: QueryResultOne<TransactionFlow>;
             if (flowScale === 'everyday')
                 res = await ReportRepo.getCashFlowEveryDay({
-                    trx_type: 'income',
+                    trx_type: ['income'],
                     userId: session?.user.id ?? '',
                     month: flowDate ?? new Date(),
                     categories: !incomeCategory ? [] : [incomeCategory],
                 });
             else
                 res = await ReportRepo.getCashFlowEveryMonth({
-                    trx_type: 'income',
+                    trx_type: ['income'],
                     userId: session?.user.id ?? '',
                     year: flowDate?.getFullYear() ?? new Date().getFullYear(),
                     categories: !incomeCategory ? [] : [incomeCategory],
@@ -173,6 +174,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                 toast.error(res.error.message);
                 return;
             }
+            res.data?.forEach((el) => (el.amount = Math.abs(el.amount)));
             setIncomeData(res.data ?? []);
         })();
     }, [session, flowDate, showIncome, incomeCategory]);
