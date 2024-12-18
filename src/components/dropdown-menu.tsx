@@ -35,6 +35,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({ options, disabled }) => {
                             onClick={(e) => {
                                 e.stopPropagation();
                                 el.onClick();
+                                e.currentTarget.blur();
                             }}
                         >
                             <Icon className="text-lg" icon={el.icon} />

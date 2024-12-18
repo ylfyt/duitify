@@ -45,6 +45,7 @@ import IconLucideMenu from '~icons/lucide/menu';
 import IconLucideCirclePlus from '~icons/lucide/circle-plus';
 import IconLucideCircleMinus from '~icons/lucide/circle-minus';
 import IconLucideAppWindow from '~icons/lucide/app-window';
+import IconLucideInfinity from '~icons/lucide/infinity';
 
 const Icons = {
     'lucide:house': IconLucideHouse,
@@ -93,6 +94,7 @@ const Icons = {
     'lucide:circle-plus': IconLucideCirclePlus,
     'lucide:circle-minus': IconLucideCircleMinus,
     'lucide:app-window': IconLucideAppWindow,
+    'lucide:infinity': IconLucideInfinity,
 };
 
 export type IconName = keyof typeof Icons;

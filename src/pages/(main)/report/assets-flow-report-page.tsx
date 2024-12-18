@@ -1,5 +1,8 @@
+import { AmountRevealer } from '@/components/amount-revealer';
 import { DropdownMenu } from '@/components/dropdown-menu';
 import { Icon } from '@/components/icon';
+import Skeleton from '@/components/skeleton';
+import { formatCurrency } from '@/helper/format-currency';
 import { formatNumeric } from '@/helper/format-numeric';
 import { QueryResultOne } from '@/repo/base-repo';
 import { ReportRepo } from '@/repo/report-repo';
@@ -220,13 +223,25 @@ const AssetsFlowReportPage: FC<AssetsFlowReportPageProps> = () => {
                                     },
                                 },
                                 {
-                                    icon: 'lucide:calendar-days',
+                                    icon: 'lucide:infinity',
                                     label: flowDate ? 'All time' : !isEveryDay ? 'This year' : 'This month',
                                     onClick: () => setFlowDate((prev) => (prev ? undefined : getNowDate())),
                                 },
                             ]}
                         />
                     </div>
+                </div>
+            </div>
+            <div className="w-full rounded-xl bg-base-100 p-4">
+                <div className="flex items-center justify-between gap-2">
+                    <span>{loadingInitialBalance ? <Skeleton>Start Balance:</Skeleton> : 'Start Balance:'}</span>
+                    <span className="font-semibold text-success">
+                        {loadingInitialBalance ? (
+                            <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
+                        ) : (
+                            <AmountRevealer amount={initialBalance ?? 0} />
+                        )}
+                    </span>
                 </div>
             </div>
             <div className="w-full rounded-xl bg-base-100 p-4">
@@ -238,14 +253,15 @@ const AssetsFlowReportPage: FC<AssetsFlowReportPageProps> = () => {
                         maintainAspectRatio: false,
                         scales: {
                             y: {
-                                type: 'logarithmic',
+                                type: 'linear',
                                 ticks: {
                                     color: colorScheme['base-content'],
                                     callback: (value) => {
                                         if (typeof value === 'string') return value;
+                                        const absValue = Math.abs(value);
                                         return (
-                                            formatNumeric(value / (value >= 1000 ? 1000 : 1)) +
-                                            (value >= 1000 ? 'K' : '')
+                                            formatNumeric(value / (absValue >= 1000 ? 1000 : 1)) +
+                                            (absValue >= 1000 ? 'K' : '')
                                         );
                                     },
                                 },
