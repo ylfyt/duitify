@@ -180,7 +180,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
     }, [session, flowDate, showIncome, incomeCategory]);
 
     return (
-        <div className="flex flex-1 flex-col items-center gap-4 overflow-x-auto p-2">
+        <div className="flex flex-1 flex-col items-center gap-2 overflow-x-auto p-2">
             <div className="flex w-full flex-col items-center gap-2 rounded-xl bg-base-100 p-2">
                 <div className="flex items-center gap-4">
                     <select

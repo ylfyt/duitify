@@ -40,13 +40,14 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
     };
 
     return (
-        <div
-            onClick={() => navigate(`/accounts/transaction?category=${category.id}`)}
-            className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer"
-        >
-            <img src={ENV.BASE_URL + category.logo} className="size-12"></img>
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer">
+            <img
+                onClick={() => navigate(`/accounts/transaction?category=${category.id}`)}
+                src={ENV.BASE_URL + category.logo}
+                className="size-9 xs:size-12"
+            ></img>
             <div className="flex flex-1 flex-col gap-0.5">
-                <p className="text-lg">{category.name}</p>
+                <p className="text-sm xs:text-base">{category.name}</p>
             </div>
             <DropdownMenu
                 options={[
@@ -72,11 +73,11 @@ export const CategoryCardSkeleton: FC<CategoryCardSkeletonProps> = () => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
             <Skeleton>
-                <div className="size-12"></div>
+                <div className="size-9 xs:size-12"></div>
             </Skeleton>
             <div className="flex flex-1 flex-col gap-0.5">
                 <Skeleton>
-                    <p className="text-lg">Transportation</p>
+                    <p className="text-sm xs:text-base">Transportation</p>
                 </Skeleton>
             </div>
             <Skeleton>

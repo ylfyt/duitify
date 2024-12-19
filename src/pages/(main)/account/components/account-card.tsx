@@ -40,14 +40,15 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
     };
 
     return (
-        <div
-            onClick={() => navigate(`/accounts/transaction?account=${account.id}`)}
-            className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer"
-        >
-            <img src={ENV.BASE_URL + account.logo} className="size-12"></img>
+        <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer">
+            <img
+                onClick={() => navigate(`/accounts/transaction?account=${account.id}`)}
+                src={ENV.BASE_URL + account.logo}
+                className="size-9 xs:size-12"
+            ></img>
             <div className="flex flex-1 flex-col gap-0.5">
-                <p className="text-lg">{account.name}</p>
-                <div className="flex items-center gap-2">
+                <p className="text-sm xs:text-base">{account.name}</p>
+                <div className="flex items-center gap-2 text-xs xs:text-sm">
                     <p>Balance: </p>
                     <span className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
                         <AmountRevealer amount={account.balance} />
@@ -78,14 +79,14 @@ export const AccountCardSkeleton: FC<AccountCardSkeletonProps> = () => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
             <Skeleton>
-                <div className="size-12 rounded-full bg-accent"></div>
+                <div className="size-9 rounded-full bg-accent xs:size-12"></div>
             </Skeleton>
             <div className="flex flex-1 flex-col gap-0.5">
                 <Skeleton>
-                    <p className="text-lg">Gopay</p>
+                    <p className="text-sm xs:text-base">Gopay</p>
                 </Skeleton>
                 <Skeleton>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 text-xs xs:text-sm">
                         <p>Balance: </p>
                         <p className={'font-bold'}>{formatCurrency(10_000_000)}</p>
                     </div>
