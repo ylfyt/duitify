@@ -208,9 +208,9 @@ interface ReportExpenseCardProps {
 const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total, color }) => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
-            <img className="size-12" src={ENV.BASE_URL + el.category?.logo} alt="" />
+            <img className="size-9 xs:size-12" src={ENV.BASE_URL + el.category?.logo} alt="" />
             <div className="flex flex-1 flex-col gap-1">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between text-sm xs:text-base">
                     <div className="flex items-center gap-1.5">
                         <span style={{ backgroundColor: color }} className="h-2 w-4"></span>
                         <span>{el.category?.name}</span>
@@ -225,7 +225,9 @@ const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total, color }) => 
                         value={el.amount ?? 0}
                         max={total}
                     ></progress>
-                    <span className="text-sm">{Math.round(100 * (total === 0 ? 0 : (el.amount ?? 0) / total))}%</span>
+                    <span className="text-xs sm:text-sm">
+                        {Math.round(100 * (total === 0 ? 0 : (el.amount ?? 0) / total))}%
+                    </span>
                 </div>
             </div>
         </div>
@@ -238,10 +240,10 @@ const ReportExpenseCardSkeleton: FC<ReportExpenseCardSkeletonProps> = () => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
             <Skeleton>
-                <div className="h-12 w-12"></div>
+                <div className="size-9 xs:size-12"></div>
             </Skeleton>
             <div className="flex flex-1 flex-col gap-1">
-                <div className="flex justify-between">
+                <div className="flex justify-between text-sm xs:text-base">
                     <div className="flex items-center gap-1.5">
                         <Skeleton>
                             <div className="h-2 w-[1rem]"></div>
@@ -256,7 +258,7 @@ const ReportExpenseCardSkeleton: FC<ReportExpenseCardSkeletonProps> = () => {
                 </div>
                 <div className="flex items-center gap-2">
                     <progress className="dai-progress dai-progress-primary dai-skeleton" value={0} max={0}></progress>
-                    <span className="text-sm">
+                    <span className="text-xs sm:text-sm">
                         <Skeleton>28%</Skeleton>
                     </span>
                 </div>
