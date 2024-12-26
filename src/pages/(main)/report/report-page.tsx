@@ -107,7 +107,7 @@ const ReportPage: FC<ReportPageProps> = () => {
                         {!expenseDate ? 'All time' : formarter.format(expenseDate)}
                     </span>
                     <button
-                        disabled={loading || !expenseDate || expenseDate.getMonth() === new Date().getMonth()}
+                        disabled={loading || !expenseDate || expenseDate.getMonth() === getNowDate().getMonth()}
                         onClick={() =>
                             setExpenseDate((prev) => (!prev ? undefined : new Date(prev.setMonth(prev.getMonth() + 1))))
                         }

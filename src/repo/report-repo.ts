@@ -82,7 +82,9 @@ export class ReportRepo extends BaseRepo {
         yearEnd?: number;
         categories: string[];
     }): Promise<QueryResultOne<TransactionFlow>> {
-        const { start, end } = this.getDateRanges(false, new Date(year, 0), new Date(yearEnd ?? year + 1, 0));
+        const next = new Date(yearEnd ?? year + 1, 0);
+        next.setDate(next.getDate() - 1);
+        const { start, end } = this.getDateRanges(false, new Date(year, 0), next);
         end.setDate(end.getDate() - 1);
         const { data, error } = await supabase.rpc('get_transaction_flow', {
             trx_type: trx_type,

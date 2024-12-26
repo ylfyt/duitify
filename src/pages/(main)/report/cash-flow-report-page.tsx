@@ -127,14 +127,14 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                 res = await ReportRepo.getCashFlowEveryDay({
                     trx_type: ['expense'],
                     userId: session?.user.id ?? '',
-                    month: flowDate ?? new Date(),
+                    month: flowDate ?? getNowDate(),
                     categories: !expenseCategory ? [] : [expenseCategory],
                 });
             else
                 res = await ReportRepo.getCashFlowEveryMonth({
                     trx_type: ['expense'],
                     userId: session?.user.id ?? '',
-                    year: flowDate?.getFullYear() ?? new Date().getFullYear(),
+                    year: flowDate?.getFullYear() ?? getNowDate().getFullYear(),
                     categories: !expenseCategory ? [] : [expenseCategory],
                 });
             setLoadingExpense(false);
@@ -159,14 +159,14 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                 res = await ReportRepo.getCashFlowEveryDay({
                     trx_type: ['income'],
                     userId: session?.user.id ?? '',
-                    month: flowDate ?? new Date(),
+                    month: flowDate ?? getNowDate(),
                     categories: !incomeCategory ? [] : [incomeCategory],
                 });
             else
                 res = await ReportRepo.getCashFlowEveryMonth({
                     trx_type: ['income'],
                     userId: session?.user.id ?? '',
-                    year: flowDate?.getFullYear() ?? new Date().getFullYear(),
+                    year: flowDate?.getFullYear() ?? getNowDate().getFullYear(),
                     categories: !incomeCategory ? [] : [incomeCategory],
                 });
             setLoadingIncome(false);
@@ -187,7 +187,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                         disabled={loading}
                         value={flowScale}
                         onChange={(e) => {
-                            setFlowDate(new Date());
+                            setFlowDate(getNowDate());
                             setFlowScale(e.target.value as 'everyday' | 'everymonth');
                         }}
                         className="dai-select dai-select-bordered dai-select-xs xs:dai-select-sm"
@@ -253,7 +253,7 @@ const CashFlowReportPage: FC<CashFlowReportPageProps> = () => {
                             disabled={
                                 loading ||
                                 !flowDate ||
-                                (flowScale === 'everymonth' && flowDate.getFullYear() === new Date().getFullYear()) ||
+                                (flowScale === 'everymonth' && flowDate.getFullYear() === getNowDate().getFullYear()) ||
                                 (flowScale === 'everyday' && flowDate.getMonth() === getNowDate().getMonth())
                             }
                             onClick={() =>

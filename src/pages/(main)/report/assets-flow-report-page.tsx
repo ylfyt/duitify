@@ -78,6 +78,13 @@ const AssetsFlowReportPage: FC<AssetsFlowReportPageProps> = () => {
         });
     }, [expenseData, initialBalance]);
 
+    const startBalance = useMemo<number | undefined>(() => {
+        if (loadingExpense) return;
+        if (initialBalance == null) return;
+        if (flowData.length === 0) return initialBalance;
+        return flowData[0].amount;
+    }, [flowData, initialBalance, loadingExpense]);
+
     const lastBalance = useMemo<number | undefined>(() => {
         if (loadingExpense) return;
         if (initialBalance == null) return;
@@ -241,7 +248,7 @@ const AssetsFlowReportPage: FC<AssetsFlowReportPageProps> = () => {
             </div>
             <div className="w-full space-y-1 rounded-xl bg-base-100 p-4 text-sm">
                 <div className="flex items-center justify-between gap-2">
-                    <span>{loadingInitialBalance ? <Skeleton>Start Balance:</Skeleton> : 'Start Balance:'}</span>
+                    <span>{loadingInitialBalance ? <Skeleton>Previous:</Skeleton> : 'Previous:'}</span>
                     <span
                         className={
                             'font-semibold ' +
@@ -256,7 +263,21 @@ const AssetsFlowReportPage: FC<AssetsFlowReportPageProps> = () => {
                     </span>
                 </div>
                 <div className="flex items-center justify-between gap-2">
-                    <span>{lastBalance == null ? <Skeleton>Last Balance:</Skeleton> : 'Last Balance:'}</span>
+                    <span>{startBalance == null ? <Skeleton>Start:</Skeleton> : 'Start:'}</span>
+                    <span
+                        className={
+                            'font-semibold ' + (!startBalance ? '' : startBalance < 0 ? 'text-error' : 'text-success')
+                        }
+                    >
+                        {startBalance == null ? (
+                            <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
+                        ) : (
+                            <AmountRevealer amount={startBalance} />
+                        )}
+                    </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                    <span>{lastBalance == null ? <Skeleton>Last:</Skeleton> : 'Last:'}</span>
                     <span
                         className={
                             'font-semibold ' + (!lastBalance ? '' : lastBalance < 0 ? 'text-error' : 'text-success')
