@@ -1,21 +1,23 @@
 import { appBarCtxAtom } from '@/stores/common';
-import { openModal } from '@/stores/modal';
 import { CategoryType } from '@/types/category.type';
 import { useAtom } from 'jotai';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { ModalCategoryCreate } from './components/modal-category-create';
 import { CategoryCard, CategoryCardSkeleton } from './components/category-card';
 import { useCategoryAtom } from '@/stores/category';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 interface CategoryPageProps {}
 
 const CategoryPage: FC<CategoryPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
+    const navigate = useNavigate();
 
     const { data: globalCategories, loading, refresh, fetched, setData: setCategories } = useCategoryAtom();
 
-    const [selected, setSelected] = useState<CategoryType>('expense');
+    const [params, setParams] = useSearchParams();
+
+    const selected = useMemo<CategoryType>(() => (params.get('type') === 'income' ? 'income' : 'expense'), [params]);
 
     const categories = useMemo(
         () => globalCategories.filter((el) => el.type === selected),
@@ -27,12 +29,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
             title: 'Categories',
             actions: [
                 <button
-                    onClick={() =>
-                        openModal(ModalCategoryCreate, {
-                            onSuccess: (category) => setCategories((prev) => [category, ...prev]),
-                            categoryType: selected,
-                        })
-                    }
+                    onClick={() => navigate(`/category/new?type=${selected}`)}
                     className="dai-btn dai-btn-success dai-btn-xs xs:dai-btn-sm"
                 >
                     Create
@@ -57,7 +54,7 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                     <button
                         key={idx}
                         role="tab"
-                        onClick={() => setSelected(el)}
+                        onClick={() => setParams({ type: el })}
                         className={'dai-tab capitalize ' + (el === selected ? 'dai-tab-active' : '')}
                     >
                         {el}
@@ -76,9 +73,6 @@ const CategoryPage: FC<CategoryPageProps> = () => {
                             category={el}
                             categoryType={selected}
                             onDeleted={(id) => setCategories((prev) => prev.filter((el) => el.id !== id))}
-                            onUpdated={(category) => {
-                                setCategories((prev) => prev.map((el) => (el.id === category.id ? category : el)));
-                            }}
                         />
                     ))
                 )}

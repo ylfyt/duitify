@@ -6,6 +6,10 @@ export class AccountRepo extends BaseRepo {
         return this.db.from('account').select('*').eq('user_id', userId).order('name', { ascending: true });
     }
 
+    public static async getAccount(id: string): Promise<QueryResultOne<Account>> {
+        return this.db.from('account').select().eq('id', id).single();
+    }
+
     public static async createAccount(data: AccountCreateDto): Promise<QueryResultOne<Account>> {
         return this.db.from('account').upsert(data).select().single();
     }

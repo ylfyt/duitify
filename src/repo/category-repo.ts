@@ -6,6 +6,10 @@ export class CategoryRepo extends BaseRepo {
         return this.db.from('category').select('*').eq('user_id', userId).order('name', { ascending: true });
     }
 
+    public static async getCategory(id: string): Promise<QueryResultOne<Category>> {
+        return this.db.from('category').select().eq('id', id).single();
+    }
+
     public static async createCategory(data: CategoryCreateDto): Promise<QueryResultOne<Category>> {
         return this.db.from('category').insert(data).select().single();
     }

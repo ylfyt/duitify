@@ -1,9 +1,7 @@
 import { DropdownMenu } from '@/components/dropdown-menu';
 import Skeleton from '@/components/skeleton';
-import { openModal } from '@/stores/modal';
 import { Category } from '@/types/category.type';
 import { FC } from 'react';
-import { ModalCategoryCreate } from './modal-category-create';
 import { showConfirm } from '@/stores/confirm';
 import { showLoading } from '@/stores/common';
 import { toast } from 'react-toastify';
@@ -14,11 +12,10 @@ import { CATEGORY_LOGO_BASE } from '@/constants/logo';
 interface CategoryCardProps {
     category: Category;
     categoryType: 'expense' | 'income';
-    onUpdated: (category: Category) => void;
     onDeleted: (id: string) => void;
 }
 
-export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, onUpdated, onDeleted }) => {
+export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, onDeleted }) => {
     const navigate = useNavigate();
 
     const handleDelete = async () => {
@@ -54,7 +51,7 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
                     {
                         icon: 'lucide:pencil',
                         label: 'Edit',
-                        onClick: () => openModal(ModalCategoryCreate, { category, onSuccess: onUpdated, categoryType }),
+                        onClick: () => navigate(`/category/${category.id}?type=${categoryType}`),
                     },
                     {
                         icon: 'lucide:trash',

@@ -4,11 +4,9 @@ import { formatCurrency } from '@/helper/format-currency';
 import { AccountRepo } from '@/repo/account-repo';
 import { showLoading } from '@/stores/common';
 import { showConfirm } from '@/stores/confirm';
-import { openModal } from '@/stores/modal';
 import { Account } from '@/types/account.type';
 import { FC } from 'react';
 import { toast } from 'react-toastify';
-import { ModalAccountCreate } from './modal-account-create';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { useNavigate } from 'react-router-dom';
 import { ACCOUNT_LOGO_BASE } from '@/constants/logo';
@@ -16,10 +14,9 @@ import { ACCOUNT_LOGO_BASE } from '@/constants/logo';
 interface AccountCardProps {
     account: Account;
     onDeleted: (id: string) => void;
-    onUpdated: (account: Account) => void;
 }
 
-export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdated }) => {
+export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted }) => {
     const navigate = useNavigate();
 
     const handleDelete = async () => {
@@ -60,7 +57,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
                     {
                         icon: 'lucide:pencil',
                         label: 'Edit',
-                        onClick: () => openModal(ModalAccountCreate, { account, onSuccess: onUpdated }),
+                        onClick: () => navigate(`/accounts/${account.id}`),
                     },
                     {
                         icon: 'lucide:trash',

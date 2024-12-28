@@ -3,17 +3,17 @@ import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo } from 'react';
 import { toast } from 'react-toastify';
 import { AccountCard, AccountCardSkeleton } from './components/account-card';
-import { openModal } from '@/stores/modal';
-import { ModalAccountCreate } from './components/modal-account-create';
 import { useAccountAtom } from '@/stores/account';
 import { formatCurrency } from '@/helper/format-currency';
 import Skeleton from '@/components/skeleton';
 import { AmountRevealer } from '@/components/amount-revealer';
+import { useNavigate } from 'react-router-dom';
 
 interface AccountPageProps {}
 
 const AccountPage: FC<AccountPageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
+    const navigate = useNavigate();
 
     const { data: accounts, setData: setAccounts, loading, fetched, refresh } = useAccountAtom();
 
@@ -25,11 +25,7 @@ const AccountPage: FC<AccountPageProps> = () => {
             revealer: true,
             actions: [
                 <button
-                    onClick={() =>
-                        openModal(ModalAccountCreate, {
-                            onSuccess: (account) => setAccounts((prev) => [account, ...prev]),
-                        })
-                    }
+                    onClick={() => navigate('/accounts/new')}
                     className="dai-btn dai-btn-success dai-btn-xs ml-2 xs:dai-btn-sm"
                 >
                     Create
@@ -73,9 +69,6 @@ const AccountPage: FC<AccountPageProps> = () => {
                             account={account}
                             onDeleted={(id) => {
                                 setAccounts((prev) => prev.filter((acc) => acc.id !== id));
-                            }}
-                            onUpdated={(account) => {
-                                setAccounts((prev) => prev.map((acc) => (acc.id === account.id ? account : acc)));
                             }}
                         />
                     ))
