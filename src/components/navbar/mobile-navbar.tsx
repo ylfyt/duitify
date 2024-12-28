@@ -3,6 +3,7 @@ import { Icon, IconName } from '@/components/icon';
 import { NavLink } from 'react-router-dom';
 import { Route as Menu } from '@/types/routes';
 import { useStateWithRef } from '@/hooks/use-state-with-ref';
+import { useWindowSize } from '@/hooks/use-window-size';
 
 interface MobileNavbarItemProps {
     icon: IconName;
@@ -35,6 +36,8 @@ export const MobileNavbar: FC<MobileNavbarProps> = ({ routes }) => {
     const [show, setShow, showRef] = useStateWithRef(true);
     const lastScrollRef = useRef(0);
 
+    const size = useWindowSize();
+
     useEffect(() => {
         const handleScroll = () => {
             const scroll = window.scrollY;
@@ -59,7 +62,7 @@ export const MobileNavbar: FC<MobileNavbarProps> = ({ routes }) => {
     return (
         <div>
             <div
-                className={`${show ? 'transform-none' : 'translate-y-full'} fixed bottom-0 left-0 z-20 grid h-16 w-full place-items-center bg-base-100 shadow-t-md transition-transform`}
+                className={`${size.height < 600 || !show ? 'translate-y-full' : 'transform-none'} fixed bottom-0 left-0 z-20 grid h-16 w-full place-items-center bg-base-100 shadow-t-md transition-transform`}
             >
                 <div className="flex w-full items-center justify-evenly py-1 md:w-[47rem]">
                     {routes.map((el, idx) => (
