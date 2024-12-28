@@ -13,6 +13,8 @@ import { focusedTransactionAtom } from './_layout';
 import { formatDate } from '@/helper/format-date';
 import { QueryResultOne } from '@/repo/base-repo';
 import { sessionAtom } from '@/stores/auth';
+import { Tooltip } from '@/components/tooltip';
+import { formatCurrency } from '@/helper/format-currency';
 
 interface TransactionCreatePageProps {}
 
@@ -181,13 +183,18 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                     <div className="dai-label">
                         <span className="req dai-label-text">Amount</span>
                     </div>
-                    <input
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        type="number"
-                        placeholder="Amount"
-                        className="dai-input dai-input-bordered"
-                    />
+                    <Tooltip open={!!amount} text={formatCurrency(isNaN(parseFloat(amount)) ? 0 : parseFloat(amount))}>
+                        {(ref) => (
+                            <input
+                                ref={ref}
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                type="number"
+                                placeholder="Amount"
+                                className="dai-input dai-input-bordered"
+                            />
+                        )}
+                    </Tooltip>
                 </label>
                 <label className="dai-form-control">
                     <div className="dai-label">

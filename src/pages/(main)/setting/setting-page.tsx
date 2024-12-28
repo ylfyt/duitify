@@ -1,5 +1,6 @@
 import { Icon } from '@/components/icon';
 import ModalPin from '@/components/modal-pin';
+import { Tooltip } from '@/components/tooltip';
 import { ENV } from '@/constants/env';
 import { generateSalt, sha256 } from '@/helper/crypto';
 import { formatCurrency } from '@/helper/format-currency';
@@ -193,13 +194,21 @@ const SettingPage: FC<SettingPageProps> = () => {
                                 {!isEditMaxAmount ? (
                                     <span>{formatCurrency(settings?.max_visible_amount ?? 0)}</span>
                                 ) : (
-                                    <input
-                                        min={0}
-                                        type="number"
-                                        value={maxAmount}
-                                        onChange={(e) => setMaxAmount(e.target.value)}
-                                        className="dai-input dai-input-xs dai-input-bordered max-w-24 text-end"
-                                    />
+                                    <Tooltip
+                                        open={!!maxAmount}
+                                        text={formatCurrency(isNaN(parseFloat(maxAmount)) ? 0 : parseFloat(maxAmount))}
+                                    >
+                                        {(ref) => (
+                                            <input
+                                                ref={ref}
+                                                min={0}
+                                                type="number"
+                                                value={maxAmount}
+                                                onChange={(e) => setMaxAmount(e.target.value)}
+                                                className="dai-input dai-input-xs dai-input-bordered max-w-24 text-end"
+                                            />
+                                        )}
+                                    </Tooltip>
                                 )}
                                 <button
                                     disabled={

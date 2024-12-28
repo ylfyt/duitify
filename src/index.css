@@ -26,4 +26,21 @@
     .req {
         @apply after:text-red-500 after:content-['_*'];
     }
+
+    .tooltip {
+        @apply absolute -translate-y-[125%] -translate-x-1/2 bg-neutral text-neutral-content rounded px-2 py-1 text-xs z-40;
+    }
+
+    .tooltip::after {
+        content: '';
+        position: absolute;
+        display: block;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border: 1px solid black;
+        border-color: black transparent transparent transparent;
+        border-width: 10px 10px 0;
+    }
 }

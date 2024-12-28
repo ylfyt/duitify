@@ -12,6 +12,8 @@ import { toast } from 'react-toastify';
 import { useAccountAtom } from '@/stores/account';
 import { useNavigate, useParams } from 'react-router-dom';
 import { appBarCtxAtom, showLoading } from '@/stores/common';
+import { Tooltip } from '@/components/tooltip';
+import { formatCurrency } from '@/helper/format-currency';
 
 interface AccountCreatePageProps {}
 
@@ -124,13 +126,21 @@ const AccountCreatePage: FC<AccountCreatePageProps> = ({}) => {
                     <div className="dai-label">
                         <span className="req dai-label-text">Intial Balance</span>
                     </div>
-                    <input
-                        value={balance}
-                        onChange={(e) => setBalance(e.target.value)}
-                        type="number"
-                        placeholder="Intial Balance"
-                        className="dai-input dai-input-bordered"
-                    />
+                    <Tooltip
+                        open={!!balance}
+                        text={formatCurrency(isNaN(parseFloat(balance)) ? 0 : parseFloat(balance))}
+                    >
+                        {(ref) => (
+                            <input
+                                ref={ref}
+                                value={balance}
+                                onChange={(e) => setBalance(e.target.value)}
+                                type="number"
+                                placeholder="Intial Balance"
+                                className="dai-input dai-input-bordered"
+                            />
+                        )}
+                    </Tooltip>
                 </label>
                 <div className="dai-form-control">
                     <div className="dai-label">
@@ -144,7 +154,7 @@ const AccountCreatePage: FC<AccountCreatePageProps> = ({}) => {
                                     type="button"
                                     className="flex-shrink-0 rounded-xl border-4 border-transparent outline outline-4 outline-transparent"
                                 >
-                                    <img className="dai-skeleton size-12 rounded-lg" alt="" />
+                                    <div className="dai-skeleton size-12 rounded-lg" />
                                 </button>
                             ))
                         ) : accountImages.length === 0 ? (

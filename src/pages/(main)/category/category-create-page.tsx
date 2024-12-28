@@ -134,7 +134,7 @@ const CategoryCreatePage: FC<CategoryCreatePageProps> = () => {
                                     type="button"
                                     className="flex-shrink-0 rounded-xl border-4 border-transparent outline outline-4 outline-transparent"
                                 >
-                                    <img className="dai-skeleton size-12 rounded-lg" alt="" />
+                                    <div className="dai-skeleton size-12 rounded-lg" />
                                 </button>
                             ))
                         ) : categoryImages.length === 0 ? (
