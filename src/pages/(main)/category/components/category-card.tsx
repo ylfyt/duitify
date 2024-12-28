@@ -7,9 +7,9 @@ import { ModalCategoryCreate } from './modal-category-create';
 import { showConfirm } from '@/stores/confirm';
 import { showLoading } from '@/stores/common';
 import { toast } from 'react-toastify';
-import { ENV } from '@/constants/env';
 import { CategoryRepo } from '@/repo/category-repo';
 import { useNavigate } from 'react-router-dom';
+import { CATEGORY_LOGO_BASE } from '@/constants/logo';
 
 interface CategoryCardProps {
     category: Category;
@@ -43,7 +43,7 @@ export const CategoryCard: FC<CategoryCardProps> = ({ category, categoryType, on
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer">
             <img
                 onClick={() => navigate(`/accounts/transaction?category=${category.id}`)}
-                src={ENV.BASE_URL + category.logo}
+                src={`${CATEGORY_LOGO_BASE}/${category.logo}`}
                 className="size-9 xs:size-12"
             ></img>
             <div className="flex flex-1 flex-col gap-0.5">

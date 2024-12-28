@@ -6,7 +6,6 @@ import { Chart as ChartJS, Title, Tooltip, ArcElement, CategoryScale, LinearScal
 import { Doughnut } from 'react-chartjs-2';
 import { formatCurrency } from '@/helper/format-currency';
 import { COLOR_RANKS } from '@/constants/color-ranks';
-import { ENV } from '@/constants/env';
 import Skeleton from '@/components/skeleton';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { Icon } from '@/components/icon';
@@ -15,6 +14,7 @@ import { DropdownMenu } from '@/components/dropdown-menu';
 import { getDefaultStore, useAtom } from 'jotai';
 import { settingsAtom } from '@/stores/settings';
 import { sessionAtom } from '@/stores/auth';
+import { CATEGORY_LOGO_BASE } from '@/constants/logo';
 
 ChartJS.register(Title, Tooltip, ArcElement, CategoryScale, LinearScale);
 
@@ -208,7 +208,7 @@ interface ReportExpenseCardProps {
 const ReportExpenseCard: FC<ReportExpenseCardProps> = ({ el, total, color }) => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 shadow">
-            <img className="size-9 xs:size-12" src={ENV.BASE_URL + el.category?.logo} alt="" />
+            <img className="size-9 xs:size-12" src={CATEGORY_LOGO_BASE + '/' + el.category?.logo} alt="" />
             <div className="flex flex-1 flex-col gap-1">
                 <div className="flex items-center justify-between text-sm xs:text-base">
                     <div className="flex items-center gap-1.5">

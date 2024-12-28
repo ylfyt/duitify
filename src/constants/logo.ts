@@ -1,3 +1,5 @@
+import { supabase } from '@/supabase';
+
 export const ACCOUNT_LOGOS: string[] = [
     '/accounts/shopee.webp',
     '/accounts/gopay.webp',
@@ -12,28 +14,4 @@ export const ACCOUNT_LOGOS: string[] = [
     '/accounts/livin-mandiri.webp',
 ] as const;
 
-export const CATEGORY_LOGOS: string[] = [
-    '/categories/bill.webp',
-    '/categories/education.webp',
-    '/categories/future.webp',
-    '/categories/health.webp',
-    '/categories/internet.webp',
-    '/categories/laundry.webp',
-    '/categories/rent.webp',
-    '/categories/salary.webp',
-    '/categories/snack.webp',
-    '/categories/sport.webp',
-    '/categories/support.webp',
-    '/categories/transportation.webp',
-    '/categories/coupon.webp',
-    '/categories/food.webp',
-    '/categories/grants.webp',
-    '/categories/insurance.webp',
-    '/categories/invest.webp',
-    '/categories/refund.webp',
-    '/categories/reward.webp',
-    '/categories/shopping.webp',
-    '/categories/social.webp',
-    '/categories/subscription.webp',
-    '/categories/tax.webp',
-] as const;
+export const CATEGORY_LOGO_BASE = supabase.storage.from('images').getPublicUrl('categories').data.publicUrl;

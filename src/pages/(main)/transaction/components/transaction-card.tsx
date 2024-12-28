@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import Skeleton from '@/components/skeleton';
 import { useAccountAtom } from '@/stores/account';
 import { AmountRevealer } from '@/components/amount-revealer';
+import { CATEGORY_LOGO_BASE } from '@/constants/logo';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -98,7 +99,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
         <div className="flex items-center gap-3 rounded-xl bg-base-100 px-3 py-2 shadow">
             <img
                 className="size-9 xs:size-12"
-                src={ENV.BASE_URL + (el.type === 'transfer' ? '/categories/transfer.webp' : el.category?.logo)}
+                src={CATEGORY_LOGO_BASE + '/' + (el.type === 'transfer' ? `transfer.webp` : el.category?.logo)}
                 loading="lazy"
                 alt=""
             />
