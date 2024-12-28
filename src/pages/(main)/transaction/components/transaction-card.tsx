@@ -1,6 +1,5 @@
 import { DropdownMenu } from '@/components/dropdown-menu';
 import { Icon } from '@/components/icon';
-import { ENV } from '@/constants/env';
 import { formatCurrency } from '@/helper/format-currency';
 import { formatDate } from '@/helper/format-date';
 import { TransactionRepo } from '@/repo/transaction-repo';
@@ -15,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import Skeleton from '@/components/skeleton';
 import { useAccountAtom } from '@/stores/account';
 import { AmountRevealer } from '@/components/amount-revealer';
-import { CATEGORY_LOGO_BASE } from '@/constants/logo';
+import { ACCOUNT_LOGO_BASE, CATEGORY_LOGO_BASE } from '@/constants/logo';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -124,7 +123,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                                 <img
                                     loading="lazy"
                                     className="size-3 xs:size-4"
-                                    src={ENV.BASE_URL + el.account?.logo}
+                                    src={ACCOUNT_LOGO_BASE + '/' + el.account?.logo}
                                     alt=""
                                 />
                                 <span>{el.account?.name}</span>
@@ -138,7 +137,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el, onDeleted }) => {
                                         <img
                                             loading="lazy"
                                             className="size-3 xs:size-4"
-                                            src={ENV.BASE_URL + el.to_account?.logo}
+                                            src={ACCOUNT_LOGO_BASE + '/' + el.to_account?.logo}
                                             alt=""
                                         />
                                         <span>{el.to_account?.name}</span>

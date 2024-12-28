@@ -9,9 +9,9 @@ import { Account } from '@/types/account.type';
 import { FC } from 'react';
 import { toast } from 'react-toastify';
 import { ModalAccountCreate } from './modal-account-create';
-import { ENV } from '@/constants/env';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { useNavigate } from 'react-router-dom';
+import { ACCOUNT_LOGO_BASE } from '@/constants/logo';
 
 interface AccountCardProps {
     account: Account;
@@ -43,7 +43,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted, onUpdate
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md hover:cursor-pointer">
             <img
                 onClick={() => navigate(`/accounts/transaction?account=${account.id}`)}
-                src={ENV.BASE_URL + account.logo}
+                src={ACCOUNT_LOGO_BASE + '/' + account.logo}
                 className="size-9 xs:size-12"
             ></img>
             <div className="flex flex-1 flex-col gap-0.5">
