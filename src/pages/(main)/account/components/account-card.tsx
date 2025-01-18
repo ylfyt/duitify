@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { useNavigate } from 'react-router-dom';
 import { ACCOUNT_LOGO_BASE } from '@/constants/logo';
-import { Icon } from '@/components/icon';
 
 interface AccountCardProps {
     account: Account;
