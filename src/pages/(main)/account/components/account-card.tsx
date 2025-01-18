@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { useNavigate } from 'react-router-dom';
 import { ACCOUNT_LOGO_BASE } from '@/constants/logo';
+import { Icon } from '@/components/icon';
 
 interface AccountCardProps {
     account: Account;
@@ -46,7 +47,6 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted }) => {
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-sm xs:text-base">{account.name}</p>
                 <div className="flex items-center gap-2 text-xs xs:text-sm">
-                    <p>Balance: </p>
                     <span className={'font-semibold ' + (account.balance < 0 ? 'text-error' : 'text-success')}>
                         <AmountRevealer amount={account.balance} />
                     </span>

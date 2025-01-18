@@ -124,7 +124,7 @@ const AccountCreatePage: FC<AccountCreatePageProps> = ({}) => {
                 </label>
                 <label className="dai-form-control">
                     <div className="dai-label">
-                        <span className="req dai-label-text">Intial Balance</span>
+                        <span className="req dai-label-text">Initial Balance</span>
                     </div>
                     <Tooltip
                         open={!!balance}
@@ -136,7 +136,7 @@ const AccountCreatePage: FC<AccountCreatePageProps> = ({}) => {
                                 value={balance}
                                 onChange={(e) => setBalance(e.target.value)}
                                 type="number"
-                                placeholder="Intial Balance"
+                                placeholder="Initial Balance"
                                 className="dai-input dai-input-bordered"
                             />
                         )}

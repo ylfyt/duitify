@@ -44,18 +44,16 @@ const AccountPage: FC<AccountPageProps> = () => {
     }, []);
 
     return (
-        <div className="flex flex-1 flex-col gap-4 p-2">
-            <div className="rounded-xl bg-base-100 p-4">
-                <div className="flex items-center gap-2">
-                    <span>{loading ? <Skeleton>Total:</Skeleton> : 'Total:'}</span>
-                    <span className="font-semibold text-success">
-                        {loading ? (
-                            <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
-                        ) : (
-                            <AmountRevealer amount={totalBalance} />
-                        )}
-                    </span>
-                </div>
+        <div className="flex flex-1 flex-col gap-2 p-2">
+            <div className="flex items-center justify-between gap-2 rounded-xl bg-base-100 px-3 py-2 text-sm font-semibold xs:text-base">
+                <span>{loading ? <Skeleton>Total</Skeleton> : 'Total'}</span>
+                <span className="text-success">
+                    {loading ? (
+                        <Skeleton>{formatCurrency(10_000_000)}</Skeleton>
+                    ) : (
+                        <AmountRevealer amount={totalBalance} />
+                    )}
+                </span>
             </div>
             <div className="grid grid-cols-1 gap-2">
                 {loading ? (
