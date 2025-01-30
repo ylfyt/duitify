@@ -22,12 +22,12 @@ const ModalSelectReport: FC<ModalSelectReportProps> = ({ onClose, reports }) => 
 
     return (
         <Modal title="Select Report">
-            <div className="mt-4 flex flex-col items-center gap-2">
+            <div className="mt-4 flex flex-col items-center gap-3">
                 {reports.map((el) => (
                     <button
                         key={el.value}
                         onClick={() => onClick(el.value)}
-                        className="dai-btn dai-btn-primary dai-btn-sm dai-btn-wide"
+                        className="dai-btn dai-btn-primary dai-btn-block"
                     >
                         {el.label}
                     </button>

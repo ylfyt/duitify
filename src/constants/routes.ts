@@ -6,7 +6,7 @@ import { LayoutReport } from '@/pages/(main)/report/_layout';
 import { LayoutCategory } from '@/pages/(main)/category/_layout';
 
 export const ROUTES: Route[] = [
-    { icon: 'lucide:house', link: '/transaction', title: 'Home', el: LayoutTransaction, layout: true },
+    { icon: 'lucide:notebook-text', link: '/transaction', title: 'Trx', el: LayoutTransaction, layout: true },
     { icon: 'lucide:chart-pie', link: '/report', title: 'Report', el: LayoutReport, layout: true },
     { icon: 'lucide:wallet', link: '/accounts', title: 'Account', el: LayoutAccount, layout: true },
     { icon: 'lucide:group', link: '/category', title: 'Categories', el: LayoutCategory, layout: true },

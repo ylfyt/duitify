@@ -28,8 +28,9 @@ const getNowDate = () => {
     const settings = store.get(settingsAtom);
     const now = new Date();
     if (!settings?.month_end_date || now.getDate() <= settings.month_end_date) return now;
-    now.setMonth(now.getMonth() + 1);
 
+    now.setDate(1);
+    now.setMonth(now.getMonth() + 1);
     return now;
 };
 
