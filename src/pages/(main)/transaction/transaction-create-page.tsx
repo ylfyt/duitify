@@ -7,7 +7,7 @@ import { LabelValue } from '@/types/common';
 import { Transaction, TransactionType } from '@/types/transaction.type';
 import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { focusedTransactionAtom } from './_layout';
 import { formatDate } from '@/helper/format-date';
@@ -22,6 +22,8 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     const [, setAppBarCtx] = useAtom(appBarCtxAtom);
     const [session] = useAtom(sessionAtom);
     const navigate = useNavigate();
+
+    const [search] = useSearchParams();
 
     const { setData: setAccounts } = useAccountAtom();
     const [focusedTransaction, setFocusedTransaction] = useAtom(focusedTransactionAtom);
@@ -38,7 +40,9 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
     );
 
     const [category, setCategory] = useState<string>(focusedTransaction?.category?.id ?? '');
-    const [fromAccount, setFromAccount] = useState<string | undefined>(focusedTransaction?.account?.id ?? '');
+    const [fromAccount, setFromAccount] = useState<string | undefined>(
+        focusedTransaction?.account?.id || search.get('account') || '',
+    );
     const [targetAccount, setTargetAccount] = useState<string | undefined>(focusedTransaction?.to_account?.id ?? '');
 
     const [loading, setLoading] = useState(false);
@@ -214,7 +218,12 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                     </div>
                     <select
                         value={fromAccount}
-                        disabled={!!focusedTransaction}
+                        disabled={
+                            !!focusedTransaction ||
+                            (!!search.get('account') &&
+                                selectedType !== 'transfer' &&
+                                fromAccount === search.get('account'))
+                        }
                         onChange={(e) => setFromAccount(e.target.value)}
                         className={
                             'dai-select dai-select-bordered w-full ' + (!fromAccount ? 'text-base-content/40' : '')

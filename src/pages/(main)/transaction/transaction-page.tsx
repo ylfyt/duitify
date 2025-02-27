@@ -70,7 +70,10 @@ const TransactionPage: FC<TransactionPageProps> = () => {
                 <img className="size-8" src={ENV.BASE_URL + '/icons/icon-192x192.png'} />
             ),
             actions: [
-                <Link to="/transaction/create" className="dai-btn dai-btn-success dai-btn-xs ml-2 xs:dai-btn-sm">
+                <Link
+                    to={`/transaction/create?${search.toString()}`}
+                    className="dai-btn dai-btn-success dai-btn-xs ml-2 xs:dai-btn-sm"
+                >
                     Create
                 </Link>,
             ],

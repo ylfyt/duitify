@@ -3,5 +3,5 @@ export type FormatCurrencyOpts = {
 };
 
 export function formatCurrency(amount: number, { currency = 'IDR' }: FormatCurrencyOpts = {}): string {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency }).format(amount);
+    return new Intl.NumberFormat('id-ID', { style: 'decimal', currency }).format(amount);
 }
