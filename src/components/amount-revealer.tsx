@@ -18,7 +18,7 @@ export const AmountRevealer: FC<AmountRevealerProps> = ({ amount, count }) => {
         return formatCurrency(amount);
 
     if (count) return <Dots num={count} />;
-    if (absAmount >= 1_000_000) return <Dots num={9} />;
+    if (absAmount >= 1_000_000) return <Dots num={6} />;
     return <Dots num={7} />;
 };
 
@@ -28,10 +28,10 @@ interface DotsProps {
 
 const Dots: FC<DotsProps> = ({ num }) => {
     return (
-        <div className="flex items-center">
+        <div className="flex items-center justify-end">
             <div className="flex items-center gap-1">
                 {Array.from({ length: num }).map((_, idx) => (
-                    <span key={idx} className="size-2 rounded-full bg-current"></span>
+                    <span key={idx} className="size-1.5 rounded-full bg-current"></span>
                 ))}
             </div>
             <p className="invisible w-[0px]">r</p>
