@@ -2,7 +2,7 @@ import { LoadingButton } from '@/components/loading-button';
 import { TransactionRepo } from '@/repo/transaction-repo';
 import { useAccountAtom } from '@/stores/account';
 import { useCategoryAtom } from '@/stores/category';
-import { appBarCtxAtom } from '@/stores/common';
+import { appBarCtxAtom, showLoading } from '@/stores/common';
 import { LabelValue } from '@/types/common';
 import { Transaction, TransactionType } from '@/types/transaction.type';
 import { useAtom } from 'jotai';
@@ -15,6 +15,8 @@ import { QueryResultOne } from '@/repo/base-repo';
 import { sessionAtom } from '@/stores/auth';
 import { Tooltip } from '@/components/tooltip';
 import { formatCurrency } from '@/helper/format-currency';
+import { Icon } from '@/components/icon';
+import { showConfirm } from '@/stores/confirm';
 
 interface TransactionCreatePageProps {}
 
@@ -71,6 +73,11 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         setAppBarCtx({
             title: focusedTransaction ? 'Edit Transaction' : 'Create Transaction',
             back: true,
+            actions: focusedTransaction && [
+                <button onClick={handleDelete} className="dai-btn dai-btn-error dai-btn-xs">
+                    <Icon icon="lucide:trash" />
+                </button>,
+            ],
         });
         return () => {
             setFocusedTransaction(undefined);
@@ -91,6 +98,40 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
             if (msg) toast.error(msg);
         })();
     }, []);
+
+    const handleDelete = async () => {
+        if (!focusedTransaction) return;
+        const confirmed = await showConfirm({
+            title: 'Delete transaction',
+            body: 'Are you sure you want to delete this transaction?',
+        });
+        if (!confirmed) return;
+
+        showLoading(true);
+        const { error } = await TransactionRepo.delete(focusedTransaction.id);
+        showLoading(false);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+        setAccounts((prev) => {
+            const account = prev.find((el2) => el2.id === focusedTransaction.account_id);
+            if (!account) return prev;
+            if (focusedTransaction.type === 'expense' || focusedTransaction.type === 'transfer') {
+                account.balance += focusedTransaction.amount;
+            }
+            if (focusedTransaction.type === 'income') {
+                account.balance -= focusedTransaction.amount;
+            }
+            if (focusedTransaction.type === 'transfer') {
+                const toAccount = prev.find((el2) => el2.id === focusedTransaction.to_account_id);
+                if (!toAccount) return prev;
+                toAccount.balance -= focusedTransaction.amount;
+            }
+            return [...prev];
+        });
+        navigate(-1);
+    };
 
     const submit = async () => {
         setLoading(true);
@@ -293,7 +334,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                     ></textarea>
                 </label>
                 <div className="col-span-full flex justify-end pt-4">
-                    <LoadingButton disabled={disabled} loading={loading} className="dai-btn-primary">
+                    <LoadingButton size='sm' disabled={disabled} loading={loading} className="dai-btn-primary">
                         Submit
                     </LoadingButton>
                 </div>

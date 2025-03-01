@@ -6,6 +6,10 @@ import { FC, useMemo } from 'react';
 import Skeleton from '@/components/skeleton';
 import { AmountRevealer } from '@/components/amount-revealer';
 import { ACCOUNT_LOGO_BASE, CATEGORY_LOGO_BASE } from '@/constants/logo';
+import { useLongPress } from '@/hooks/use-long-press';
+import { useAtom } from 'jotai';
+import { focusedTransactionAtom } from '../_layout';
+import { useNavigate } from 'react-router-dom';
 
 interface TransactionGroupCardProps {
     date: string;
@@ -46,10 +50,24 @@ interface TransactionCardProps {
 }
 
 const TransactionCard: FC<TransactionCardProps> = ({ el }) => {
+    const navigate = useNavigate();
+    const [, setFocused] = useAtom(focusedTransactionAtom);
+
+    const attrs = useLongPress(
+        () => {
+            setFocused(el);
+            navigate(`/transaction/create`);
+        },
+        { threshold: 500 },
+    );
+
     const amount = useMemo(() => (el.type === 'expense' ? -1 * el.amount : el.amount), [el]);
 
     return (
-        <div className="flex flex-col gap-1.5 rounded bg-base-100 px-2 py-1.5 shadow">
+        <div
+            {...attrs}
+            className="flex cursor-pointer select-none flex-col gap-1.5 rounded bg-base-100 px-2 py-1.5 shadow"
+        >
             <div className="flex items-center gap-1.5">
                 <div className="size-4 xs:size-5">
                     <img
@@ -92,7 +110,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el }) => {
                     </div>
                     <span
                         className={
-                            'text-nowrap text-end ' +
+                            'select-text text-nowrap text-end ' +
                             (el.type === 'transfer' ? 'text-secondary' : amount > 0 ? 'text-success' : 'text-error')
                         }
                     >
@@ -101,7 +119,7 @@ const TransactionCard: FC<TransactionCardProps> = ({ el }) => {
                 </div>
             </div>
             {el.description && (
-                <span className="line-clamp-1 text-end text-xs text-base-content/80">{el.description}</span>
+                <span className="line-clamp-1 text-end text-[10px] text-base-content/80">{el.description}</span>
             )}
         </div>
     );
