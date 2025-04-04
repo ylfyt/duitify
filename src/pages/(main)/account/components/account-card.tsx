@@ -41,7 +41,7 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted }) => {
             <img
                 onClick={() => navigate(`/accounts/transaction?account=${account.id}`)}
                 src={ACCOUNT_LOGO_BASE + '/' + account.logo}
-                className="size-9 xs:size-12"
+                className="size-6 xs:size-9"
             ></img>
             <div className="flex flex-1 flex-col gap-0.5">
                 <p className="text-sm xs:text-base">{account.name}</p>
@@ -69,13 +69,11 @@ export const AccountCard: FC<AccountCardProps> = ({ account, onDeleted }) => {
     );
 };
 
-interface AccountCardSkeletonProps {}
-
-export const AccountCardSkeleton: FC<AccountCardSkeletonProps> = () => {
+export const AccountCardSkeleton: FC<{}> = () => {
     return (
         <div className="flex items-center gap-4 rounded-xl bg-base-100 px-3 py-2 text-sm shadow-md">
             <Skeleton>
-                <div className="size-9 rounded-full bg-accent xs:size-12"></div>
+                <div className="size-6 rounded-full bg-accent xs:size-9"></div>
             </Skeleton>
             <div className="flex flex-1 flex-col gap-0.5">
                 <Skeleton>

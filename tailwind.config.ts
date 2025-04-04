@@ -8,6 +8,10 @@ const config: Config = {
     darkMode: 'class',
     theme: {
         extend: {
+            colors: {
+                'base-accent': 'oklch(var(--bc)/0.2)',
+                'base-content-accent': 'oklch(var(--bc)/0.7)',
+            },
             fontSize: {
                 xxs: '.6rem',
             },

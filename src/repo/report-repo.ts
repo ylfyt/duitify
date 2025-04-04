@@ -36,7 +36,7 @@ export class ReportRepo extends BaseRepo {
 
         const { data, error } = await this.db
             .from('transaction')
-            .select(`amount:amount.sum(), category(id, name, logo)`)
+            .select(`amount:amount.sum(), count:id.count(), category(id, name, logo)`)
             .eq('user_id', userId)
             .eq('type', 'expense')
             .gte('occurred_at', formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss', timeZone: 'UTC' }))

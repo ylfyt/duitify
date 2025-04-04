@@ -9,6 +9,12 @@
 }
 
 @layer base {
+    *,
+    ::before,
+    ::after {
+        @apply border-base-accent;
+    }
+    
     * {
         scrollbar-width: thin;
     }

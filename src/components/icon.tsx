@@ -35,6 +35,7 @@ import IconLucideArrowRight from '~icons/lucide/arrow-right';
 import IconLucideX from '~icons/lucide/x';
 import IconLucideSettings from '~icons/lucide/settings';
 import IconLucideDownload from '~icons/lucide/download';
+import IconLucideUpload from '~icons/lucide/upload';
 import IconLucideChevronRight from '~icons/lucide/chevron-right';
 import IconLucideChevronLeft from '~icons/lucide/chevron-left';
 import IconLucideDollarSign from '~icons/lucide/dollar-sign';
@@ -97,6 +98,7 @@ const Icons = {
     'lucide:app-window': IconLucideAppWindow,
     'lucide:infinity': IconLucideInfinity,
     'lucide:notebook-text': IconLucideNotebookText,
+    'lucide:upload': IconLucideUpload,
 };
 
 export type IconName = keyof typeof Icons;
