@@ -12,6 +12,7 @@ interface ExpenseOverviewDetailProps {
     totalExpense: number;
     totalIncome: number;
     loadingIncome: boolean;
+    ranges?: { start: Date; end: Date };
 }
 
 export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
@@ -20,8 +21,18 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
     totalIncome,
     loadingIncome,
     loadingExpense,
+    ranges,
 }) => {
     const expenseCount = useMemo(() => expenses.reduce((acc, el) => acc + el.count, 0), [expenses]);
+    const days = useMemo(() => {
+        if (!ranges) return 0;
+        const now = new Date();
+
+        if (ranges.end.getMonth() === now.getMonth() && ranges.end.getFullYear() === now.getFullYear()) {
+            return Math.ceil((now.getTime() - ranges.start.getTime()) / (1000 * 60 * 60 * 24));
+        }
+        return Math.ceil((ranges.end.getTime() - ranges.start.getTime()) / (1000 * 60 * 60 * 24));
+    }, [ranges]);
 
     return (
         <div className="flex w-full flex-col gap-2 text-xs">
@@ -64,7 +75,7 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
                     <CondSkeleton skel={loadingExpense}>
                         <div className="flex items-center gap-1 text-success">
                             <Icon icon="lucide:calendar-days" />
-                            <span>31</span>
+                            <span>{days}</span>
                         </div>
                     </CondSkeleton>
                     <CondSkeleton skel={loadingExpense}>

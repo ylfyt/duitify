@@ -30,6 +30,7 @@ interface ReportPageProps {}
 const ReportPage: FC<ReportPageProps> = () => {
     const [session] = useAtom(sessionAtom);
     const [loading, setLoading] = useState(false);
+    const [ranges, setRanges] = useState<{ start: Date; end: Date }>();
     const [data, setData] = useState<ExpenseOverview[]>([]);
     const [loadingIncome, setLoadingIncome] = useState(false);
     const [totalIncome, setTotalIncome] = useState(0);
@@ -42,8 +43,9 @@ const ReportPage: FC<ReportPageProps> = () => {
         if (!session?.user.id) return;
         (async () => {
             setLoading(true);
-            const res = await ReportRepo.getExpenseOverview(session.user.id, expenseDate);
+            const [res, ranges] = await ReportRepo.getExpenseOverview(session.user.id, expenseDate);
             setLoading(false);
+            setRanges(ranges);
             if (res.error) {
                 toast.error(res.error.message);
                 return;
@@ -111,6 +113,7 @@ const ReportPage: FC<ReportPageProps> = () => {
                 totalExpense={total}
                 totalIncome={totalIncome}
                 loadingIncome={loadingIncome}
+                ranges={ranges}
             />
         </div>
     );

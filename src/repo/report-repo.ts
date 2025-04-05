@@ -31,7 +31,10 @@ export class ReportRepo extends BaseRepo {
         return { start, end };
     }
 
-    public static async getExpenseOverview(userId: string, month?: Date): Promise<QueryResultMany<ExpenseOverview>> {
+    public static async getExpenseOverview(
+        userId: string,
+        month?: Date,
+    ): Promise<[QueryResultMany<ExpenseOverview>, { start: Date; end: Date }]> {
         const { start, end } = this.getDateRanges(true, month);
 
         const { data, error } = await this.db
@@ -44,10 +47,10 @@ export class ReportRepo extends BaseRepo {
 
         const data2 = data as unknown as ExpenseOverview[];
         data2.sort((a, b) => b.amount - a.amount);
-        return {
-            error,
-            data: data2,
-        };
+        return [
+            { error, data: data2 },
+            { start, end },
+        ];
     }
 
     public static async getIncomeTotal(userId: string, month?: Date): Promise<QueryResultOne<number>> {
