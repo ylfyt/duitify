@@ -98,44 +98,24 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
             <div className="grid grid-cols-1 gap-2 rounded-lg border bg-base-100 p-2">
                 {loadingExpense ? (
                     Array.from({ length: 10 }).map((_, idx) => (
-                        <div key={idx} className={'flex flex-col gap-0.5 ' + (idx !== 9 ? 'border-b pb-2' : '')}>
-                            <div className="flex items-center justify-between text-sm">
-                                <div className="flex items-center gap-1">
-                                    <div className="dai-skeleton size-5 xs:size-6"></div>
-                                    <Skeleton>
-                                        <span>Transportation</span>
-                                    </Skeleton>
-                                </div>
+                        <div key={idx} className={'flex items-center gap-1 ' + (idx !== 10 - 1 ? 'border-b pb-2' : '')}>
+                            <div className="flex flex-1 items-center gap-1">
+                                <div className="dai-skeleton size-4 xs:size-5"></div>
                                 <Skeleton>
-                                    <span className="text-error">{formatCurrency(-1 * 10_123_000)}</span>
+                                    <span>Transportation</span>
                                 </Skeleton>
                             </div>
-                            <div className="flex items-center text-xxs">
-                                <div className="flex flex-1 items-center gap-2">
-                                    <Skeleton>
-                                        <div className="flex items-center gap-1 text-error">
-                                            <Icon icon="lucide:upload" />
-                                            <span>{formatNumeric(1000)}</span>
-                                        </div>
-                                    </Skeleton>
-                                    <Skeleton>
-                                        <span className="text-error">Avg. {formatCurrency(-1 * 123_000)}</span>
-                                    </Skeleton>
-                                </div>
-                                <div
-                                    className="dai-radial-progress dai-skeleton text-transparent"
-                                    style={
-                                        {
-                                            '--value': '70',
-                                            '--size': '1.5rem',
-                                            '--thickness': '0.1rem',
-                                        } as React.CSSProperties
-                                    }
-                                    aria-valuenow={70}
-                                    role="progressbar"
-                                >
-                                    {70}%
-                                </div>
+                            <Skeleton>
+                                <progress
+                                    className="dai-progress dai-progress-error h-[5px] w-[4rem] rotate-180"
+                                    value={0}
+                                    max="100"
+                                ></progress>
+                            </Skeleton>
+                            <div className="flex flex-1 justify-end">
+                                <Skeleton>
+                                    <span className="text-error">{formatCurrency(-1 * 100_123)}</span>
+                                </Skeleton>
                             </div>
                         </div>
                     ))
@@ -148,47 +128,27 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
                             <div
                                 key={idx}
                                 className={
-                                    'flex flex-col gap-0.5 ' + (idx !== expenses.length - 1 ? 'border-b pb-2' : '')
+                                    'flex items-center gap-1 ' + (idx !== expenses.length - 1 ? 'border-b pb-2' : '')
                                 }
                             >
-                                <div className="flex items-center justify-between text-sm">
-                                    <div className="flex items-center gap-1">
-                                        <div className="size-5 xs:size-6">
-                                            <img
-                                                className="aspect-square w-full"
-                                                src={CATEGORY_LOGO_BASE + '/' + el.category?.logo}
-                                                loading="lazy"
-                                                alt=""
-                                            />
-                                        </div>
-                                        <span>{el.category?.name}</span>
+                                <div className="flex flex-1 items-center gap-1">
+                                    <div className="size-4 xs:size-5">
+                                        <img
+                                            className="aspect-square w-full"
+                                            src={CATEGORY_LOGO_BASE + '/' + el.category?.logo}
+                                            loading="lazy"
+                                            alt=""
+                                        />
                                     </div>
-                                    <span className="text-error">{formatCurrency(-1 * el.amount)}</span>
+                                    <span>{el.category?.name}</span>
                                 </div>
-                                <div className="flex items-center text-xxs">
-                                    <div className="flex flex-1 items-center gap-2">
-                                        <div className="flex items-center gap-1">
-                                            <Icon icon="lucide:upload" />
-                                            <span>{formatNumeric(el.count)}</span>
-                                        </div>
-                                        <span className="text-error">
-                                            Avg. {formatCurrency((-1 * el.amount) / el.count)}
-                                        </span>
-                                    </div>
-                                    <div
-                                        className="dai-radial-progress text-primary"
-                                        style={
-                                            {
-                                                '--value': percent,
-                                                '--size': '1.5rem',
-                                                '--thickness': '0.1rem',
-                                            } as React.CSSProperties
-                                        }
-                                        aria-valuenow={70}
-                                        role="progressbar"
-                                    >
-                                        {percent}%
-                                    </div>
+                                <progress
+                                    className="dai-progress dai-progress-error h-[5px] w-[4rem] rotate-180"
+                                    value={percent}
+                                    max="100"
+                                ></progress>
+                                <div className="flex flex-1 justify-end">
+                                    <span className="text-error">{formatCurrency(-1 * el.amount)}</span>
                                 </div>
                             </div>
                         );
