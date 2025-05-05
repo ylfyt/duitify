@@ -68,7 +68,7 @@ const SavingFlowReportPage: FC<{}> = () => {
                 <div className="flex-1"></div>
                 <div className="flex items-center justify-center gap-2">
                     <button
-                        disabled={loading || !flow}
+                        disabled={loading || !flow || true}
                         onClick={() =>
                             setFlow((prev) => {
                                 prev.setFullYear(prev.getFullYear() - 1);
@@ -136,7 +136,7 @@ const SavingFlowReportPage: FC<{}> = () => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2 rounded-lg border bg-base-100 p-2">
+                <div className="grid grid-cols-1 gap-2 rounded-lg border bg-base-100 p-2 text-xxs">
                     {data.map((el, idx) => {
                         const save = el.income - el.expense;
                         const savePercent = saveRatios[el.occurred_at];

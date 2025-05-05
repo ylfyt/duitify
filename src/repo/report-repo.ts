@@ -152,9 +152,9 @@ export class ReportRepo extends BaseRepo {
     }
 
     public static async getIncomeExpensePerMonth(userId: string, year: number): Promise<QueryResultOne<IncomeExpense>> {
-        const next = new Date(year + 1, 0);
+        const next = new Date(year + 2, 0);
         next.setDate(next.getDate() - 1);
-        const { start, end } = this.getDateRanges(true, new Date(year, 0), next);
+        const { start, end } = this.getDateRanges(true, new Date(year - 10, 0), next);
         end.setDate(end.getDate() - 1);
 
         const { data, error } = await supabase.rpc('get_income_expense_per_month', {
