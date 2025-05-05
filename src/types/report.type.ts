@@ -12,3 +12,5 @@ export type ExpenseOverview = {
 };
 
 export type TransactionFlow = Database['public']['Functions']['get_transaction_flow']['Returns'];
+
+export type IncomeExpense = Database['public']['Functions']['get_income_expense_per_month']['Returns'];

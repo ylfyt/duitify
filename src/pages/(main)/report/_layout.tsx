@@ -9,6 +9,7 @@ import { openModal } from '@/stores/modal';
 import ModalSelectReport from './components/modal-select-report';
 import { LabelValue } from '@/types/common';
 import AssetsFlowReportPage from './assets-flow-report-page';
+import SavingFlowReportPage from './saving-flow-report-page';
 
 interface LayoutReportProps {}
 
@@ -23,6 +24,10 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
             {
                 value: '/report',
                 label: 'Expense Overview',
+            },
+            {
+                value: '/report/saving-flow',
+                label: 'Saving Flow',
             },
             {
                 value: '/report/cash-flow',
@@ -63,6 +68,7 @@ export const LayoutReport: FC<LayoutReportProps> = () => {
         <Routes>
             <Route path="/" element={<ReportPage />} />
             <Route path="/cash-flow" element={<CashFlowReportPage />} />
+            <Route path="/saving-flow" element={<SavingFlowReportPage />} />
             <Route path="/assets-flow" element={<AssetsFlowReportPage />} />
         </Routes>
     );

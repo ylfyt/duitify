@@ -2,7 +2,7 @@ import { BaseRepo, QueryResultMany, QueryResultOne } from './base-repo';
 import { formatDate, LOCAL_TIMEZONE } from '@/helper/format-date';
 import { settingsAtom } from '@/stores/settings';
 import { supabase } from '@/supabase';
-import { ExpenseOverview, TransactionFlow } from '@/types/report.type';
+import { ExpenseOverview, IncomeExpense, TransactionFlow } from '@/types/report.type';
 import { getDefaultStore } from 'jotai';
 
 const store = getDefaultStore();
@@ -149,5 +149,22 @@ export class ReportRepo extends BaseRepo {
             data,
             error,
         };
+    }
+
+    public static async getIncomeExpensePerMonth(userId: string, year: number): Promise<QueryResultOne<IncomeExpense>> {
+        const next = new Date(year + 1, 0);
+        next.setDate(next.getDate() - 1);
+        const { start, end } = this.getDateRanges(true, new Date(year, 0), next);
+        end.setDate(end.getDate() - 1);
+
+        const { data, error } = await supabase.rpc('get_income_expense_per_month', {
+            start_str: formatDate(start, { format: 'yyyy-MM-dd HH:mm:ss' }),
+            end_str: formatDate(end, { format: 'yyyy-MM-dd HH:mm:ss' }),
+            month_end_date: store.get(settingsAtom)?.month_end_date ?? 0,
+            time_zone: LOCAL_TIMEZONE,
+            trx_user_id: userId,
+        });
+
+        return { data, error };
     }
 }
