@@ -27,7 +27,9 @@ export function openModal<T>(
     { dismissible = true, ...props }: T & JSX.IntrinsicAttributes & ModalOptions,
 ): number {
     if (props.modalId) {
-        const exist = store.get(pendingModalAtom).find((modal) => modal.modalId === props.modalId);
+        const exist =
+            store.get(pendingModalAtom).find((modal) => modal.modalId === props.modalId) ||
+            store.get(modalAtom).find((modal) => modal.modalId === props.modalId);
         if (exist) return -1;
     }
 
