@@ -1,3 +1,4 @@
+import { openModal } from '@/components/global-modal';
 import { Icon } from '@/components/icon';
 import ModalPin from '@/components/modal-pin';
 import { Tooltip } from '@/components/tooltip';
@@ -10,7 +11,6 @@ import { SettingRepo } from '@/repo/setting-repo';
 import { sessionAtom } from '@/stores/auth';
 import { appBarCtxAtom, showLoading } from '@/stores/common';
 import { showConfirm } from '@/stores/confirm';
-import { openModal } from '@/stores/modal';
 import { pinAuthenticatedAtom, settingsAtom } from '@/stores/settings';
 import { isDarkAtom } from '@/stores/theme';
 import { useAtom } from 'jotai';

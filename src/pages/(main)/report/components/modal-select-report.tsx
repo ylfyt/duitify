@@ -1,5 +1,5 @@
+import { closeModal } from '@/components/global-modal';
 import { Modal } from '@/components/modal';
-import { closeModal } from '@/stores/modal';
 import { LabelValue } from '@/types/common';
 import { FC, useEffect, useRef } from 'react';
 

@@ -1,13 +1,106 @@
-import { closeModal, modalAtom } from '@/stores/modal';
-import { useAtom } from 'jotai';
-import { FC, useEffect } from 'react';
-import { useBlocker } from 'react-router-dom';
+import { atom, getDefaultStore, useAtom } from 'jotai';
+import { FC, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-interface ModalContainerProps {}
+const store = getDefaultStore();
+const MODAL_SEARCH_KEY = 'modal-depth';
+let LAST_ID = 0;
 
-const ModalContainer: FC<ModalContainerProps> = ({}) => {
-    const [modals] = useAtom(modalAtom);
-    const blocker = useBlocker(modals.length > 0);
+type Modal = {
+    Element: FC<any>;
+    props: JSX.IntrinsicAttributes;
+    dismissible: boolean;
+    modalId?: number;
+};
+
+export type ModalOptions = {
+    dismissible?: boolean;
+    modalId?: number;
+};
+/**
+ * Open a modal with the given element and props.
+ * It will return the id of the modal.
+ * If modal already exist, them -1 will be returned.
+ **/
+export function openModal<T>(
+    element: FC<T>,
+    { dismissible = true, ...props }: T & JSX.IntrinsicAttributes & ModalOptions,
+): number {
+    if (props.modalId) {
+        const exist = store.get(pendingModalAtom).find((modal) => modal.modalId === props.modalId);
+        if (exist) return -1;
+    }
+
+    if (!props.modalId) props.modalId = ++LAST_ID as any;
+
+    store.set(pendingModalAtom, (prev) => {
+        prev.push({ Element: element, props, dismissible, modalId: props.modalId });
+        return [...prev];
+    });
+    return props.modalId ?? 0;
+}
+
+/**
+ * Close the last modal in the stack.
+ **/
+export function closeModal() {
+    history.back();
+}
+
+const pendingModalAtom = atom<Modal[]>([]);
+const modalAtom = atom<Modal[]>([]);
+
+export const GlobalModal: FC<{}> = ({}) => {
+    const [modals, setModals] = useAtom(modalAtom);
+    const [pending, setPending] = useAtom(pendingModalAtom);
+
+    const [search, setSearch] = useSearchParams();
+    const depth = useMemo(() => {
+        const d = parseInt(search.get(MODAL_SEARCH_KEY) || '0', 10);
+        return isNaN(d) ? 0 : d;
+    }, [search.get(MODAL_SEARCH_KEY)]);
+
+    useEffect(() => {
+        if (pending.length === 0) return;
+
+        setModals((prev) => {
+            prev.push(...pending);
+            setPending([]);
+
+            const isExists = !!new URLSearchParams(window.location.search).get(MODAL_SEARCH_KEY);
+            setSearch(
+                (s) => {
+                    s.set(MODAL_SEARCH_KEY, prev.length.toString());
+                    return s;
+                },
+                { replace: prev.length === 1 && isExists },
+            );
+
+            return [...prev];
+        });
+    }, [pending]);
+
+    useEffect(() => {
+        if (modals.length <= depth) return;
+        setModals((prev) => prev.slice(0, depth));
+    }, [depth]);
+
+    useEffect(() => {
+        if (modals.length === 0) {
+            document.body.style.overflowY = 'auto';
+            return;
+        }
+        document.body.style.overflowY = 'hidden';
+    }, [modals]);
+
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key !== 'Escape') return;
+            popModal();
+        };
+        window.addEventListener('keyup', handleEsc);
+        return () => window.removeEventListener('keyup', handleEsc);
+    }, []);
 
     const popModal = () => {
         if (modals.length === 0) return;
@@ -16,25 +109,7 @@ const ModalContainer: FC<ModalContainerProps> = ({}) => {
         closeModal();
     };
 
-    useEffect(() => {
-        window.addEventListener('keyup', handleEsc);
-        return () => window.removeEventListener('keyup', handleEsc);
-    }, []);
-
-    const handleEsc = (e: KeyboardEvent) => {
-        if (e.key !== 'Escape') return;
-        popModal();
-    };
-
-    useEffect(() => {
-        const onBack = () => {
-            if (blocker.state !== 'blocked') return;
-            popModal();
-        };
-        window.addEventListener('popstate', onBack);
-        return () => window.removeEventListener('popstate', onBack);
-    }, [blocker]);
-
+    if (modals.length === 0) return null;
     return (
         <div
             onClick={popModal}
@@ -54,17 +129,4 @@ const ModalContainer: FC<ModalContainerProps> = ({}) => {
             })}
         </div>
     );
-};
-
-interface GlobalModalProps {}
-export const GlobalModal: FC<GlobalModalProps> = () => {
-    const [modals] = useAtom(modalAtom);
-    useEffect(() => {
-        if (modals.length === 0) {
-            document.body.style.overflowY = 'auto';
-            return;
-        }
-        document.body.style.overflowY = 'hidden';
-    }, [modals]);
-    return modals.length === 0 ? null : <ModalContainer />;
 };

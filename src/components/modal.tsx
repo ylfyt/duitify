@@ -1,7 +1,7 @@
 import { useAutoFocus } from '@/hooks/use-auto-focus';
 import { FC } from 'react';
 import { Icon } from './icon';
-import { closeModal } from '@/stores/modal';
+import { closeModal } from './global-modal';
 
 type ModalProps = {
     children: React.ReactNode;

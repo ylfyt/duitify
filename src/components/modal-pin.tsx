@@ -1,6 +1,6 @@
 import { useStateWithRef } from '@/hooks/use-state-with-ref';
-import { closeModal } from '@/stores/modal';
 import { ClipboardEvent, FC, KeyboardEvent, useEffect, useMemo, useRef } from 'react';
+import { closeModal } from './global-modal';
 
 interface ModalPinProps {
     onClose: (pin: string, desktopOnly?: boolean) => void;

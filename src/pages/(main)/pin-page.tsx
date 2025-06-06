@@ -1,7 +1,7 @@
+import { openModal } from '@/components/global-modal';
 import ModalPin from '@/components/modal-pin';
 import { sha256 } from '@/helper/crypto';
 import { showLoading } from '@/stores/common';
-import { openModal } from '@/stores/modal';
 import { pinAuthenticatedAtom, settingsAtom } from '@/stores/settings';
 import { useAtom } from 'jotai';
 import { FC, useEffect } from 'react';

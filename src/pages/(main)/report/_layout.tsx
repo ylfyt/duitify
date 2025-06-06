@@ -5,11 +5,11 @@ import CashFlowReportPage from './cash-flow-report-page';
 import { appBarCtxAtom } from '@/stores/common';
 import { useAtom } from 'jotai';
 import { Icon } from '@/components/icon';
-import { openModal } from '@/stores/modal';
 import ModalSelectReport from './components/modal-select-report';
 import { LabelValue } from '@/types/common';
 import AssetsFlowReportPage from './assets-flow-report-page';
 import SavingFlowReportPage from './saving-flow-report-page';
+import { openModal } from '@/components/global-modal';
 
 interface LayoutReportProps {}
 

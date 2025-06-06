@@ -1,4 +1,4 @@
-import { Route, Routes, useBlocker, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { NotFound } from './not-found-page';
 import { useEffect, useMemo, useState } from 'react';
 import { useAtom } from 'jotai';
@@ -29,17 +29,6 @@ export const DashboardLayout = () => {
     const [count, setCount] = useState(0);
 
     const defaultPage = useMemo(() => routes[0].link, [routes]);
-
-    const blocker = useBlocker(({ historyAction, currentLocation, nextLocation }) => {
-        return (
-            historyAction === 'POP' && currentLocation.pathname === defaultPage && nextLocation.pathname !== defaultPage
-        );
-    });
-
-    useEffect(() => {
-        if (blocker.state !== 'blocked') return;
-        handleLogout();
-    }, [blocker]);
 
     useEffect(() => {
         let location = window.location.pathname;

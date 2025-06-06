@@ -1,5 +1,5 @@
+import { closeModal, openModal } from '@/components/global-modal';
 import { ModalConfirm } from '@/components/modal-confirm';
-import { closeModal, openModal } from './modal';
 
 type ConfirmOptions = {
     title?: string;
@@ -21,7 +21,7 @@ export function showConfirm(opts: ConfirmOptions = {}) {
                 resolve(false);
                 closeModal();
             },
-            ...opts
+            ...opts,
         });
         if (id === -1) resolve(false); // already exist
     });
