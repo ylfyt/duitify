@@ -31,6 +31,7 @@ export class TransactionRepo extends BaseRepo {
         if (account) q.or(`account_id.eq.${account}, to_account_id.eq.${account}`);
         return q
             .order('occurred_at', { ascending: false })
+            .order('created_at', { ascending: false })
             .lt('occurred_at', !cursor ? formatDate(today, { format: 'yyyy-MM-dd HH:mm:ss' }) : cursor)
             .limit(PAGINATION_SIZES[0]);
     }
