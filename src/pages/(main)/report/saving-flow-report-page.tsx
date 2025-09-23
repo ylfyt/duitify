@@ -1,32 +1,20 @@
-import { DropdownMenu } from '@/components/dropdown-menu';
-import { Icon } from '@/components/icon';
+import { LineChart } from '@/components/line-chart';
 import { CondSkeleton } from '@/components/skeleton';
+import { abbreviate } from '@/helper/abbreviate';
 import { formatCurrency } from '@/helper/format-currency';
 import { formatNumeric } from '@/helper/format-numeric';
 import { ReportRepo } from '@/repo/report-repo';
 import { sessionAtom } from '@/stores/auth';
-import { settingsAtom } from '@/stores/settings';
+import { useColorScheme } from '@/stores/theme';
 import { IncomeExpense } from '@/types/report.type';
-import { getDefaultStore, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 import { FC, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
-const store = getDefaultStore();
-
-const getNowDate = () => {
-    const settings = store.get(settingsAtom);
-    const now = new Date();
-    if (!settings?.month_end_date || now.getDate() <= settings.month_end_date) return now;
-
-    now.setDate(1);
-    now.setMonth(now.getMonth() + 1);
-    return now;
-};
-
 const SavingFlowReportPage: FC<{}> = () => {
+    const colorScheme = useColorScheme();
     const [session] = useAtom(sessionAtom);
     const [loading, setLoading] = useState(false);
-    const [flow, setFlow] = useState<Date>(new Date());
     const [data, setData] = useState<IncomeExpense>([]);
 
     const totalIncome = useMemo(() => data.reduce((prev, curr) => curr.income + prev, 0), [data]);
@@ -48,11 +36,32 @@ const SavingFlowReportPage: FC<{}> = () => {
         return result;
     }, [data]);
 
+    const chartData = useMemo(() => {
+        const assets: number[] = [];
+        const expenses: number[] = [];
+        const incomes: number[] = [];
+        const labels: string[] = [];
+
+        for (let i = data.length - 1; i >= 0; i--) {
+            const el = data[i];
+
+            let last = assets[assets.length - 1];
+            if (last == null) last = 0;
+            assets.push(last + el.income - el.expense);
+
+            expenses.push(el.expense);
+            incomes.push(el.income);
+            labels.push(el.occurred_at.slice(2).replace('-', ''));
+        }
+
+        return { assets, labels, incomes, expenses };
+    }, [data]);
+
     useEffect(() => {
         if (!session?.user.id) return;
         (async () => {
             setLoading(true);
-            const res = await ReportRepo.getIncomeExpensePerMonth(session.user.id, flow.getFullYear());
+            const res = await ReportRepo.getIncomeExpensePerMonth(session.user.id, new Date().getFullYear());
             setLoading(false);
             if (res.error) {
                 toast.error(res.error.message);
@@ -60,46 +69,13 @@ const SavingFlowReportPage: FC<{}> = () => {
             }
             setData(res.data || []);
         })();
-    }, [flow, session]);
+    }, [session]);
 
     return (
         <div className="flex flex-1 flex-col items-center gap-2 p-2">
-            <div className="flex w-full items-center rounded-lg border bg-base-100 p-2">
-                <div className="flex-1"></div>
-                <div className="flex items-center justify-center gap-2">
-                    <button
-                        disabled={loading || !flow || true}
-                        onClick={() =>
-                            setFlow((prev) => {
-                                prev.setFullYear(prev.getFullYear() - 1);
-                                return new Date(prev);
-                            })
-                        }
-                        className="text-xl disabled:opacity-20"
-                    >
-                        <Icon icon="lucide:chevron-left" />
-                    </button>
-                    <span className="w-[10rem] text-center">{flow.getFullYear()}</span>
-                    <button
-                        disabled={loading || flow.getFullYear() >= getNowDate().getFullYear()}
-                        onClick={() =>
-                            setFlow((prev) => {
-                                prev.setFullYear(prev.getFullYear() + 1);
-                                return new Date(prev);
-                            })
-                        }
-                        className="text-xl disabled:opacity-20"
-                    >
-                        <Icon icon="lucide:chevron-right" />
-                    </button>
-                </div>
-                <div className="flex flex-1 justify-end">
-                    <DropdownMenu options={[]} />
-                </div>
-            </div>
             <div className="flex w-full flex-col gap-2 text-xs">
                 <div className="rounded-lg border bg-base-100">
-                    <div className="flex border-b px-2 text-base-content-accent">
+                    <div className="flex px-2 text-base-content-accent">
                         <div className="flex flex-1 flex-col items-center gap-0.5 py-2">
                             <CondSkeleton skel={loading}>
                                 <span>Income </span>
@@ -131,11 +107,26 @@ const SavingFlowReportPage: FC<{}> = () => {
                             </CondSkeleton>
                         </div>
                     </div>
-                    <div className="flex items-center justify-evenly gap-2 p-2">
-                        <p>Loading</p>
-                    </div>
                 </div>
 
+                <div className="flex min-h-[14rem] flex-col rounded-lg border bg-base-100 p-2 text-xxs">
+                    <LineChart
+                        legend={true}
+                        yFormatter={abbreviate}
+                        data={{
+                            datasets: [
+                                {
+                                    data: chartData.assets,
+                                    label: 'Save',
+                                    color: colorScheme.primary,
+                                },
+                                { data: chartData.expenses, label: 'Expense', color: colorScheme.error },
+                                { data: chartData.incomes, label: 'Income', color: colorScheme.success },
+                            ],
+                            labels: chartData.labels,
+                        }}
+                    />
+                </div>
                 <div className="grid grid-cols-1 gap-2 rounded-lg border bg-base-100 p-2 text-xxs">
                     {data.map((el, idx) => {
                         const save = el.income - el.expense;
