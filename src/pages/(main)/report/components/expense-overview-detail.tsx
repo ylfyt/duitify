@@ -23,6 +23,7 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
     loadingExpense,
     ranges,
 }) => {
+    const totalSave = useMemo(() => totalIncome - totalExpense, [totalExpense, totalIncome]);
     const expenseCount = useMemo(() => expenses.reduce((acc, el) => acc + el.count, 0), [expenses]);
     const days = useMemo(() => {
         if (!ranges) return 0;
@@ -42,9 +43,9 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
                         <CondSkeleton skel={loadingIncome}>
                             <span>Income </span>
                         </CondSkeleton>
-                        <CondSkeleton skel={loadingIncome}>
-                            <span className="text-sm text-success">
-                                {formatCurrency(loadingIncome ? 10_123_000 : totalIncome)}
+                        <CondSkeleton skel={loadingIncome} placeholder="Rp 123124214">
+                            <span className={'text-sm ' + (totalIncome > 0 ? 'text-success' : '')}>
+                                {!totalIncome ? '-' : formatCurrency(totalIncome)}
                             </span>
                         </CondSkeleton>
                     </div>
@@ -52,9 +53,9 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
                         <CondSkeleton skel={loadingExpense}>
                             <span>Expense</span>
                         </CondSkeleton>
-                        <CondSkeleton skel={loadingExpense}>
-                            <span className="text-sm text-error">
-                                {formatCurrency(loadingExpense ? 10_123_000 : -1 * totalExpense)}
+                        <CondSkeleton skel={loadingExpense} placeholder="Rp 31232142">
+                            <span className={'text-sm ' + (totalExpense > 0 ? 'text-error' : '')}>
+                                {!totalExpense ? '-' : formatCurrency(-1 * totalExpense)}
                             </span>
                         </CondSkeleton>
                     </div>
@@ -62,12 +63,14 @@ export const ExpenseOverviewDetail: FC<ExpenseOverviewDetailProps> = ({
                         <CondSkeleton skel={loadingExpense || loadingIncome}>
                             <span>Save</span>
                         </CondSkeleton>
-                        <CondSkeleton skel={loadingExpense || loadingIncome}>
-                            <span className="text-sm text-success">
-                                {formatCurrency(
-                                    loadingExpense || loadingIncome ? 10_123_000 : totalIncome - totalExpense,
-                                )}
-                            </span>{' '}
+                        <CondSkeleton skel={loadingExpense || loadingIncome} placeholder="Rp 21312321">
+                            <span
+                                className={
+                                    'text-sm ' + (totalSave > 0 ? 'text-success' : totalSave < 0 ? 'text-error' : '')
+                                }
+                            >
+                                {!totalSave ? '-' : formatCurrency(totalSave)}
+                            </span>
                         </CondSkeleton>
                     </div>
                 </div>
