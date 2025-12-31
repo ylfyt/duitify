@@ -159,10 +159,8 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
             });
         }
         setLoading(false);
-        if (res.error) {
-            toast.error(res.error.message);
-            return;
-        }
+        if (res.error) return toast.error(res.error.message);
+
         setAccounts((prev) => {
             const account = prev.find((el) => el.id === fromAccount);
             if (!account) return prev;
@@ -195,7 +193,10 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
             }
             return [...prev];
         });
-        navigate(-1);
+
+        if (focusedTransaction) return navigate(-1);
+        toast.success(`Successfully create`);
+        setAmount('');
     };
 
     return (
@@ -235,6 +236,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 type="number"
+                                autoFocus
                                 placeholder="Amount"
                                 className="dai-input dai-input-bordered"
                             />
@@ -334,7 +336,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
                     ></textarea>
                 </label>
                 <div className="col-span-full flex justify-end pt-4">
-                    <LoadingButton size='sm' disabled={disabled} loading={loading} className="dai-btn-primary">
+                    <LoadingButton size="sm" disabled={disabled} loading={loading} className="dai-btn-primary">
                         Submit
                     </LoadingButton>
                 </div>
