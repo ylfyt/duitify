@@ -197,6 +197,7 @@ const TransactionCreatePage: FC<TransactionCreatePageProps> = () => {
         if (focusedTransaction) return navigate(-1);
         toast.success(`Successfully create`);
         setAmount('');
+        setTargetAccount('');
     };
 
     return (
