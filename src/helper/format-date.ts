@@ -5,6 +5,8 @@ type Options = {
     lang?: string;
     format?: string;
     timeZone?: string;
+    day?: 'numeric' | '2-digit' | 'hide';
+    weekday?: 'long' | 'short' | 'narrow' | 'hide';
 };
 
 /**
@@ -14,7 +16,7 @@ type Options = {
  */
 export function formatDate(
     date: Date | string | number | undefined | null,
-    { placeholder = '-', lang, format = 'yyyy-MM-dd', timeZone }: Options = {},
+    { placeholder = '-', lang, format = 'yyyy-MM-dd', timeZone, day = '2-digit', weekday = 'short' }: Options = {},
 ): string {
     if (!date) return placeholder;
     if (typeof date === 'string') date = new Date(date);
@@ -24,10 +26,10 @@ export function formatDate(
     if (!timeZone) timeZone = LOCAL_TIMEZONE;
     if (lang) {
         const formatter = new Intl.DateTimeFormat(lang, {
-            day: '2-digit',
+            day: day === 'hide' ? undefined : day,
             month: 'short',
             year: 'numeric',
-            weekday: 'short',
+            weekday: weekday === 'hide' ? undefined : weekday,
             timeZone,
         });
         return formatter.format(date);
@@ -36,14 +38,14 @@ export function formatDate(
     if (timeZone !== LOCAL_TIMEZONE) date = new Date(date.toLocaleString('en-US', { timeZone }));
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const dayD = date.getDate();
     const hour = date.getHours();
     const minute = date.getMinutes();
     const second = date.getSeconds();
     return format
         .replace('yyyy', year.toString())
         .replace('MM', month.toString().padStart(2, '0'))
-        .replace('dd', day.toString().padStart(2, '0'))
+        .replace('dd', dayD.toString().padStart(2, '0'))
         .replace('HH', hour.toString().padStart(2, '0'))
         .replace('mm', minute.toString().padStart(2, '0'))
         .replace('ss', second.toString().padStart(2, '0'));

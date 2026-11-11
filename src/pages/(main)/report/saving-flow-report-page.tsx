@@ -2,6 +2,7 @@ import { LineChart } from '@/components/line-chart';
 import { CondSkeleton } from '@/components/skeleton';
 import { abbreviate } from '@/helper/abbreviate';
 import { formatCurrency } from '@/helper/format-currency';
+import { formatDate } from '@/helper/format-date';
 import { formatNumeric } from '@/helper/format-numeric';
 import { ReportRepo } from '@/repo/report-repo';
 import { sessionAtom } from '@/stores/auth';
@@ -19,22 +20,6 @@ const SavingFlowReportPage: FC<{}> = () => {
 
     const totalIncome = useMemo(() => data.reduce((prev, curr) => curr.income + prev, 0), [data]);
     const totalExpense = useMemo(() => data.reduce((prev, curr) => curr.expense + prev, 0), [data]);
-
-    const saveRatios = useMemo(() => {
-        const result: Record<string, number> = {};
-
-        for (let i = data.length - 2; i >= 0; i--) {
-            const prev = data[i + 1];
-            const curr = data[i];
-
-            const prevSaving = prev.income - prev.expense;
-            const currSaving = curr.income - curr.expense;
-
-            if (prevSaving !== 0) result[curr.occurred_at] = ((currSaving - prevSaving) / Math.abs(prevSaving)) * 100;
-        }
-
-        return result;
-    }, [data]);
 
     const chartData = useMemo(() => {
         const assets: number[] = [];
@@ -130,7 +115,10 @@ const SavingFlowReportPage: FC<{}> = () => {
                 <div className="grid grid-cols-1 gap-2 rounded-lg border bg-base-100 p-2 text-xxs">
                     {data.map((el, idx) => {
                         const save = el.income - el.expense;
-                        const savePercent = saveRatios[el.occurred_at];
+                        const lastAsset = chartData.assets[chartData.assets.length - idx - 1] ?? 0;
+                        const prevAsset = lastAsset - save;
+                        const saveP = !el.income ? 0 : (save / el.income) * 100;
+                        const assetP = !prevAsset ? 0 : (save / prevAsset) * 100;
                         return (
                             <div
                                 className={
@@ -138,26 +126,24 @@ const SavingFlowReportPage: FC<{}> = () => {
                                 }
                                 key={el.occurred_at}
                             >
-                                <span className="flex-1 text-center">{el.occurred_at}</span>
-                                <span className={'flex-1 text-center ' + (el.income > 0 ? 'text-success' : '')}>
-                                    {formatCurrency(el.income)}
+                                <span className="w-[3.8rem] text-center font-semibold">
+                                    {formatDate(el.occurred_at, { lang: 'en-US', day: 'hide', weekday: 'hide' })}
                                 </span>
-                                <span className="flex-1 text-center text-error">{formatCurrency(-1 * el.expense)}</span>
-                                <span
-                                    className={
-                                        'flex-1 text-center ' +
-                                        (save > 0 ? 'text-success' : save < 0 ? 'text-error' : '')
-                                    }
-                                >
-                                    {formatCurrency(save)}
+                                <span className="flex flex-1 items-center gap-1 text-center">
+                                    <p className="rounded-sm bg-primary/10 px-1.5">Assets</p>
+                                    <p>{abbreviate(lastAsset)}</p>
+                                    <p className={assetP > 0 ? 'text-success' : assetP < 0 ? 'text-error' : ''}>
+                                        ({assetP > 0 ? '+' : ''}
+                                        {formatNumeric(assetP)}%)
+                                    </p>
                                 </span>
-                                <span
-                                    className={
-                                        'flex-1 text-center ' +
-                                        (!savePercent ? '' : savePercent > 0 ? 'text-success' : 'text-error')
-                                    }
-                                >
-                                    {!savePercent ? '-' : `${formatNumeric(savePercent)}%`}
+                                <span className="flex flex-1 items-center gap-1 text-center">
+                                    <p className="rounded-sm bg-primary/10 px-1.5">Save</p>
+                                    <p>{abbreviate(save)}</p>
+                                    <p className={save > 0 ? 'text-success' : save < 0 ? 'text-error' : ''}>
+                                        ({save > 0 ? '+' : ''}
+                                        {formatNumeric(saveP)}%)
+                                    </p>
                                 </span>
                             </div>
                         );
